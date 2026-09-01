@@ -1,0 +1,634 @@
+<div class="page">
+
+  <!-- =========================
+       HEADER
+  ========================== -->
+
+  <div class="page-header">
+
+    <div>
+
+      <div class="breadcrumb">
+
+        <a routerLink="/deces/dashboard">
+          Décès
+        </a>
+
+        <span>/</span>
+
+        <span class="current">
+          Validation
+        </span>
+
+      </div>
+
+      <h1>
+        Validation des dossiers
+      </h1>
+
+      <p>
+        Vérification et validation des dossiers de décès
+      </p>
+
+    </div>
+
+  </div>
+
+
+  <!-- =========================
+       STATISTICS
+  ========================== -->
+
+  <div class="stats-grid">
+
+    <div class="stat-card">
+
+      <div class="stat-icon">
+        📁
+      </div>
+
+      <div>
+
+        <span>
+          Total dossiers
+        </span>
+
+        <strong>
+          {{ total }}
+        </strong>
+
+      </div>
+
+    </div>
+
+
+    <div class="stat-card warning">
+
+      <div class="stat-icon">
+        🔍
+      </div>
+
+      <div>
+
+        <span>
+          À valider
+        </span>
+
+        <strong>
+          {{ aValider }}
+        </strong>
+
+      </div>
+
+    </div>
+
+
+    <div class="stat-card success">
+
+      <div class="stat-icon">
+        ✓
+      </div>
+
+      <div>
+
+        <span>
+          Dossiers complets
+        </span>
+
+        <strong>
+          {{ complets }}
+        </strong>
+
+      </div>
+
+    </div>
+
+
+    <div class="stat-card danger">
+
+      <div class="stat-icon">
+        ⚠
+      </div>
+
+      <div>
+
+        <span>
+          Compléments
+        </span>
+
+        <strong>
+          {{ complement }}
+        </strong>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- =========================
+       SEARCH
+  ========================== -->
+
+  <div class="filter-card">
+
+    <div class="search-box">
+
+      <label>
+        Recherche
+      </label>
+
+      <input
+        type="text"
+        [(ngModel)]="recherche"
+        placeholder="N° dossier, CIN, matricule ou adhérent..."
+      >
+
+    </div>
+
+
+    <div class="filter-box">
+
+      <label>
+        Statut
+      </label>
+
+      <select
+        [(ngModel)]="statutFiltre">
+
+        <option value="">
+          Tous les statuts
+        </option>
+
+        <option value="À valider">
+          À valider
+        </option>
+
+        <option value="Validé">
+          Validé
+        </option>
+
+        <option value="Rejeté">
+          Rejeté
+        </option>
+
+        <option value="Retour pour complément">
+          Retour pour complément
+        </option>
+
+      </select>
+
+    </div>
+
+
+    <button
+      class="btn-reset"
+      type="button"
+      (click)="resetFiltres()">
+
+      Réinitialiser
+
+    </button>
+
+  </div>
+
+
+  <!-- =========================
+       TABLE
+  ========================== -->
+
+  <div class="section-card">
+
+    <div class="section-title">
+
+      <div>
+
+        <h2>
+          Dossiers à traiter
+        </h2>
+
+        <p>
+          {{ dossiersFiltres.length }}
+          dossier(s) trouvé(s)
+        </p>
+
+      </div>
+
+    </div>
+
+
+    <div class="table-container">
+
+      <table>
+
+        <thead>
+
+          <tr>
+
+            <th>
+              N° dossier
+            </th>
+
+            <th>
+              Adhérent
+            </th>
+
+            <th>
+              Matricule
+            </th>
+
+            <th>
+              Date décès
+            </th>
+
+            <th>
+              Pièces
+            </th>
+
+            <th>
+              Statut
+            </th>
+
+            <th>
+              Action
+            </th>
+
+          </tr>
+
+        </thead>
+
+
+        <tbody>
+
+          <tr
+            *ngFor="let dossier of dossiersFiltres">
+
+            <td>
+
+              <strong>
+                {{ dossier.numero }}
+              </strong>
+
+            </td>
+
+
+            <td>
+              {{ dossier.adherent }}
+            </td>
+
+
+            <td>
+              {{ dossier.matricule }}
+            </td>
+
+
+            <td>
+              {{ dossier.dateDeces }}
+            </td>
+
+
+            <td>
+
+              <span
+                class="pieces-count"
+                [class.complete]="
+                  dossier.piecesValides === dossier.piecesTotal
+                ">
+
+                {{ dossier.piecesValides }}
+                /
+                {{ dossier.piecesTotal }}
+
+              </span>
+
+            </td>
+
+
+            <td>
+
+              <span
+                class="status"
+
+                [class.status-warning]="
+                  dossier.statut === 'À valider'
+                "
+
+                [class.status-success]="
+                  dossier.statut === 'Validé'
+                "
+
+                [class.status-danger]="
+                  dossier.statut === 'Rejeté'
+                "
+
+                [class.status-progress]="
+                  dossier.statut === 'Retour pour complément'
+                ">
+
+                {{ dossier.statut }}
+
+              </span>
+
+            </td>
+
+
+            <td>
+
+              <button
+                class="btn-view"
+                type="button"
+                (click)="ouvrirDossier(dossier)">
+
+                Examiner
+
+              </button>
+
+            </td>
+
+          </tr>
+
+
+          <tr
+            *ngIf="dossiersFiltres.length === 0">
+
+            <td
+              colspan="7"
+              class="empty">
+
+              <div class="empty-icon">
+                🔍
+              </div>
+
+              <strong>
+                Aucun dossier trouvé
+              </strong>
+
+              <span>
+                Modifiez les critères de recherche.
+              </span>
+
+            </td>
+
+          </tr>
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
+
+  <!-- =========================
+       MODAL
+  ========================== -->
+
+  <div
+    class="modal-overlay"
+    *ngIf="dossierSelectionne"
+    (click)="fermerDossier()">
+
+
+    <div
+      class="modal"
+      (click)="$event.stopPropagation()">
+
+
+      <!-- MODAL HEADER -->
+
+      <div class="modal-header">
+
+        <div>
+
+          <span class="modal-label">
+            DOSSIER
+          </span>
+
+          <h2>
+            {{ dossierSelectionne?.numero }}
+          </h2>
+
+        </div>
+
+
+        <button
+          class="close-button"
+          type="button"
+          (click)="fermerDossier()">
+
+          ×
+
+        </button>
+
+      </div>
+
+
+      <!-- ADHERENT -->
+
+      <div class="modal-section">
+
+        <h3>
+          Informations adhérent
+        </h3>
+
+
+        <div class="info-grid">
+
+          <div>
+
+            <span>
+              Adhérent
+            </span>
+
+            <strong>
+              {{ dossierSelectionne?.adherent }}
+            </strong>
+
+          </div>
+
+
+          <div>
+
+            <span>
+              Matricule
+            </span>
+
+            <strong>
+              {{ dossierSelectionne?.matricule }}
+            </strong>
+
+          </div>
+
+
+          <div>
+
+            <span>
+              Date de décès
+            </span>
+
+            <strong>
+              {{ dossierSelectionne?.dateDeces }}
+            </strong>
+
+          </div>
+
+
+          <div>
+
+            <span>
+              Date dépôt
+            </span>
+
+            <strong>
+              {{ dossierSelectionne?.dateDepot }}
+            </strong>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- PIECES -->
+
+      <div class="modal-section">
+
+        <h3>
+          Pièces justificatives
+        </h3>
+
+
+        <div class="document-status">
+
+          <div class="document-icon">
+            📄
+          </div>
+
+          <div>
+
+            <strong>
+              Documents du dossier
+            </strong>
+
+            <span>
+
+              {{ dossierSelectionne?.piecesValides }}
+              /
+              {{ dossierSelectionne?.piecesTotal }}
+
+              pièces vérifiées
+
+            </span>
+
+          </div>
+
+
+          <span
+            class="status status-success"
+            *ngIf="
+              dossierSelectionne?.piecesValides ===
+              dossierSelectionne?.piecesTotal
+            ">
+
+            Complet
+
+          </span>
+
+
+          <span
+            class="status status-warning"
+            *ngIf="
+              dossierSelectionne?.piecesValides !==
+              dossierSelectionne?.piecesTotal
+            ">
+
+            Incomplet
+
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <!-- OBSERVATION -->
+
+      <div class="modal-section">
+
+        <h3>
+          Observation
+        </h3>
+
+        <p class="observation">
+
+          {{ dossierSelectionne?.observation }}
+
+        </p>
+
+      </div>
+
+
+      <!-- MOTIF -->
+
+      <div class="modal-section">
+
+        <label class="motif-label">
+
+          Motif / Observation
+
+        </label>
+
+        <textarea
+          [(ngModel)]="motif"
+          rows="4"
+          placeholder="Saisir une remarque, un motif de rejet ou les documents manquants...">
+        </textarea>
+
+      </div>
+
+
+      <!-- ACTIONS -->
+
+      <div class="modal-actions">
+
+
+        <button
+          type="button"
+          class="btn-return"
+          (click)="retournerComplement()">
+
+          ↩ Retour pour complément
+
+        </button>
+
+
+        <button
+          type="button"
+          class="btn-reject"
+          (click)="rejeterDossier()">
+
+          ✕ Rejeter
+
+        </button>
+
+
+        <button
+          type="button"
+          class="btn-validate"
+          (click)="validerDossier()">
+
+          ✓ Valider
+
+        </button>
+
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

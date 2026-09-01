@@ -1,0 +1,1337 @@
+<div class="page">
+
+
+  <!-- ================================================= -->
+  <!-- HEADER -->
+  <!-- ================================================= -->
+
+  <div class="page-header">
+
+    <div>
+
+      <div class="breadcrumb">
+
+        <a routerLink="/deces/dashboard">
+          Décès
+        </a>
+
+        <span>/</span>
+
+        <span class="current">
+          Ayants droit
+        </span>
+
+      </div>
+
+
+      <h1>
+        Ayants droit
+      </h1>
+
+
+      <p>
+        Gestion des bénéficiaires et ayants droit
+        des adhérents décédés
+      </p>
+
+    </div>
+
+
+    <button
+      class="btn-primary"
+      type="button"
+      (click)="nouveau()"
+      [disabled]="!dossierSelectionne">
+
+      + Ajouter un ayant droit
+
+    </button>
+
+  </div>
+
+
+
+  <!-- ================================================= -->
+  <!-- RECHERCHE -->
+  <!-- ================================================= -->
+
+  <div class="search-card">
+
+
+    <div class="search-title">
+
+      <div class="search-icon">
+        🔎
+      </div>
+
+
+      <div>
+
+        <h2>
+          Rechercher un dossier
+        </h2>
+
+        <p>
+          Recherchez par CIN, matricule ou nom
+          de l'adhérent
+        </p>
+
+      </div>
+
+    </div>
+
+
+
+    <div class="search-box">
+
+      <input
+        type="text"
+        [(ngModel)]="search"
+        placeholder="CIN, matricule ou nom de l'adhérent..."
+      >
+
+
+      @if (search) {
+
+        <button
+          type="button"
+          class="clear-btn"
+          (click)="search = ''; dossierSelectionne = null; ayantsDroit = []">
+
+          ×
+
+        </button>
+
+      }
+
+    </div>
+
+
+
+    <!-- ================================================= -->
+    <!-- RESULTATS -->
+    <!-- ================================================= -->
+
+    @if (
+      search &&
+      resultatsRecherche.length > 0
+    ) {
+
+      <div class="search-results">
+
+
+        @for (
+          dossier of resultatsRecherche;
+          track dossier.id
+        ) {
+
+
+          <button
+            type="button"
+            class="result-item"
+            (click)="selectionnerDossier(dossier)">
+
+
+            <div class="result-avatar">
+
+              {{
+                dossier.adherent.charAt(0)
+              }}
+
+            </div>
+
+
+            <div class="result-info">
+
+              <strong>
+
+                {{ dossier.adherent }}
+
+              </strong>
+
+
+              <span>
+
+                CIN :
+                {{ dossier.cin }}
+
+              </span>
+
+
+              <span>
+
+                Matricule :
+                {{ dossier.matricule }}
+
+              </span>
+
+            </div>
+
+
+            <div class="result-arrow">
+
+              →
+
+            </div>
+
+
+          </button>
+
+        }
+
+      </div>
+
+    }
+
+
+
+    @if (
+      search &&
+      resultatsRecherche.length === 0
+    ) {
+
+      <div class="no-result">
+
+        Aucun adhérent trouvé.
+
+      </div>
+
+    }
+
+  </div>
+
+
+
+  <!-- ================================================= -->
+  <!-- DOSSIER SELECTIONNE -->
+  <!-- ================================================= -->
+
+  @if (dossierSelectionne) {
+
+
+    <div class="selected-dossier">
+
+
+      <div class="selected-icon">
+
+        ✓
+
+      </div>
+
+
+      <div class="selected-info">
+
+        <span>
+          Dossier sélectionné
+        </span>
+
+
+        <strong>
+
+          {{ dossierSelectionne.adherent }}
+
+        </strong>
+
+      </div>
+
+
+      <div class="selected-details">
+
+        <span>
+
+          N°
+          {{ dossierSelectionne.numero }}
+
+        </span>
+
+
+        <span>
+
+          CIN :
+          {{ dossierSelectionne.cin }}
+
+        </span>
+
+
+        <span>
+
+          Matricule :
+          {{ dossierSelectionne.matricule }}
+
+        </span>
+
+
+        <span>
+
+          Décès :
+          {{ dossierSelectionne.dateDeces }}
+
+        </span>
+
+      </div>
+
+    </div>
+
+  }
+
+
+
+  <!-- ================================================= -->
+  <!-- MODE DE REPARTITION -->
+  <!-- ================================================= -->
+
+  @if (dossierSelectionne) {
+
+
+    <div class="repartition-card">
+
+
+      <div class="repartition-header">
+
+
+        <div>
+
+          <h2>
+            Mode de répartition
+          </h2>
+
+
+          <p>
+            Choisissez le mode de répartition
+            des droits
+          </p>
+
+        </div>
+
+
+
+        <!-- SWITCH -->
+
+        <div class="mode-switch">
+
+
+          <button
+            type="button"
+            [class.active]="
+              modeRepartition === 'pourcentage'
+            "
+            (click)="
+              changerMode('pourcentage')
+            ">
+
+            <span class="switch-icon">
+              %
+            </span>
+
+            <span>
+              Pourcentage
+            </span>
+
+          </button>
+
+
+
+          <button
+            type="button"
+            [class.active]="
+              modeRepartition === 'charia'
+            "
+            (click)="
+              changerMode('charia')
+            ">
+
+            <span class="switch-icon">
+              ☪
+            </span>
+
+            <span>
+              Charia
+            </span>
+
+          </button>
+
+
+        </div>
+
+      </div>
+
+
+
+      <!-- ================================================= -->
+      <!-- MODE POURCENTAGE -->
+      <!-- ================================================= -->
+
+      @if (
+        modeRepartition === 'pourcentage'
+      ) {
+
+
+        <div class="percentage-info">
+
+
+          <div class="percentage-stat">
+
+
+            <span>
+              Total attribué
+            </span>
+
+
+            <strong
+              [class.valid]="
+                pourcentageValide
+              "
+              [class.invalid]="
+                pourcentageDepasse
+              ">
+
+              {{ totalPourcentage }}%
+
+            </strong>
+
+          </div>
+
+
+
+          <div class="percentage-stat">
+
+
+            <span>
+              Reste
+            </span>
+
+
+            <strong>
+
+              {{ pourcentageRestant }}%
+
+            </strong>
+
+          </div>
+
+
+
+          <div class="percentage-progress">
+
+
+            <div class="progress-track">
+
+
+              <div
+                class="progress-fill"
+                [style.width.%]="
+                  pourcentageProgress
+                ">
+
+              </div>
+
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+
+        @if (pourcentageValide) {
+
+
+          <div class="success-message">
+
+            ✓ La répartition est complète :
+            <strong>100%</strong>
+
+          </div>
+
+        }
+
+
+
+        @if (pourcentageDepasse) {
+
+
+          <div class="error-message">
+
+            ! Le total dépasse
+            <strong>100%</strong>.
+
+          </div>
+
+        }
+
+      }
+
+
+
+      <!-- ================================================= -->
+      <!-- MODE CHARIA -->
+      <!-- ================================================= -->
+
+      @if (
+        modeRepartition === 'charia'
+      ) {
+
+
+        <div class="charia-info">
+
+
+          <div class="charia-icon">
+            ☪
+          </div>
+
+
+          <div>
+
+            <strong>
+              Répartition selon la Charia
+            </strong>
+
+
+            <p>
+
+              La répartition sera calculée
+              selon les liens de parenté
+              et les règles successorales
+              définies.
+
+            </p>
+
+          </div>
+
+
+        </div>
+
+      }
+
+
+    </div>
+
+  }
+
+
+
+  <!-- ================================================= -->
+  <!-- LISTE -->
+  <!-- ================================================= -->
+
+  @if (dossierSelectionne) {
+
+
+    <div class="section-card">
+
+
+      <div class="section-title">
+
+
+        <div>
+
+          <h2>
+            Liste des ayants droit
+          </h2>
+
+
+          <p>
+            Ayants droit associés au dossier
+            sélectionné
+          </p>
+
+        </div>
+
+
+        <span class="count">
+
+          {{ ayantsDroit.length }}
+          ayant(s) droit
+
+        </span>
+
+
+      </div>
+
+
+
+      <!-- ================================================= -->
+      <!-- TABLE -->
+      <!-- ================================================= -->
+
+      <div class="table-container">
+
+
+        <table>
+
+
+          <thead>
+
+
+            <tr>
+
+
+              <th>
+                Nom & prénom
+              </th>
+
+
+              <th>
+                CIN
+              </th>
+
+
+              <th>
+                Lien de parenté
+              </th>
+
+
+              <th>
+                Date naissance
+              </th>
+
+
+              <th>
+                Téléphone
+              </th>
+
+
+              <th>
+                Pourcentage
+              </th>
+
+
+              <th>
+                Actions
+              </th>
+
+
+            </tr>
+
+
+          </thead>
+
+
+
+          <tbody>
+
+
+            @for (
+              ayant of ayantsDroit;
+              track ayant.id
+            ) {
+
+
+              <tr>
+
+
+                <!-- NOM -->
+
+                <td>
+
+
+                  <div class="person">
+
+
+                    <div class="person-avatar">
+
+                      {{
+                        ayant.prenom.charAt(0)
+                      }}
+
+                    </div>
+
+
+                    <div>
+
+                      <strong>
+
+                        {{ ayant.nom }}
+                        {{ ayant.prenom }}
+
+                      </strong>
+
+                    </div>
+
+
+                  </div>
+
+
+                </td>
+
+
+
+                <!-- CIN -->
+
+                <td>
+
+                  {{ ayant.cin }}
+
+                </td>
+
+
+
+                <!-- PARENTÉ -->
+
+                <td>
+
+
+                  <span class="relation">
+
+                    {{ ayant.lienParente }}
+
+                  </span>
+
+
+                </td>
+
+
+
+                <!-- DATE -->
+
+                <td>
+
+                  {{ ayant.dateNaissance }}
+
+                </td>
+
+
+
+                <!-- TELEPHONE -->
+
+                <td>
+
+                  {{ ayant.telephone }}
+
+                </td>
+
+
+
+                <!-- POURCENTAGE -->
+
+                <td>
+
+
+                  @if (
+                    modeRepartition ===
+                    'pourcentage'
+                  ) {
+
+
+                    <span
+                      class="percentage-badge">
+
+                      {{ ayant.pourcentage }}%
+
+                    </span>
+
+                  }
+
+
+                  @if (
+                    modeRepartition ===
+                    'charia'
+                  ) {
+
+
+                    <span
+                      class="charia-badge">
+
+                      Charia
+
+                    </span>
+
+                  }
+
+
+                </td>
+
+
+
+                <!-- ACTIONS -->
+
+                <td>
+
+
+                  <div class="actions">
+
+
+                    <button
+                      type="button"
+                      class="btn-edit"
+                      (click)="modifier(ayant)">
+
+                      Modifier
+
+                    </button>
+
+
+                    <button
+                      type="button"
+                      class="btn-delete"
+                      (click)="
+                        supprimer(ayant.id)
+                      ">
+
+                      Supprimer
+
+                    </button>
+
+
+                  </div>
+
+
+                </td>
+
+
+              </tr>
+
+            }
+
+
+            @if (
+              ayantsDroit.length === 0
+            ) {
+
+
+              <tr>
+
+
+                <td
+                  colspan="7"
+                  class="table-empty">
+
+                  Aucun ayant droit
+                  enregistré pour ce dossier.
+
+                </td>
+
+
+              </tr>
+
+            }
+
+
+          </tbody>
+
+
+        </table>
+
+
+      </div>
+
+
+
+      <!-- ================================================= -->
+      <!-- SAVE REPARTITION -->
+      <!-- ================================================= -->
+
+      <div class="repartition-actions">
+
+
+        <div class="save-status">
+
+
+          @if (
+            modeRepartition ===
+            'pourcentage'
+          ) {
+
+
+            @if (
+              pourcentageValide
+            ) {
+
+
+              <span
+                class="status-ok">
+
+                ✓ Total : 100%
+
+              </span>
+
+
+            } @else {
+
+
+              <span
+                class="status-warning">
+
+                Total :
+                {{ totalPourcentage }}%
+
+                —
+                Reste :
+                {{ pourcentageRestant }}%
+
+              </span>
+
+
+            }
+
+          }
+
+
+          @if (
+            modeRepartition ===
+            'charia'
+          ) {
+
+
+            <span
+              class="status-charia">
+
+              ☪ Répartition Charia
+
+            </span>
+
+          }
+
+
+        </div>
+
+
+
+        <button
+          type="button"
+          class="btn-save-repartition"
+          (click)="
+            sauvegarderRepartition()
+          "
+          [disabled]="
+            modeRepartition ===
+            'pourcentage'
+            &&
+            !pourcentageValide
+          ">
+
+          ✓ Enregistrer la répartition
+
+        </button>
+
+
+      </div>
+
+
+    </div>
+
+  }
+
+
+
+  <!-- ================================================= -->
+  <!-- EMPTY STATE -->
+  <!-- ================================================= -->
+
+  @if (!dossierSelectionne) {
+
+
+    <div class="empty-state">
+
+
+      <div class="empty-icon">
+        👥
+      </div>
+
+
+      <h2>
+        Aucun dossier sélectionné
+      </h2>
+
+
+      <p>
+
+        Recherchez un adhérent avec son CIN
+        ou son matricule pour afficher
+        ses informations et gérer ses
+        ayants droit.
+
+      </p>
+
+
+    </div>
+
+  }
+
+
+
+  <!-- ================================================= -->
+  <!-- MODAL FORM -->
+  <!-- ================================================= -->
+
+  @if (showForm) {
+
+
+    <div class="modal-overlay">
+
+
+      <div class="modal">
+
+
+        <!-- HEADER -->
+
+        <div class="modal-header">
+
+
+          <div>
+
+            <h2>
+
+              {{
+                editMode
+                  ? 'Modifier l’ayant droit'
+                  : 'Ajouter un ayant droit'
+              }}
+
+            </h2>
+
+
+            <p>
+              Informations de l'ayant droit
+            </p>
+
+          </div>
+
+
+          <button
+            type="button"
+            class="close-btn"
+            (click)="
+              fermerForm()
+            ">
+
+            ×
+
+          </button>
+
+
+        </div>
+
+
+
+        <!-- FORM -->
+
+        <form
+          class="modal-body"
+          (ngSubmit)="enregistrer()">
+
+
+          <div class="form-grid">
+
+
+            <!-- NOM -->
+
+            <div class="form-group">
+
+
+              <label>
+
+                Nom
+                <span>*</span>
+
+              </label>
+
+
+              <input
+                type="text"
+                name="nom"
+                [(ngModel)]="
+                  ayant.nom
+                "
+                required>
+
+            </div>
+
+
+
+            <!-- PRENOM -->
+
+            <div class="form-group">
+
+
+              <label>
+
+                Prénom
+                <span>*</span>
+
+              </label>
+
+
+              <input
+                type="text"
+                name="prenom"
+                [(ngModel)]="
+                  ayant.prenom
+                "
+                required>
+
+            </div>
+
+
+
+            <!-- CIN -->
+
+            <div class="form-group">
+
+
+              <label>
+
+                CIN
+                <span>*</span>
+
+              </label>
+
+
+              <input
+                type="text"
+                name="cin"
+                [(ngModel)]="
+                  ayant.cin
+                "
+                placeholder="Ex: AB123456"
+                required>
+
+            </div>
+
+
+
+            <!-- LIEN PARENTE -->
+
+            <div class="form-group">
+
+
+              <label>
+
+                Lien de parenté
+                <span>*</span>
+
+              </label>
+
+
+              <select
+                name="lienParente"
+                [(ngModel)]="
+                  ayant.lienParente
+                "
+                required>
+
+
+                <option value="">
+
+                  Sélectionner
+
+                </option>
+
+
+                <option value="Épouse">
+                  Épouse
+                </option>
+
+
+                <option value="Époux">
+                  Époux
+                </option>
+
+
+                <option value="Fils">
+                  Fils
+                </option>
+
+
+                <option value="Fille">
+                  Fille
+                </option>
+
+
+                <option value="Père">
+                  Père
+                </option>
+
+
+                <option value="Mère">
+                  Mère
+                </option>
+
+
+                <option value="Autre">
+                  Autre
+                </option>
+
+
+              </select>
+
+            </div>
+
+
+
+            <!-- POURCENTAGE -->
+
+            @if (
+              modeRepartition ===
+              'pourcentage'
+            ) {
+
+
+              <div class="form-group">
+
+
+                <label>
+
+                  Pourcentage
+                  <span>*</span>
+
+                </label>
+
+
+                <div class="percentage-input">
+
+
+                  <input
+                    type="number"
+                    name="pourcentage"
+                    [(ngModel)]="
+                      ayant.pourcentage
+                    "
+                    min="0"
+                    max="100"
+                    step="0.01"
+                    placeholder="Ex: 50"
+                    required>
+
+
+                  <span>
+                    %
+                  </span>
+
+
+                </div>
+
+
+                <small class="input-help">
+
+                  Reste disponible :
+                  {{ pourcentageRestant }}%
+
+                </small>
+
+
+              </div>
+
+            }
+
+
+
+            <!-- DATE NAISSANCE -->
+
+            <div class="form-group">
+
+
+              <label>
+
+                Date de naissance
+
+              </label>
+
+
+              <input
+                type="date"
+                name="dateNaissance"
+                [(ngModel)]="
+                  ayant.dateNaissance
+                ">
+
+            </div>
+
+
+
+            <!-- TELEPHONE -->
+
+            <div class="form-group">
+
+
+              <label>
+
+                Téléphone
+
+              </label>
+
+
+              <input
+                type="text"
+                name="telephone"
+                [(ngModel)]="
+                  ayant.telephone
+                "
+                placeholder="06XXXXXXXX">
+
+            </div>
+
+
+
+            <!-- ADRESSE -->
+
+            <div
+              class="form-group full">
+
+
+              <label>
+                Adresse
+              </label>
+
+
+              <input
+                type="text"
+                name="adresse"
+                [(ngModel)]="
+                  ayant.adresse
+                "
+                placeholder="Adresse complète">
+
+            </div>
+
+
+          </div>
+
+
+
+          <!-- ACTIONS -->
+
+          <div class="modal-actions">
+
+
+            <button
+              type="button"
+              class="btn-cancel"
+              (click)="
+                fermerForm()
+              ">
+
+              Annuler
+
+            </button>
+
+
+            <button
+              type="submit"
+              class="btn-save">
+
+              {{
+                editMode
+                  ? 'Enregistrer les modifications'
+                  : 'Ajouter'
+              }}
+
+            </button>
+
+
+          </div>
+
+
+        </form>
+
+
+      </div>
+
+
+    </div>
+
+  }
+
+
+</div>

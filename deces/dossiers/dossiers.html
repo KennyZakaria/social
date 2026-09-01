@@ -1,0 +1,274 @@
+<div class="page">
+
+  <!-- HEADER -->
+
+  <div class="page-header">
+
+    <div>
+
+      <div class="breadcrumb">
+
+  <a routerLink="/deces/dashboard">
+    Décès
+  </a>
+
+  <span>/</span>
+
+  <a>Dossiers de décès</a>
+
+</div>
+      <h1>Dossiers de décès</h1>
+
+      <p>
+        Recherche et suivi des dossiers des adhérents décédés
+      </p>
+
+    </div>
+
+
+    <a
+      routerLink="/deces/nouveau"
+      class="btn-primary">
+
+      + Nouveau dossier
+
+    </a>
+
+  </div>
+
+
+  <!-- FILTER CARD -->
+
+  <div class="filter-card">
+
+    <div class="search-box">
+
+      <span>⌕</span>
+
+      <input
+        type="text"
+        [(ngModel)]="searchTerm"
+        placeholder="Rechercher par numéro, adhérent ou matricule...">
+
+    </div>
+
+
+    <div class="filter-group">
+
+      <label>Statut</label>
+
+      <select [(ngModel)]="selectedStatut">
+
+        <option value="Tous">
+          Tous
+        </option>
+
+        <option value="En cours">
+          En cours
+        </option>
+
+        <option value="Incomplet">
+          Incomplets
+        </option>
+
+        <option value="À valider">
+          À valider
+        </option>
+
+        <option value="Validé">
+          Validés
+        </option>
+
+        <option value="Clôturé">
+          Clôturés
+        </option>
+
+      </select>
+
+    </div>
+
+  </div>
+
+
+  <!-- ERREUR CHARGEMENT -->
+  <div *ngIf="errorMessage" class="filter-card" style="color:#b91c1c;">
+    {{ errorMessage }}
+  </div>
+
+  <!-- CHARGEMENT -->
+  <div *ngIf="loading" class="filter-card">
+    Chargement des dossiers...
+  </div>
+
+  <!-- TABLE -->
+
+  <div class="table-card">
+
+    <div class="table-header">
+
+      <div>
+
+        <h2>Liste des dossiers</h2>
+
+        <span>
+          {{ filteredDossiers.length }} dossier(s)
+        </span>
+
+      </div>
+
+    </div>
+
+
+    <div class="table-container">
+
+      <table>
+
+        <thead>
+
+          <tr>
+
+            <th>N° DOSSIER</th>
+
+            <th>ADHÉRENT</th>
+
+            <th>MATRICULE</th>
+
+            <th>DATE DÉCÈS</th>
+
+            <th>LIEU</th>
+
+            <th>NATURE</th>
+
+            <th>STATUT</th>
+
+            <th>ACTIONS</th>
+
+          </tr>
+
+        </thead>
+
+
+        <tbody>
+
+          <tr *ngFor="let dossier of filteredDossiers">
+
+            <td>
+              <strong class="numero">
+                {{ dossier.numero }}
+              </strong>
+            </td>
+
+
+            <td>
+
+              <div class="adherent">
+
+                <div class="avatar">
+                  {{ dossier.adherent.charAt(0) }}
+                </div>
+
+                <span>
+                  {{ dossier.adherent }}
+                </span>
+
+              </div>
+
+            </td>
+
+
+            <td>
+              {{ dossier.matricule }}
+            </td>
+
+
+            <td>
+              {{ dossier.dateDeces }}
+            </td>
+
+
+            <td>
+              {{ dossier.lieuDeces }}
+            </td>
+
+
+            <td>
+              {{ dossier.natureDeces }}
+            </td>
+
+
+            <td>
+
+              <span
+                class="status"
+                [ngClass]="getStatusClass(dossier.statut)">
+
+                {{ dossier.statut }}
+
+              </span>
+
+            </td>
+
+
+            <td>
+
+              <div class="actions">
+
+                <button
+                  class="action-view"
+                  title="Voir"
+                  (click)="voirDossier(dossier)">
+
+                  👁
+
+                </button>
+
+
+                <button
+                  class="action-edit"
+                  title="Modifier"
+                  (click)="modifierDossier(dossier)">
+
+                  ✎
+
+                </button>
+
+              </div>
+
+            </td>
+
+          </tr>
+
+
+          <!-- EMPTY -->
+
+          <tr *ngIf="filteredDossiers.length === 0">
+
+            <td
+              colspan="8"
+              class="empty">
+
+              <div class="empty-icon">
+                📂
+              </div>
+
+              <strong>
+                Aucun dossier trouvé
+              </strong>
+
+              <p>
+                Aucun dossier ne correspond à votre recherche.
+              </p>
+
+            </td>
+
+          </tr>
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
+</div>

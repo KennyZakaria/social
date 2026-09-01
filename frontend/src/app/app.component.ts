@@ -1,0 +1,43 @@
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterOutlet, Router } from '@angular/router';
+import { AuthStateService } from './auth-state.service';
+import { MODULE_MAP } from './module-map';
+import { SidebarComponent, SidebarModule } from './features/sidebar/sidebar.component';
+
+@Component({
+    selector: 'app-root',
+    imports: [CommonModule, RouterOutlet, SidebarComponent],
+    templateUrl: './app.component.html',
+    styleUrls: ['./app.component.scss']
+})
+export class AppComponent {
+  readonly modules: SidebarModule[] = [
+    { key: 'mutuelle', name: 'Section Mutuelle', short: 'MU', module: MODULE_MAP['mutuelle'], subItems: [
+      { label: 'Dossiers', route: ['/module', 'mutuelle', 'dossiers'] },
+      { label: 'Statistiques', route: ['/module', 'mutuelle', 'statistiques'] }
+    ]},
+    { key: 'assistance-sociale', name: 'Assistance Sociale', short: 'AS', module: MODULE_MAP['assistance-sociale'], subItems: [
+      { label: 'Dossiers', route: ['/module', 'assistance-sociale', 'dossiers'] },
+      { label: 'Enquêtes', route: ['/module', 'assistance-sociale', 'enquetes'] }
+    ]},
+    { key: 'culture-loisirs', name: 'Culture et Loisirs', short: 'CL', module: MODULE_MAP['culture-loisirs'], subItems: [
+      { label: 'Activités', route: ['/module', 'culture-loisirs', 'activites'] },
+      { label: 'Événements', route: ['/module', 'culture-loisirs', 'evenements'] }
+    ]},
+    { key: 'retraites', name: 'Section Retraites', short: 'RE', module: MODULE_MAP['retraites'], subItems: [
+      { label: 'Dossiers', route: ['/module', 'retraites', 'dossiers'] }
+    ]},
+    { key: 'assurance-sociale', name: 'Assurance Sociale', short: 'AN', module: MODULE_MAP['assurance-sociale'], subItems: [
+      { label: 'Dossiers', route: ['/module', 'assurance-sociale', 'dossiers'] },
+      { label: 'Prestations', route: ['/module', 'assurance-sociale', 'prestations'] }
+    ]}
+  ];
+
+  constructor(public readonly authState: AuthStateService, private readonly router: Router) {}
+
+  logout(): void {
+    this.authState.logout();
+    this.router.navigate(['/login']);
+  }
+}

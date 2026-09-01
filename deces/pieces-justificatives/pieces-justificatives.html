@@ -1,0 +1,238 @@
+<div class="page">
+
+  <!-- HEADER -->
+
+  <div class="page-header">
+
+    <div>
+
+      <div class="breadcrumb">
+
+        <a routerLink="/deces/dashboard">
+          Décès
+        </a>
+
+        <span>/</span>
+
+        <span class="current">
+          Pièces justificatives
+        </span>
+
+      </div>
+
+      <h1>Pièces justificatives</h1>
+
+      <p>
+        Rechercher un dossier avant de gérer ses pièces justificatives
+      </p>
+
+    </div>
+
+  </div>
+
+
+  <!-- SEARCH CARD -->
+
+  <div class="search-card">
+
+    <div class="search-header">
+
+      <div class="search-icon">
+        🔎
+      </div>
+
+      <div>
+
+        <h2>Rechercher un dossier</h2>
+
+        <p>
+          Recherchez par CIN, matricule, numéro de dossier ou nom
+        </p>
+
+      </div>
+
+    </div>
+
+
+    <div class="search-box">
+
+      <input
+        type="text"
+        [(ngModel)]="search"
+        placeholder="CIN, matricule, N° dossier ou nom de l'adhérent..."
+      >
+
+      @if (search) {
+
+        <button
+          type="button"
+          class="clear-btn"
+          (click)="search = ''">
+
+          ×
+
+        </button>
+
+      }
+
+    </div>
+
+  </div>
+
+
+  <!-- RESULTS -->
+
+  @if (search && dossiersFiltres.length > 0) {
+
+    <div class="results-card">
+
+      <div class="results-header">
+
+        <div>
+
+          <h2>Dossiers trouvés</h2>
+
+          <p>
+            Sélectionnez le dossier concerné
+          </p>
+
+        </div>
+
+        <span class="result-count">
+          {{ dossiersFiltres.length }}
+        </span>
+
+      </div>
+
+
+      <div class="results-list">
+
+        @for (dossier of dossiersFiltres; track dossier.id) {
+
+          <div class="dossier-result">
+
+            <div class="dossier-main">
+
+              <div class="dossier-icon">
+                📁
+              </div>
+
+              <div>
+
+                <strong>
+                  {{ dossier.numero }}
+                </strong>
+
+                <span>
+                  {{ dossier.adherent }}
+                </span>
+
+              </div>
+
+            </div>
+
+
+            <div class="dossier-info">
+
+              <div>
+
+                <small>CIN</small>
+
+                <strong>
+                  {{ dossier.cin }}
+                </strong>
+
+              </div>
+
+              <div>
+
+                <small>Matricule</small>
+
+                <strong>
+                  {{ dossier.matricule }}
+                </strong>
+
+              </div>
+
+              <div>
+
+                <small>Date décès</small>
+
+                <strong>
+                  {{ dossier.dateDeces }}
+                </strong>
+
+              </div>
+
+            </div>
+
+
+            <div class="dossier-action">
+
+              <button
+                type="button"
+                class="btn-open"
+                (click)="ouvrirDossier(dossier.id)">
+
+                Ouvrir
+
+                <span>→</span>
+
+              </button>
+
+            </div>
+
+          </div>
+
+        }
+
+      </div>
+
+    </div>
+
+  }
+
+
+  <!-- NO RESULT -->
+
+  @if (search && dossiersFiltres.length === 0) {
+
+    <div class="empty-card">
+
+      <div class="empty-icon">
+        🔎
+      </div>
+
+      <h3>Aucun dossier trouvé</h3>
+
+      <p>
+        Aucun dossier ne correspond à votre recherche.
+      </p>
+
+    </div>
+
+  }
+
+
+  <!-- INITIAL STATE -->
+
+  @if (!search) {
+
+    <div class="empty-card initial">
+
+      <div class="empty-icon">
+        📂
+      </div>
+
+      <h3>Sélectionnez un dossier</h3>
+
+      <p>
+        Commencez par rechercher un dossier avec le CIN,
+        le matricule ou le numéro de dossier.
+      </p>
+
+    </div>
+
+  }
+
+</div>

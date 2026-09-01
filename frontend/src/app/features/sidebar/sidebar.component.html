@@ -1,0 +1,132 @@
+<aside class="sidebar">
+
+  <!-- Logo -->
+  <div class="sidebar__logo">
+    <div class="logo-icon">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+      </svg>
+    </div>
+    <div class="logo-text">
+      <span class="logo-title">Service Social</span>
+      <span class="logo-sub">Plateforme Intégrale</span>
+    </div>
+  </div>
+
+  <!-- Nav (authenticated) -->
+  <nav class="nav" *ngIf="authState.isAuthenticated; else guestNav">
+
+    <p class="nav__label">Principal</p>
+
+    <a *ngIf="authState.hasRole('MANAGER')" class="nav__item" routerLink="/dashboard" routerLinkActive="nav__item--active">
+      <svg class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+        <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+      </svg>
+      <span>Tableau de Bord</span>
+    </a>
+
+    <!-- Bureau d'Ordre: module-access controlled (BUREAU_ORDRE) -->
+    <a *ngIf="!authState.hasRole('ADMIN') && canSeeModule('BUREAU_ORDRE')" class="nav__item" routerLink="/bureau-order" routerLinkActive="nav__item--active">
+      <svg class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+      </svg>
+      <span>Bureau d'Ordre</span>
+    </a>
+
+    <!-- Section Décès: expandable with real sub-features -->
+    <ng-container *ngIf="!authState.hasRole('ADMIN') && canSeeModule('DECES')">
+      <div class="nav__group">
+        <a class="nav__item nav__item--parent" (click)="toggle('deces')" routerLink="/deces/dashboard" routerLinkActive="nav__item--active">
+          <svg class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/>
+            <line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>
+          </svg>
+          <span>Section Décès</span>
+          <svg class="nav__arrow" [class.nav__arrow--open]="isExpanded('deces')" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 12 15 18 9"/>
+          </svg>
+        </a>
+        <div class="nav__children" [class.nav__children--open]="isExpanded('deces')">
+          <a *ngFor="let sub of decesSubItems" class="nav__child" [routerLink]="sub.route" routerLinkActive="nav__child--active">
+            {{ sub.label }}
+          </a>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- Modules section: visible to MANAGER and AGENT only -->
+    <ng-container *ngIf="!authState.hasRole('ADMIN')">
+      <p class="nav__label">Modules</p>
+      <ng-container *ngFor="let module of modules">
+        <div class="nav__group" *ngIf="canSeeModule(module.module)">
+          <a class="nav__item nav__item--parent" (click)="toggle(module.key)" [routerLink]="['/module', module.key]" routerLinkActive="nav__item--active">
+            <span class="nav__chip">{{ module.short }}</span>
+            <span>{{ module.name }}</span>
+            <svg class="nav__arrow" [class.nav__arrow--open]="isExpanded(module.key)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </a>
+          <div class="nav__children" [class.nav__children--open]="isExpanded(module.key)">
+            <a *ngFor="let sub of module.subItems" class="nav__child" [routerLink]="sub.route" routerLinkActive="nav__child--active">
+              {{ sub.label }}
+            </a>
+          </div>
+        </div>
+      </ng-container>
+    </ng-container>
+
+    <!-- Adhérents: MANAGER only -->
+    <ng-container *ngIf="authState.hasRole('MANAGER')">
+      <p class="nav__label">Gestion</p>
+      <a class="nav__item" routerLink="/adherents" routerLinkActive="nav__item--active">
+        <svg class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/>
+          <path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>
+        </svg>
+        <span>Adhérents</span>
+      </a>
+    </ng-container>
+
+    <!-- Administration: ADMIN and MANAGER -->
+    <ng-container *ngIf="authState.hasRole('ADMIN') || authState.hasRole('MANAGER')">
+      <p class="nav__label">Administration</p>
+      <a class="nav__item" routerLink="/users" routerLinkActive="nav__item--active">
+        <svg class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/>
+          <path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>
+        </svg>
+        <span>Utilisateurs</span>
+      </a>
+    </ng-container>
+  </nav>
+
+  <!-- Nav (guest) -->
+  <ng-template #guestNav>
+    <nav class="nav">
+      <a class="nav__item" routerLink="/login" routerLinkActive="nav__item--active">
+        <svg class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/>
+        </svg>
+        <span>Connexion</span>
+      </a>
+    </nav>
+  </ng-template>
+
+  <!-- User footer -->
+  <div class="sidebar__footer" *ngIf="authState.auth as me">
+    <div class="user-row">
+      <div class="avatar">{{ me.fullName.charAt(0).toUpperCase() }}</div>
+      <div class="user-info">
+        <span class="user-name">{{ me.fullName }}</span>
+        <span class="user-role">{{ me.role }}</span>
+      </div>
+    </div>
+    <button class="logout-btn" title="Déconnexion" (click)="logout()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+      </svg>
+    </button>
+  </div>
+
+</aside>
