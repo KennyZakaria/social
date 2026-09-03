@@ -1,0 +1,34 @@
+<section class="page-shell">
+  <header class="page-header">
+    <div class="header-icon">AD</div>
+    <div>
+      <p class="eyebrow">Section Décès</p>
+      <h1>Ayants droit</h1>
+    </div>
+    <a class="btn-outline" routerLink="/deces/dossiers">Voir les dossiers</a>
+  </header>
+  <div class="content-card">
+    <div class="card-title">
+      <div>
+        <h2>Dossiers disponibles</h2>
+        <p>Choisissez le dossier concerné.</p>
+      </div>
+      <span class="count">{{ dossiers.length }}</span>
+    </div>
+
+    <div class="loading" *ngIf="loading">
+      <span></span> Chargement des dossiers…</div>
+    <p *ngIf="error" class="feedback error">{{error}}</p>
+    <div class="dossier-list" *ngIf="!loading && !error">
+      <a class="dossier-row" *ngFor="let d of dossiers" [routerLink]="'/deces/ayants-droit'">
+        <div class="avatar">{{ d.nomComplet.charAt(0) }}</div>
+        <div class="dossier-main">
+          <strong>{{d.nomComplet}}</strong>
+          <span>{{d.numero}} · Décès le {{d.dateDeces | date:'dd/MM/yyyy'}}</span>
+        </div>
+        <span class="action">Gérer <b>→</b></span>
+      </a>
+      <div class="empty" *ngIf="dossiers.length===0">Aucun dossier décès disponible.</div>
+    </div>
+  </div>
+</section>

@@ -5,6 +5,8 @@ import { DossiersListComponent } from './pages/dossiers-list.component';
 import { NouveauDossierDecesComponent } from './pages/nouveau-dossier.component';
 import { AyantsDroitComponent } from './pages/ayants-droit.component';
 import { ValidationComponent } from './pages/validation.component';
+import { DemandesDecesComponent } from './pages/demandes-deces.component';
+import { PiecesJustificativesComponent } from './pages/pieces-justificatives.component';
 
 export const DECES_ROUTES: Routes = [
   { path: 'deces', redirectTo: 'deces/dashboard', pathMatch: 'full' },
@@ -26,8 +28,10 @@ export const DECES_ROUTES: Routes = [
     canActivate: [authGuard, moduleGuard],
     data: { moduleKey: 'deces' }
   },
+  { path: 'deces/demandes', component: DemandesDecesComponent, canActivate: [authGuard, moduleGuard], data: { moduleKey: 'deces' } },
+  { path: 'deces/pieces-justificatives', component: PiecesJustificativesComponent, canActivate: [authGuard, moduleGuard], data: { moduleKey: 'deces' } },
   {
-    path: 'deces/dossiers/:id/ayants-droit',
+    path: 'deces/ayants-droit',
     component: AyantsDroitComponent,
     canActivate: [authGuard, moduleGuard],
     data: { moduleKey: 'deces' }

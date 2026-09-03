@@ -1,0 +1,142 @@
+<div class="page">
+  <div class="alert alert--success" *ngIf="successMsg">{{ successMsg }}</div>
+  <div class="alert alert--error" *ngIf="errorMsg">{{ errorMsg }}</div>
+
+  <div class="page-header">
+    <a class="back-btn" routerLink="/deces/dashboard">←</a>
+    <div class="page-icon">AD</div>
+    <div>
+      <p class="page-kicker">Section Décès</p>
+      <h2 class="page-title">Ayants droit</h2>
+    </div>
+    <button class="btn-primary ml-auto" (click)="openNew()">+ Ajouter</button>
+  </div>
+
+  <div class="card search-card">
+    <div class="card__head">
+      <div>
+        <p class="card__title">Rechercher un adhérent</p>
+      </div>
+    </div>
+    <div class="search-wrap">
+      <input [(ngModel)]="search" (input)="onSearch()" placeholder="Rechercher par Nom, prénom, matricule ou CIN"/>
+      <span>⌕</span>
+    </div>
+    <div class="search-results" *ngIf="results.length">
+      <button type="button" *ngFor="let item of results" (click)="selectAdherent(item)">
+        <b>{{ item.prenomAr }} {{ item.nomAr }}</b>
+        <span>{{ item.matricule }} · {{ item.cin }}</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="member-card" *ngIf="adherent">
+    <div class="avatar">{{ adherent.nomAr.charAt(0) }}</div>
+    <div>
+      <span>Adhérent sélectionné</span>
+      <strong>{{ adherent.prenomAr }} {{ adherent.nomAr }}</strong>
+      <small>{{ adherent.matricule }} · {{ adherent.cin }}</small>
+    </div>
+    <span class="pct-badge" [class.pct-badge--warn]="totalPct!==100" *ngIf="modeRepartition==='POURCENTAGE'">
+      {{ totalPct }}% / 100%
+    </span>
+  </div>
+
+  <div class="card form-card" *ngIf="formOpen">
+    <div class="card__head">
+      <p class="card__title">{{ editingId ? 'Modifier l’ayant droit' : 'Nouvel ayant droit' }}</p>
+      <button class="btn-ghost" (click)="closeForm()">Annuler</button>
+    </div>
+    <form [formGroup]="form" (ngSubmit)="saveAyant()" class="form-body">
+      <div class="form-grid">
+        <div class="field">
+          <label>Nom *</label>
+          <input formControlName="nom"/>
+        </div>
+        <div class="field">
+          <label>Prénom *</label>
+          <input formControlName="prenom"/>
+        </div>
+        <div class="field">
+          <label>CIN *</label>
+          <input formControlName="cin"/>
+        </div>
+        <div class="field">
+          <label>Lien de parenté *</label>
+          <input formControlName="lienParente" placeholder="Épouse, fils…"/>
+        </div>
+        <div class="field">
+          <label>Date de naissance</label>
+          <input type="date" formControlName="dateNaissance"/>
+        </div>
+        <div class="field">
+          <label>Téléphone</label>
+          <input formControlName="telephone"/>
+        </div>
+        <div class="field">
+          <label>Mode</label>
+          <select [(ngModel)]="modeRepartition" [ngModelOptions]="{standalone:true}">
+            <option value="POURCENTAGE">Pourcentage</option>
+            <option value="CHARIA">Charia</option>
+          </select>
+        </div>
+        <div class="field" *ngIf="modeRepartition==='POURCENTAGE'">
+          <label>Pourcentage</label>
+          <input type="number" formControlName="pourcentage" min="0" max="100"/>
+        </div>
+        <div class="field field--wide">
+          <label>Adresse</label>
+          <input formControlName="adresse"/>
+        </div>
+      </div>
+      <div class="form-footer">
+        <button type="button" class="btn-ghost" (click)="closeForm()">Annuler</button>
+        <button class="btn-primary" [disabled]="form.invalid">{{ editingId ? 'Enregistrer' : 'Ajouter' }}</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="card" *ngIf="adherent">
+    <div class="card__head">
+      <p class="card__title">Ayants droit ({{ ayants.length }})</p>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Nom &amp; prénom</th>
+            <th>CIN</th>
+            <th>Lien</th>
+            <th>Téléphone</th>
+            <th>Répartition</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let a of ayants">
+            <td><b>{{ a.nom }} {{ a.prenom }}</b></td>
+            <td>{{ a.cin }}</td>
+            <td>{{ a.lienParente }}</td>
+            <td>{{ a.telephone || '—' }}</td>
+            <td>{{ a.typeRepartition==='CHARIA' ? 'Charia' : (a.pourcentage ?? 0)+'%' }}</td>
+            <td class="actions">
+              <button (click)="startEdit(a)">Modifier</button>
+              <ng-container *ngIf="confirmDeleteId===a.id; else del">
+                <button class="danger" (click)="doDelete(a.id)">Confirmer</button>
+                <button (click)="confirmDeleteId=null">Annuler</button>
+              </ng-container>
+              <ng-template #del>
+                <button class="danger" (click)="confirmDeleteId=a.id">Supprimer</button>
+              </ng-template>
+            </td>
+          </tr>
+          <tr *ngIf="!loading && ayants.length===0">
+            <td colspan="6" class="empty-row">Aucun ayant droit pour cet adhérent.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="empty-state" *ngIf="!adherent">Recherchez puis sélectionnez un adhérent pour afficher ses ayants droit.</div>
+</div>

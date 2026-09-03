@@ -31,7 +31,10 @@ export class SidebarComponent {
     { label: 'Tableau de bord', route: '/deces/dashboard' },
     { label: 'Dossiers', route: '/deces/dossiers' },
     { label: 'Nouveau dossier', route: '/deces/nouveau' },
-    { label: 'Validation', route: '/deces/validation' }
+    { label: 'Validation', route: '/deces/validation' },
+    { label: 'Ayants droit', route: '/deces/ayants-droit' },
+    { label: 'Demandes ayants droit', route: '/deces/demandes' },
+    { label: 'Pièces justificatives', route: '/deces/pieces-justificatives' }
   ];
 
   private readonly expandedModules = new Set<string>();

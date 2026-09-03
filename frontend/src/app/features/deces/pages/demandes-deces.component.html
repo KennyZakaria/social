@@ -1,0 +1,92 @@
+<section class="page-shell">
+  <header class="page-header">
+    <div class="header-icon">DM</div>
+    <div>
+      <p class="eyebrow">Section Décès</p>
+      <h1>Demandes</h1>
+      <p class="subtitle">Suivi et traitement des demandes liées aux dossiers décès.</p>
+    </div>
+    <a class="btn-outline" routerLink="/deces/dossiers">Dossiers</a>
+  </header>
+
+<div class="selector-card">
+  <label for="dossierSearch">Dossier concerné</label>
+
+  <div class="selected-chip" *ngIf="selectedDossier">
+    <span>{{ selectedDossier.numero }} — {{ selectedDossier.nomComplet }}</span>
+    <button type="button" class="chip-clear" (click)="clearDossier()">Changer</button>
+  </div>
+
+  <ng-container *ngIf="!selectedDossier">
+    <div class="search-wrap">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <input
+        id="dossierSearch"
+        type="text"
+        class="search-input"
+        autocomplete="off"
+        placeholder="Rechercher par N° dossier, nom ou matricule…"
+        [(ngModel)]="dossierSearch"
+        (input)="onSearchDossier()"
+      />
+    </div>
+
+    <div class="results-list" *ngIf="filteredDossiers.length > 0">
+      <div class="result-item" *ngFor="let d of filteredDossiers" (click)="selectDossier(d)">
+        <div class="result-avatar">{{ d.nomComplet?.charAt(0) }}</div>
+        <div>
+          <div class="result-name">{{ d.nomComplet }}</div>
+          <div class="result-meta">{{ d.numero }}<ng-container *ngIf="d.matricule"> · {{ d.matricule }}</ng-container></div>
+        </div>
+        <svg class="result-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="9 18 15 12 9 6"/>
+        </svg>
+      </div>
+    </div>
+
+    <p class="hint-text" *ngIf="dossierSearch && filteredDossiers.length === 0">Aucun dossier trouvé.</p>
+  </ng-container>
+</div>
+
+  <ng-container *ngIf="dossierId">
+    <div class="content-card">
+      <div class="card-title">
+        <div><h2>Nouvelle demande</h2><p>Enregistrez une demande pour ce dossier.</p></div>
+      </div>
+      <div class="request-form">
+        <input [(ngModel)]="typeDemande" placeholder="Type de demande"/>
+        <input [(ngModel)]="description" placeholder="Description facultative"/>
+        <button (click)="create()" [disabled]="!typeDemande.trim()">Ajouter la demande</button>
+      </div>
+      <p class="feedback error" *ngIf="error">{{ error }}</p>
+    </div>
+
+    <div class="content-card">
+      <div class="card-title">
+        <div><h2>Historique des demandes</h2><p>{{ demandes.length }} demande(s) enregistrée(s)</p></div>
+      </div>
+      <div class="loading" *ngIf="loading"><span></span> Chargement…</div>
+      <div class="table-wrap" *ngIf="!loading">
+        <table>
+          <thead><tr><th>Demande</th><th>Description</th><th>Date</th><th>Statut</th><th></th></tr></thead>
+          <tbody>
+            <tr *ngFor="let item of demandes">
+              <td><strong>{{ item.typeDemande }}</strong></td>
+              <td>{{ item.description || '—' }}</td>
+              <td>{{ item.dateDemande | date:'dd/MM/yyyy' }}</td>
+              <td>
+                <select class="status-select" [ngModel]="item.statut" (ngModelChange)="setStatut(item, $event)">
+                  <option>EN_ATTENTE</option><option>EN_COURS</option><option>ACCEPTEE</option><option>REFUSEE</option><option>CLOTUREE</option>
+                </select>
+              </td>
+              <td><button class="delete" (click)="remove(item.id)">Supprimer</button></td>
+            </tr>
+            <tr *ngIf="demandes.length===0"><td colspan="5" class="empty">Aucune demande pour ce dossier.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </ng-container>
+</section>

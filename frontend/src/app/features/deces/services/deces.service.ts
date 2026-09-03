@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+﻿import { Injectable } from '@angular/core';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { DossierDecesRequest, DossierDecesResponse } from '../../../models';
+import { AdherentPageResponse, AdherentResponse, DossierDecesRequest, DossierDecesResponse } from '../../../models';
 
 @Injectable({ providedIn: 'root' })
 export class DecesService {
@@ -11,6 +11,15 @@ export class DecesService {
 
   findAll(): Observable<DossierDecesResponse[]> {
     return this.http.get<DossierDecesResponse[]>(this.base);
+  }
+
+  searchAdherents(search: string): Observable<AdherentPageResponse> {
+    const params = new HttpParams().set('search', search).set('page', 0).set('size', 10);
+    return this.http.get<AdherentPageResponse>('http://localhost:8080/api/deces/adherents', { params });
+  }
+
+  getAdherent(id: number): Observable<AdherentResponse> {
+    return this.http.get<AdherentResponse>('http://localhost:8080/api/deces/adherents/' + id);
   }
 
   findById(id: number): Observable<DossierDecesResponse> {

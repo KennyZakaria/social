@@ -1,4 +1,4 @@
-export interface CaseRecord {
+﻿export interface CaseRecord {
   id?: number;
   referenceCode: string;
   module: string;
@@ -155,7 +155,7 @@ export interface AyantDroitRequest {
 
 export interface AyantDroitResponse {
   id: number;
-  dossierId: number;
+  adherentId: number;
   nom: string;
   prenom: string;
   cin: string;
@@ -165,4 +165,15 @@ export interface AyantDroitResponse {
   adresse?: string;
   typeRepartition: string;
   pourcentage?: number;
+}
+
+export interface PieceJustificativeRequest {
+  libelle: string;
+  present: boolean;
+}
+
+export interface PieceJustificativeResponse extends PieceJustificativeRequest {
+  id: number;
+  dossierId: number;
+  typePiece: string;
 }
