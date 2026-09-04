@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 
 import { DecesService } from '../services/deces.service';
@@ -47,7 +47,8 @@ export class PiecesJustificativesComponent implements OnInit {
 
   constructor(
     private readonly deces: DecesService,
-    private readonly piecesService: PiecesJustificativesService
+    private readonly piecesService: PiecesJustificativesService,
+    private readonly route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
@@ -66,6 +67,7 @@ export class PiecesJustificativesComponent implements OnInit {
           // On ne remplit plus filteredDossiers ici : la liste
           // ne doit apparaitre que lorsque l'utilisateur tape une recherche.
           this.filteredDossiers = [];
+          this.selectDossierFromQueryParam();
         },
         error: (err) => {
           console.error('Erreur chargement dossiers :', err);
@@ -181,4 +183,10 @@ export class PiecesJustificativesComponent implements OnInit {
   private cloneDefaultPieces(): ChecklistPiece[] {
     return DEFAULT_PIECES.map(piece => ({ ...piece }));
   }
-}
+
+  private selectDossierFromQueryParam(): void {
+    const dossierId = Number(this.route.snapshot.queryParamMap.get('dossierId'));
+    if (!dossierId || this.selectedDossier?.id === dossierId) return;
+    const dossier = this.dossiers.find(item => item.id === dossierId);
+    if (dossier) this.selectDossier(dossier);
+  }}

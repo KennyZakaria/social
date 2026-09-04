@@ -1,8 +1,9 @@
 package com.social.servicesocial.model;
 
 import jakarta.persistence.*;
-import lombok.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import lombok.*;
 
 @Entity
 @Table(name = "dossiers_deces")
@@ -48,10 +49,37 @@ public class DossierDeces {
     @Column(nullable = false, length = 30)
     private StatutDossierDeces statut;
 
+    @Column(nullable = false)
+    private LocalDateTime dateCreation;
+
+    private LocalDateTime dateMaj;
+
+    private LocalDateTime dateValidation;
+
+    private LocalDateTime dateCloture;
+
+    @Column(length = 120)
+    private String validePar;
+
+    @Column(length = 120)
+    private String cloturePar;
+
+    @Column(length = 2000)
+    private String motifDerniereDecision;
+
     @PrePersist
     public void prePersist() {
         if (statut == null) {
             statut = StatutDossierDeces.EN_COURS;
         }
+        if (dateCreation == null) {
+            dateCreation = LocalDateTime.now();
+        }
+        dateMaj = dateCreation;
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        dateMaj = LocalDateTime.now();
     }
 }

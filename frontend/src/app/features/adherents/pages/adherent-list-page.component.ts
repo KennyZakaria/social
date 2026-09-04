@@ -109,7 +109,30 @@ import { AdherentsService } from '../services/adherents.service';
               </div>
               <div class="field">
                 <label>Grade</label>
-                <input formControlName="grade" placeholder="Colonel"/>
+                <select formControlName="grade">
+  <option value="" disabled>Sélectionner un grade</option>
+  <optgroup label="Sous-officiers">
+    <option value="M/G">M/G</option>
+    <option value="M/C">M/C</option>
+    <option value="Adj">Adj</option>
+    <option value="A/C">A/C</option>
+  </optgroup>
+  <optgroup label="Officiers">
+    <option value="Sous-lieutenant">Sous-lieutenant</option>
+    <option value="Lieutenant">Lieutenant</option>
+    <option value="Capitaine">Capitaine</option>
+  </optgroup>
+  <optgroup label="Officiers supérieurs">
+    <option value="Commandant">Commandant</option>
+    <option value="Lieutenant-colonel">Lieutenant-colonel</option>
+    <option value="Colonel">Colonel</option>
+    <option value="Colonel-major">Colonel-major</option>
+  </optgroup>
+  <optgroup label="Officiers généraux">
+    <option value="Général de brigade">Général de brigade</option>
+    <option value="Général de division">Général de division</option>
+  </optgroup>
+</select>
               </div>
               <div class="field">
                 <label>Matricule BR</label>

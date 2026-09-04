@@ -35,6 +35,14 @@ public class DossierDecesController {
         return ResponseEntity.ok(service.findById(id));
     }
 
+
+    @PutMapping("/{id}")
+    public ResponseEntity<DossierDecesResponse> update(
+            @PathVariable Long id,
+            @Valid @RequestBody DossierDecesRequest request) {
+        return ResponseEntity.ok(service.update(id, request));
+    }
+
     @PatchMapping("/{id}/statut")
     public ResponseEntity<DossierDecesResponse> updateStatut(
             @PathVariable Long id,

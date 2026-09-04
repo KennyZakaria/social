@@ -1,9 +1,12 @@
 package com.social.servicesocial.model;
 
 public enum StatutDossierDeces {
+    NOUVEAU,
     EN_COURS,
     INCOMPLET,
     A_VALIDER,
     VALIDE,
-    CLOTURE
+    REJETE,
+    CLOTURE,
+    ARCHIVE
 }

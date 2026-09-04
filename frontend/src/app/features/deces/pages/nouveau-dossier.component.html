@@ -1,103 +1,139 @@
-<div class="page">
+﻿<div class="page">
+  <div class="page-header">
+    <a class="back-btn" routerLink="/deces/dossiers" aria-label="Retour aux dossiers">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="15 18 9 12 15 6" />
+      </svg>
+    </a>
 
-      <!-- Header -->
-      <div class="page-header">
-        <a class="back-btn" routerLink="/deces/dossiers">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="15 18 9 12 15 6"/>
-          </svg>
-        </a>
-        <div class="page-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/>
-            <line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/>
-          </svg>
-        </div>
-        <div>
-          <p class="page-kicker">Section Décès</p>
-          <h2 class="page-title">Nouveau dossier</h2>
-        </div>
-      </div>
-
-      <!-- Alert -->
-      <div class="alert alert--success" *ngIf="successMsg">{{ successMsg }}</div>
-      <div class="alert alert--error"   *ngIf="errorMsg">{{ errorMsg }}</div>
-
-      <!-- Step 1: Search adherent -->
-      <div class="card" *ngIf="!adherentSelectionne">
-        <div class="card__head"><p class="card__title">Étape 1 — Rechercher l'adhérent</p></div>
-        <div class="form-body">
-          <div class="search-row">
-            <div class="search-wrap">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-              <input [(ngModel)]="rechercheAdherent" placeholder="Nom, matricule, CIN…" class="search-input" (input)="onSearchAdherent()"/>
-            </div>
-          </div>
-          <div class="results-list" *ngIf="resultats.length > 0">
-            <div class="result-item" *ngFor="let a of resultats" (click)="selectAdherent(a)">
-              <div class="result-avatar">{{ a.nomAr.charAt(0) }}</div>
-              <div>
-                <div class="result-name">{{ a.prenomAr }} {{ a.nomAr }}</div>
-                <div class="result-meta">{{ a.matricule }} · {{ a.cin }}</div>
-              </div>
-              <svg class="result-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-            </div>
-          </div>
-          <p class="hint-text" *ngIf="rechercheAdherent && resultats.length === 0">Aucun adhérent trouvé.</p>
-        </div>
-      </div>
-
-      <!-- Step 2: Form -->
-      <div class="card" *ngIf="adherentSelectionne">
-        <div class="card__head">
-          <p class="card__title">
-            Étape 2 — Informations du décès
-            <span class="adherent-chip">{{ adherentSelectionne.prenomAr }} {{ adherentSelectionne.nomAr }}  ----  {{ adherentSelectionne.matricule }}</span>
-          </p>
-          <button class="btn-ghost" (click)="adherentSelectionne = null">Changer d'adhérent</button>
-        </div>
-        <form [formGroup]="form" (ngSubmit)="submitDossier()" class="form-body">
-          <div class="form-grid">
-            <div class="field">
-              <label>Date du décès <span class="req">*</span></label>
-              <input formControlName="dateDeces" type="date"/>
-            </div>
-            <div class="field">
-              <label>Lieu du décès <span class="req">*</span></label>
-              <input formControlName="lieuDeces" placeholder="Ville, wilaya"/>
-            </div>
-            <div class="field">
-              <label>Nature du décès</label>
-              <select formControlName="natureDeces">
-                <option value="">— Sélectionner —</option>
-                <option>Naturelle</option>
-                <option>Accidentelle</option>
-                <option>Maladie</option>
-                <option>Autre</option>
-              </select>
-            </div>
-            <div class="field">
-              <label>Cause du décès</label>
-              <input formControlName="causeDeces" placeholder="Description"/>
-            </div>
-            <div class="field">
-              <label>DPR</label>
-              <input formControlName="dpr" placeholder="N° DPR"/>
-            </div>
-            <div class="field field--wide">
-              <label>Observation</label>
-              <textarea formControlName="observation" rows="3" placeholder="Notes complémentaires…"></textarea>
-            </div>
-          </div>
-          <div class="form-footer">
-            <button class="btn-ghost" type="button" routerLink="/deces/dossiers">Annuler</button>
-            <button class="btn-primary" type="submit" [disabled]="form.invalid || loading">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v14a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/>
-              </svg>
-              {{ loading ? 'Enregistrement…' : 'Créer le dossier' }}
-            </button>
-          </div>
-        </form>
-      </div>
+    <div class="page-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+        <polyline points="14 2 14 8 20 8" />
+        <line x1="12" y1="18" x2="12" y2="12" />
+        <line x1="9" y1="15" x2="15" y2="15" />
+      </svg>
     </div>
+
+    <div>
+      <p class="page-kicker">Section Deces</p>
+      <h2 class="page-title">Nouveau dossier</h2>
+    </div>
+  </div>
+
+  <div class="alert alert--success" *ngIf="successMsg">{{ successMsg }}</div>
+  <div class="alert alert--error" *ngIf="errorMsg">{{ errorMsg }}</div>
+
+  <div class="card" *ngIf="!adherentSelectionne">
+    <div class="card__head">
+      <p class="card__title">Etape 1 - Rechercher l'adherent</p>
+    </div>
+
+    <div class="form-body">
+      <div class="search-row">
+        <div class="search-wrap">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          <input
+            [(ngModel)]="rechercheAdherent"
+            placeholder="Nom, matricule, CIN..."
+            class="search-input"
+            (input)="onSearchAdherent()"
+          />
+        </div>
+      </div>
+
+      <div class="results-list" *ngIf="resultats.length > 0">
+        <button
+          type="button"
+          class="result-item"
+          *ngFor="let a of resultats"
+          [class.result-item--blocked]="a.hasDossierDeces"
+          [disabled]="a.hasDossierDeces"
+          (click)="selectAdherent(a)"
+        >
+          <div class="result-avatar">{{ a.nomAr.charAt(0) }}</div>
+
+          <div class="result-main">
+            <div class="result-name">{{ a.prenomAr }} {{ a.nomAr }}</div>
+            <div class="result-meta">{{ a.matricule }} - {{ a.cin }}</div>
+
+            <div class="result-warning" *ngIf="a.hasDossierDeces">
+              Dossier existe
+              <ng-container *ngIf="a.dossierNumero"> - {{ a.dossierNumero }}</ng-container>
+            </div>
+          </div>
+
+          <svg class="result-arrow" *ngIf="!a.hasDossierDeces" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="9 18 15 12 9 6" />
+          </svg>
+        </button>
+      </div>
+
+      <p class="hint-text" *ngIf="rechercheAdherent && resultats.length === 0">Aucun adherent trouve.</p>
+    </div>
+  </div>
+
+  <div class="card" *ngIf="adherentSelectionne">
+    <div class="card__head">
+      <p class="card__title">
+        Etape 2 - Informations du deces
+        <span class="adherent-chip">{{ adherentSelectionne.prenomAr }} {{ adherentSelectionne.nomAr }} - {{ adherentSelectionne.matricule }}</span>
+      </p>
+      <button class="btn-ghost" type="button" (click)="changerAdherent()">Changer d'adherent</button>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="submitDossier()" class="form-body">
+      <div class="form-grid">
+        <div class="field">
+          <label>Date du deces <span class="req">*</span></label>
+          <input formControlName="dateDeces" type="date" />
+        </div>
+
+        <div class="field">
+          <label>Lieu du deces <span class="req">*</span></label>
+          <input formControlName="lieuDeces" placeholder="Ville, wilaya" />
+        </div>
+
+        <div class="field">
+          <label>Nature du deces</label>
+          <select formControlName="natureDeces">
+            <option value="">Selectionner</option>
+            <option>Naturelle</option>
+            <option>Accidentelle</option>
+            <option>Maladie</option>
+            <option>Autre</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Cause du deces</label>
+          <input formControlName="causeDeces" placeholder="Description" />
+        </div>
+
+        <div class="field">
+          <label>DPR</label>
+          <input formControlName="dpr" placeholder="Numero DPR" />
+        </div>
+
+        <div class="field field--wide">
+          <label>Observation</label>
+          <textarea formControlName="observation" rows="3" placeholder="Notes complementaires..."></textarea>
+        </div>
+      </div>
+
+      <div class="form-footer">
+        <button class="btn-ghost" type="button" routerLink="/deces/dossiers">Annuler</button>
+        <button class="btn-primary" type="submit" [disabled]="form.invalid || loading">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v14a2 2 0 01-2 2z" />
+            <polyline points="17 21 17 13 7 13 7 21" />
+          </svg>
+          {{ loading ? 'Enregistrement...' : 'Creer le dossier' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

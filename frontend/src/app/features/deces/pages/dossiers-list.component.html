@@ -1,4 +1,4 @@
-﻿<div class="page">
+<div class="page">
 
   <!-- Alerts -->
   <div class="alert alert--success" *ngIf="successMsg" (click)="successMsg=''">{{ successMsg }}</div>
@@ -30,7 +30,7 @@
         <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
       </svg>
       <input
-        [(ngModel)]="searchTerm"
+        [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()"
         placeholder="Rechercher par numéro, nom ou matricule…"
         class="search-input"
       />
@@ -38,16 +38,8 @@
     </div>
   </div>
 
-  <!-- Empty prompt: shown before any search -->
-  <div class="empty-state" *ngIf="!hasSearched">
-    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-      <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-    </svg>
-    <p>Recherchez un dossier par numéro, nom ou matricule pour l'afficher.</p>
-  </div>
-
-  <!-- Table: shown only after a search -->
-  <div class="card" *ngIf="hasSearched">
+  <!-- Dossiers -->
+  <div class="card">
     <div class="card__head">
       <p class="card__title">Résultats ({{ filtered.length }})</p>
     </div>
@@ -66,7 +58,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let d of filtered">
+          <tr *ngFor="let d of pagedDossiers">
             <td class="td-mono">{{ d.numero }}</td>
             <td>
               <div class="name-cell">
@@ -85,6 +77,7 @@
             </td>
             <td>
               <div class="actions-cell">
+                <button class="action-btn action-btn--view" title="Voir le dossier" (click)="openDetail(d)">Voir</button>
                 <a class="action-btn action-btn--view" title="Ayants droit" (click)="openAyants(d)">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/>
@@ -114,5 +107,12 @@
         </tbody>
       </table>
     </div>
-  </div>
+    <div class="pagination" *ngIf="filtered.length > 0">
+      <span class="pagination__summary">Affichage {{ firstDisplayedItem }}–{{ lastDisplayedItem }} sur {{ filtered.length }} dossier(s)</span>
+      <div class="pagination__actions">
+        <button type="button" (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1">Précédent</button>
+        <button type="button" *ngFor="let page of pageNumbers" (click)="goToPage(page)" [class.is-active]="page === currentPage">{{ page }}</button>
+        <button type="button" (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages">Suivant</button>
+      </div>
+    </div>  </div>
 </div>

@@ -63,7 +63,16 @@
         </div>
         <div class="field">
           <label>Lien de parenté *</label>
-          <input formControlName="lienParente" placeholder="Épouse, fils…"/>
+          <select formControlName="lienParente">
+  <option value="" disabled>Sélectionner le lien</option>
+  <option value="VEUF">VEUF</option>
+  <option value="VEUVE">VEUVE</option>
+  <option value="FILS">FILS</option>
+  <option value="FILLE">FILLE</option>
+  <option value="PERE">PERE</option>
+  <option value="MERE">MERE</option>
+  <option value="AUTRE">AUTRE</option>
+</select>
         </div>
         <div class="field">
           <label>Date de naissance</label>

@@ -1,99 +1,65 @@
 <div class="page">
+  <div class="alert alert--success" *ngIf="successMsg" (click)="successMsg=''">{{ successMsg }}</div>
+  <div class="alert alert--error" *ngIf="errorMsg" (click)="errorMsg=''">{{ errorMsg }}</div>
 
-      <!-- Alerts -->
-      <div class="alert alert--success" *ngIf="successMsg" (click)="successMsg=''">{{ successMsg }}</div>
-      <div class="alert alert--error"   *ngIf="errorMsg"   (click)="errorMsg=''">{{ errorMsg }}</div>
-
-      <!-- Header -->
-      <div class="page-header">
-        <a class="back-btn" routerLink="/deces/dashboard">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-        </a>
-        <div class="page-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
-            <polyline points="22 4 12 14.01 9 11.01"/>
-          </svg>
-        </div>
-        <div>
-          <p class="page-kicker">Module Décès</p>
-          <h2 class="page-title">Validation des dossiers</h2>
-        </div>
-        <div class="header-meta ml-auto">
-          <span class="count-badge">{{ pending.length }} en attente</span>
-        </div>
-      </div>
-
-      <!-- Tabs -->
-      <div class="tab-bar">
-        <button class="tab" [class.active]="activeTab === 'a_valider'" (click)="activeTab='a_valider'">
-          À valider <span class="tab-count">{{ countByStatut('A_VALIDER') }}</span>
-        </button>
-        <button class="tab" [class.active]="activeTab === 'incomplet'" (click)="activeTab='incomplet'">
-          Incomplets <span class="tab-count">{{ countByStatut('INCOMPLET') }}</span>
-        </button>
-        <button class="tab" [class.active]="activeTab === 'tous'" (click)="activeTab='tous'">
-          Tous <span class="tab-count">{{ allDossiers.length }}</span>
-        </button>
-      </div>
-
-      <!-- Dossiers list -->
-      <div class="dossiers-list">
-        <div class="dossier-card" *ngFor="let d of filteredDossiers">
-          <div class="dossier-card__head">
-            <div class="dossier-info">
-              <div class="dossier-num">{{ d.numero }}</div>
-              <div class="dossier-name">{{ d.nomComplet }}</div>
-              <div class="dossier-meta">
-                <span>Matricule : {{ d.matricule || '—' }}</span>
-                <span>Date décès : {{ d.dateDeces | date:'dd/MM/yyyy' }}</span>
-                <span>Lieu : {{ d.lieuDeces }}</span>
-              </div>
-            </div>
-            <div class="dossier-actions">
-              <span class="statut-badge statut-{{ d.statut?.toLowerCase() }}">{{ d.statut }}</span>
-              <button class="btn-valider" *ngIf="d.statut === 'A_VALIDER'" (click)="changeStatut(d, 'VALIDE')">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                Valider
-              </button>
-              <button class="btn-rejeter" *ngIf="d.statut === 'A_VALIDER' || d.statut === 'VALIDE'" (click)="changeStatut(d, 'INCOMPLET')">
-                Marquer incomplet
-              </button>
-              <button class="btn-valider" *ngIf="d.statut === 'INCOMPLET' || d.statut === 'EN_COURS'" (click)="changeStatut(d, 'A_VALIDER')">
-                Soumettre à validation
-              </button>
-              <button class="btn-cloturer" *ngIf="d.statut === 'VALIDE'" (click)="changeStatut(d, 'CLOTURE')">
-                Clôturer
-              </button>
-            </div>
-          </div>
-
-          <!-- Expandable details -->
-          <div class="dossier-card__body" *ngIf="expandedId === d.id">
-            <div class="details-grid">
-              <div *ngIf="d.natureDeces"><label>Nature du décès</label><span>{{ d.natureDeces }}</span></div>
-              <div *ngIf="d.causeDeces"><label>Cause du décès</label><span>{{ d.causeDeces }}</span></div>
-              <div *ngIf="d.dpr"><label>DPR</label><span>{{ d.dpr }}</span></div>
-              <div *ngIf="d.observation"><label>Observation</label><span>{{ d.observation }}</span></div>
-            </div>
-            <div class="obs-field">
-              <label>Ajouter une observation</label>
-              <div class="obs-row">
-                <input [(ngModel)]="observations[d.id]" placeholder="Saisir une observation…" class="obs-input"/>
-                <button class="btn-obs" (click)="saveObservation(d)">Enregistrer</button>
-              </div>
-            </div>
-          </div>
-          <button class="toggle-btn" (click)="toggleExpand(d.id)">
-            {{ expandedId === d.id ? '▲ Réduire' : '▼ Détails' }}
-          </button>
-        </div>
-
-        <div class="empty-state" *ngIf="filteredDossiers.length === 0 && !loading">
-          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color:var(--text-3)"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-          <p>Aucun dossier dans cet onglet.</p>
-        </div>
-
-        <div class="loading-state" *ngIf="loading">Chargement…</div>
-      </div>
+  <div class="page-header">
+    <a class="back-btn" routerLink="/deces/dashboard" aria-label="Retour au dashboard">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6" /></svg>
+    </a>
+    <div class="page-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" /></svg>
     </div>
+    <div>
+      <p class="page-kicker">Module Deces</p>
+      <h2 class="page-title">Validation des dossiers</h2>
+    </div>
+    <div class="header-meta ml-auto"><span class="count-badge">{{ pending.length }} en attente</span></div>
+  </div>
+
+  <div class="filters-card">
+    <div class="filter-field filter-field--wide"><label>Recherche</label><input [(ngModel)]="search" (input)="applyFilters()" placeholder="Numero, matricule, matricule BR, CIN, nom..." /></div>
+
+  </div>
+
+  <div class="stats-row"><span>A valider <b>{{ countByStatut('A_VALIDER') }}</b></span><span>Incomplet <b>{{ countByStatut('INCOMPLET') }}</b></span><span>Rejete <b>{{ countByStatut('REJETE') }}</b></span></div>
+
+  <div class="table-card">
+    <table>
+      <thead><tr><th>N dossier</th><th>Adherent</th><th>Matricule</th><th>CIN</th><th>Date deces</th><th>Statut</th><th>Date creation</th><th>Actions</th></tr></thead>
+      <tbody>
+        <tr *ngFor="let d of pagedDossiers">
+          <td class="mono">{{ d.numero }}</td><td>{{ d.nomComplet }}</td><td>{{ d.matricule || '-' }}</td><td>{{ d.cin || '-' }}</td><td>{{ d.dateDeces | date:'dd/MM/yyyy' }}</td><td><span class="statut-badge statut-{{ d.statut.toLowerCase() }}">{{ d.statut }}</span></td><td>{{ d.dateCreation ? (d.dateCreation | date:'dd/MM/yyyy HH:mm') : '-' }}</td>
+          <td class="actions-cell">
+            <button type="button" class="btn-neutral" (click)="openDossier(d, 'adherent')">Voir</button>
+            <button type="button" class="btn-neutral" (click)="openDossier(d, 'controle')">Controler</button>
+            <button type="button" class="btn-primary" *ngIf="d.statut === 'EN_COURS' || d.statut === 'INCOMPLET'" (click)="soumettre(d)">Soumettre</button>
+            <button type="button" class="btn-success" *ngIf="d.statut === 'A_VALIDER'" [disabled]="controleOf(d.id)?.valid === false" (click)="valider(d)">Valider</button>
+            <button type="button" class="btn-warning" *ngIf="d.statut === 'A_VALIDER'" (click)="retourComplement(d)">Retour complement</button>
+            <button type="button" class="btn-danger" *ngIf="d.statut === 'A_VALIDER'" (click)="rejeter(d)">Rejeter</button>
+            <button type="button" class="btn-neutral" *ngIf="d.statut === 'VALIDE'" (click)="cloturer(d)">Cloturer</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="empty-state" *ngIf="filteredDossiers.length === 0 && !loading">Aucun dossier trouve.</div><div class="loading-state" *ngIf="loading">Chargement...</div>
+    <div class="pagination" *ngIf="filteredDossiers.length > 0"><button type="button" class="btn-neutral" [disabled]="page === 1" (click)="previousPage()">Precedent</button><span>Page {{ page }} / {{ totalPages }}</span><button type="button" class="btn-neutral" [disabled]="page === totalPages" (click)="nextPage()">Suivant</button></div>
+  </div>
+
+  <div class="detail-card" *ngIf="expandedId as id">
+    <div class="detail-head"><h3>Controle du dossier</h3><button type="button" class="btn-neutral" (click)="expandedId = null">Fermer</button></div>
+    <div class="detail-tabs"><button type="button" *ngFor="let tab of detailTabs" [class.active]="activeDetailTab === tab.key" (click)="activeDetailTab = tab.key">{{ tab.label }}</button></div>
+    <div class="detail-body" *ngIf="details[id] as detail">
+      <div class="loading-state" *ngIf="detail.loading">Chargement du controle...</div>
+      <ng-container *ngIf="!detail.loading">
+        <div class="progress-block" *ngIf="detail.controle as controle"><div class="progress-title"><span>{{ controle.valid ? 'Dossier complet - pret a etre valide' : 'Dossier incomplet' }}</span><b>{{ controle.progression }}%</b></div><div class="progress"><span [style.width.%]="controle.progression"></span></div></div>
+        <div *ngIf="activeDetailTab === 'adherent'" class="info-grid"><div><label>ID</label><span>{{ detail.adherent?.id || '-' }}</span></div><div><label>Matricule</label><span>{{ detail.adherent?.matricule || '-' }}</span></div><div><label>Matricule BR</label><span>{{ detail.adherent?.matriculeBR || '-' }}</span></div><div><label>Nom</label><span>{{ detail.adherent?.nomAr || '-' }}</span></div><div><label>Prenom</label><span>{{ detail.adherent?.prenomAr || '-' }}</span></div><div><label>CIN</label><span>{{ detail.adherent?.cin || '-' }}</span></div><div><label>Grade</label><span>{{ detail.adherent?.grade || '-' }}</span></div><div><label>Categorie</label><span>{{ detail.adherent?.categorie || '-' }}</span></div><div><label>Date naissance</label><span>{{ detail.adherent?.dateNaissance || '-' }}</span></div><div><label>Situation</label><span>{{ detail.adherent?.situationCategorie || '-' }}</span></div><div><label>Unite</label><span>{{ detail.adherent?.dernierUnite || '-' }}</span></div><div><label>Telephone</label><span>{{ detail.adherent?.telephone1 || '-' }}</span></div></div>
+        <div *ngIf="activeDetailTab === 'deces' && selectedDossier(id) as d" class="info-grid"><div><label>N dossier</label><span>{{ d.numero }}</span></div><div><label>Date deces</label><span>{{ d.dateDeces | date:'dd/MM/yyyy' }}</span></div><div><label>Lieu</label><span>{{ d.lieuDeces }}</span></div><div><label>Nature</label><span>{{ d.natureDeces || '-' }}</span></div><div><label>Cause</label><span>{{ d.causeDeces || '-' }}</span></div><div><label>DPR</label><span>{{ d.dpr || '-' }}</span></div><div class="wide"><label>Observation</label><span>{{ d.observation || '-' }}</span></div><div class="wide"><label>Derniere decision</label><span>{{ d.motifDerniereDecision || '-' }}</span></div></div>
+        <div *ngIf="activeDetailTab === 'ayants'" class="mini-table"><div class="mini-row head"><span>Nom</span><span>Lien</span><span>CIN</span><span>Statut</span></div><div class="mini-row" *ngFor="let a of detail.ayants"><span>{{ a.prenom }} {{ a.nom }}</span><span>{{ a.lienParente }}</span><span>{{ a.cin }}</span><span>{{ a.nom && a.prenom && a.cin ? 'COMPLET' : 'INCOMPLET' }}</span></div><div class="empty-state" *ngIf="detail.ayants.length === 0">Aucun ayant droit.</div></div>
+        <div *ngIf="activeDetailTab === 'demandes'" class="mini-table"><div class="mini-row head"><span>Type</span><span>Date</span><span>Statut</span><span>Description</span></div><div class="mini-row" *ngFor="let dem of detail.demandes"><span>{{ dem.typeDemande }}</span><span>{{ dem.dateDemande | date:'dd/MM/yyyy HH:mm' }}</span><span>{{ dem.statut }}</span><span>{{ dem.description || '-' }}</span></div><div class="empty-state" *ngIf="detail.demandes.length === 0">Aucune demande.</div></div>
+        <div *ngIf="activeDetailTab === 'pieces'" class="mini-table"><div class="mini-row head"><span>Type document</span><span>Present</span><span>Valide</span><span>Statut</span></div><div class="mini-row" *ngFor="let p of detail.pieces"><span>{{ p.libelle }}</span><span>{{ p.present ? 'Oui' : 'Non' }}</span><span>{{ p.present ? 'Oui' : 'Non' }}</span><span>{{ p.present ? 'PRESENT' : 'MANQUANT' }}</span></div><div class="empty-state" *ngIf="detail.pieces.length === 0">Aucune piece justificative.</div></div>
+        <div *ngIf="activeDetailTab === 'controle' && detail.controle as controle" class="controle-list"><div class="controle-item" *ngFor="let c of controle.details" [class.ok]="c.complet" [class.ko]="!c.complet"><b>{{ c.complet ? 'OK' : 'X' }}</b><div><strong>{{ c.libelle }}</strong><span>{{ c.message }}</span></div></div><div class="anomalies" *ngIf="controle.erreurs.length > 0"><strong>Anomalies bloquantes</strong><ul><li *ngFor="let e of controle.erreurs">{{ e }}</li></ul></div></div>
+        <div *ngIf="activeDetailTab === 'decision'" class="decision-box"><label>Commentaire validation</label><textarea [(ngModel)]="commentaireValidation" rows="3" placeholder="Dossier verifie et valide"></textarea><label>Motif retour/rejet</label><textarea [(ngModel)]="motifDecision" rows="3" placeholder="Motif obligatoire pour retour complement ou rejet"></textarea><p class="hint-text">La validation finale reste controlee par le backend.</p></div>
+      </ng-container>
+    </div>
+  </div>
+</div>

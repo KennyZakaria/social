@@ -1,0 +1,66 @@
+<div class="fiche-page">
+  <div class="alert error" *ngIf="error">{{ error }}</div>
+  <div class="alert success" *ngIf="success">{{ success }}</div>
+  <div class="loading" *ngIf="loading">Chargement de la fiche...</div>
+
+  <ng-container *ngIf="!loading && view as f">
+    <header class="fiche-header">
+      <div class="official-head">
+        <div class="official-left"><strong>ROYAUME DU MAROC</strong></div>
+        <div class="official-title"><p>SECTION DÉCÈS EN ACTIVITÉ</p><h1>FICHE DE RENSEIGNEMENTS<br><em>VEUVE / DÉCÉDÉ EN ACTIVITÉ</em></h1><span>En date du : {{ f.deces.dateFiche || '—' }}</span><span>Mise à jour le : {{ f.deces.dateMiseAJour || '—' }}</span></div>
+        <div class="official-right"><strong>GENDARMERIE ROYALE</strong><small>SCF SOCIAL</small></div>
+      </div>
+      <div class="header-actions">
+        <a class="btn secondary" [routerLink]="['/deces/dossiers', f.dossierId]">Retour dossier</a>
+        <button class="btn secondary" *ngIf="!editing" (click)="startEdit()">Modifier les informations complémentaires</button>
+        <button class="btn secondary" *ngIf="editing" (click)="cancelEdit()">Annuler</button>
+        <button class="btn secondary" (click)="preview()">Aperçu / Imprimer</button>
+        <button class="btn primary" (click)="exportPdf()">Export PDF</button>
+        <button class="btn primary" *ngIf="editing" [disabled]="saving" (click)="save()">{{ saving ? 'Enregistrement...' : 'Enregistrer' }}</button>
+      </div>
+    </header>
+
+    <section class="paper-section">
+      <h2>IDENTIFICATION DÉCÉDÉ</h2>
+      <div class="info-grid">
+        <div><label>Nom</label><strong>{{ f.adherent.nom || '—' }}</strong></div><div><label>Prénom</label><strong>{{ f.adherent.prenom || '—' }}</strong></div>
+        <div><label>Grade</label><strong>{{ f.adherent.grade || '—' }}</strong></div><div><label>Matricule / MLE</label><strong>{{ f.adherent.matricule || f.adherent.matriculeBR || '—' }}</strong></div>
+        <div><label>CIN</label><strong>{{ f.adherent.cin || '—' }}</strong></div><div><label>Date de naissance</label><strong>{{ f.adherent.dateNaissance || '—' }}</strong></div>
+        <div><label>Date de décès</label><strong>{{ f.deces.dateDeces || '—' }}</strong></div><div><label>Lieu du décès</label><strong>{{ f.deces.lieuDeces || '—' }}</strong></div>
+        <div><label>Cause du décès</label><strong>{{ f.deces.causeDeces || '—' }}</strong></div><div><label>Dernière unité</label><strong>{{ f.adherent.derniereUnite || '—' }}</strong></div>
+        <div><label>Situation</label><strong>{{ f.adherent.situationCategorie || '—' }}</strong></div><div><label>DPR</label><strong>{{ f.deces.dpr || '—' }}</strong></div>
+        <div><label>Date de fiche</label><strong>{{ f.deces.dateFiche || '—' }}</strong></div><div><label>Dernière mise à jour</label><strong>{{ f.deces.dateMiseAJour || '—' }}</strong></div>
+      </div>
+    </section>
+
+    <section class="paper-section"><h2>IDENTIFICATION AYANTS DROITS<br><u>VEUVE(S) / VEUF</u></h2>
+      <div class="info-grid" *ngIf="f.veufVeuve as a; else none"><div><label>Nom</label><strong>{{ a.nom }}</strong></div><div><label>Prénom</label><strong>{{ a.prenom }}</strong></div><div><label>CIN</label><strong>{{ a.cin || '—' }}</strong></div><div><label>Date / lieu naissance</label><strong>{{ a.dateNaissance || '—' }} {{ a.lieuNaissance || '' }}</strong></div><div><label>Activité</label><strong>{{ a.activiteEmploi || '—' }}</strong></div><div class="wide"><label>Adresse</label><strong>{{ a.adresse || '—' }}</strong></div></div>
+      <ng-template #none><p class="empty">Aucun veuf ou veuve identifié selon le lien de parenté.</p></ng-template>
+    </section>
+
+    <section class="paper-section"><h2>ORPHELINS</h2><ng-container *ngTemplateOutlet="ayantsTable; context: {$implicit: f.orphelins}"></ng-container></section>
+    <section class="paper-section"><h2>ASCENDANTS</h2><ng-container *ngTemplateOutlet="ayantsTable; context: {$implicit: f.ascendants}"></ng-container></section>
+
+    <section class="paper-section editable-section"><div class="section-head"><h2>LIQUIDATION DROITS<br><u>ALLOCATIONS / CAPITAL DÉCÈS</u></h2><button *ngIf="editing" class="btn small" (click)="addLiquidation()">+ Ajouter</button></div>
+      <table><thead><tr><th>Désignation</th><th>Montant</th><th>Bénéficiaire</th><th>Référence</th><th *ngIf="editing"></th></tr></thead><tbody>
+        <tr *ngFor="let x of f.liquidations; index as i"><td><input *ngIf="editing" [(ngModel)]="x.designation"><span *ngIf="!editing">{{x.designation}}</span></td><td><input *ngIf="editing" type="number" min="0" [(ngModel)]="x.montant"><span *ngIf="!editing">{{x.montant | number:'1.2-2'}}</span></td><td><input *ngIf="editing" [(ngModel)]="x.beneficiaire"><span *ngIf="!editing">{{x.beneficiaire || '—'}}</span></td><td><input *ngIf="editing" [(ngModel)]="x.reference"><span *ngIf="!editing">{{x.reference || '—'}}</span></td><td *ngIf="editing"><button class="icon danger" (click)="remove(f.liquidations,i)">×</button></td></tr>
+        <tr *ngIf="!f.liquidations.length"><td colspan="5" class="empty">Aucune liquidation.</td></tr></tbody></table>
+    </section>
+
+    <section class="paper-section editable-section"><div class="section-head"><h2>PENSIONS</h2><button *ngIf="editing" class="btn small" (click)="addPension()">+ Ajouter</button></div>
+      <table><thead><tr><th>Type bénéficiaire</th><th>N° pension</th><th>Montant</th><th *ngIf="editing"></th></tr></thead><tbody><tr *ngFor="let x of f.pensions; index as i"><td><select *ngIf="editing" [(ngModel)]="x.typeBeneficiaire"><option>VEUVE_VEUF</option><option>ORPHELIN</option><option>PERE</option><option>MERE</option></select><span *ngIf="!editing">{{x.typeBeneficiaire}}</span></td><td><input *ngIf="editing" [(ngModel)]="x.numero"><span *ngIf="!editing">{{x.numero || '—'}}</span></td><td><input *ngIf="editing" type="number" min="0" [(ngModel)]="x.montant"><span *ngIf="!editing">{{x.montant | number:'1.2-2'}}</span></td><td *ngIf="editing"><button class="icon danger" (click)="remove(f.pensions,i)">×</button></td></tr><tr *ngIf="!f.pensions.length"><td colspan="4" class="empty">Aucune pension.</td></tr></tbody></table>
+    </section>
+
+    <section class="paper-section editable-section"><div class="section-head"><h2>ASSURANCE</h2><button *ngIf="editing" class="btn small" (click)="addAssurance()">+ Ajouter</button></div>
+      <table><thead><tr><th>Type bénéficiaire</th><th>N° chèque</th><th>Montant</th><th *ngIf="editing"></th></tr></thead><tbody><tr *ngFor="let x of f.assurances; index as i"><td><select *ngIf="editing" [(ngModel)]="x.typeBeneficiaire"><option>VEUVE_VEUF</option><option>ORPHELIN</option><option>PERE</option><option>MERE</option></select><span *ngIf="!editing">{{x.typeBeneficiaire}}</span></td><td><input *ngIf="editing" [(ngModel)]="x.numeroCheque"><span *ngIf="!editing">{{x.numeroCheque || '—'}}</span></td><td><input *ngIf="editing" type="number" min="0" [(ngModel)]="x.montant"><span *ngIf="!editing">{{x.montant | number:'1.2-2'}}</span></td><td *ngIf="editing"><button class="icon danger" (click)="remove(f.assurances,i)">×</button></td></tr><tr *ngIf="!f.assurances.length"><td colspan="4" class="empty">Aucune assurance.</td></tr></tbody></table>
+    </section>
+
+    <section class="paper-section financial"><h2>SITUATION FINANCIÈRE</h2><div class="finance-grid"><div><h3>Ressources mensuelles</h3><label>PMR <input *ngIf="editing" type="number" min="0" [(ngModel)]="f.situationFinanciere.pmr"><strong *ngIf="!editing">{{f.situationFinanciere.pmr | number:'1.2-2'}}</strong></label><label>PMI <input *ngIf="editing" type="number" min="0" [(ngModel)]="f.situationFinanciere.pmi"><strong *ngIf="!editing">{{f.situationFinanciere.pmi | number:'1.2-2'}}</strong></label><label>Salaire <input *ngIf="editing" type="number" min="0" [(ngModel)]="f.situationFinanciere.salaire"><strong *ngIf="!editing">{{f.situationFinanciere.salaire | number:'1.2-2'}}</strong></label><label>Autres <input *ngIf="editing" type="number" min="0" [(ngModel)]="f.situationFinanciere.autresRessources"><strong *ngIf="!editing">{{f.situationFinanciere.autresRessources | number:'1.2-2'}}</strong></label><p>Total ressources <b>{{totalResources() | number:'1.2-2'}}</b></p></div><div><h3>Charges mensuelles</h3><label>Eau / électricité <input *ngIf="editing" type="number" min="0" [(ngModel)]="f.situationFinanciere.eauElectricite"><strong *ngIf="!editing">{{f.situationFinanciere.eauElectricite | number:'1.2-2'}}</strong></label><label>Frais médicaux <input *ngIf="editing" type="number" min="0" [(ngModel)]="f.situationFinanciere.fraisMedicaux"><strong *ngIf="!editing">{{f.situationFinanciere.fraisMedicaux | number:'1.2-2'}}</strong></label><label>Frais scolarité <input *ngIf="editing" type="number" min="0" [(ngModel)]="f.situationFinanciere.fraisScolarite"><strong *ngIf="!editing">{{f.situationFinanciere.fraisScolarite | number:'1.2-2'}}</strong></label><label>Loyer <input *ngIf="editing" type="number" min="0" [(ngModel)]="f.situationFinanciere.loyer"><strong *ngIf="!editing">{{f.situationFinanciere.loyer | number:'1.2-2'}}</strong></label><label>Autres <input *ngIf="editing" type="number" min="0" [(ngModel)]="f.situationFinanciere.autresCharges"><strong *ngIf="!editing">{{f.situationFinanciere.autresCharges | number:'1.2-2'}}</strong></label><p>Total charges <b>{{totalCharges() | number:'1.2-2'}}</b></p></div></div><div class="balance">Balance : {{ totalResources() - totalCharges() | number:'1.2-2' }}</div></section>
+
+    <section class="paper-section editable-section"><div class="section-head"><h2>ASSISTANCE OCTROYÉE</h2><button *ngIf="editing" class="btn small" (click)="addAssistance()">+ Ajouter</button></div><table><thead><tr><th>Désignation</th><th>Montant</th><th>Date</th><th>Référence chèque</th><th *ngIf="editing"></th></tr></thead><tbody><tr *ngFor="let x of f.assistancesOctroyees; index as i"><td><select *ngIf="editing" [(ngModel)]="x.designation"><option>SECOURS</option><option>AGREMENT</option><option>AUTRE</option></select><span *ngIf="!editing">{{x.designation}}</span></td><td><input *ngIf="editing" type="number" min="0" [(ngModel)]="x.montant"><span *ngIf="!editing">{{x.montant | number:'1.2-2'}}</span></td><td><input *ngIf="editing" type="date" [(ngModel)]="x.date"><span *ngIf="!editing">{{x.date || '—'}}</span></td><td><input *ngIf="editing" [(ngModel)]="x.chequeReference"><span *ngIf="!editing">{{x.chequeReference || '—'}}</span></td><td *ngIf="editing"><button class="icon danger" (click)="remove(f.assistancesOctroyees,i)">×</button></td></tr><tr *ngIf="!f.assistancesOctroyees.length"><td colspan="5" class="empty">Aucune assistance.</td></tr></tbody></table></section>
+
+    <section class="paper-section"><h2><u>Observation</u></h2><textarea *ngIf="editing" [(ngModel)]="f.observation" rows="5" placeholder="Observation générale de la fiche"></textarea><p class="observation" *ngIf="!editing">{{ f.observation || 'Aucune observation.' }}</p></section>
+  </ng-container>
+</div>
+
+<ng-template #ayantsTable let-items><table><thead><tr><th>Nom / prénom</th><th>Date naissance</th><th>Situation</th><th>Instruction</th><th>Emploi</th></tr></thead><tbody><tr *ngFor="let a of items"><td>{{a.prenom}} {{a.nom}}</td><td>{{a.dateNaissance || '—'}}</td><td>{{a.situationFamiliale || '—'}}</td><td>{{a.niveauInstruction || '—'}}</td><td>{{a.activiteEmploi || '—'}}</td></tr><tr *ngIf="!items.length"><td colspan="5" class="empty">Aucune donnée.</td></tr></tbody></table></ng-template>

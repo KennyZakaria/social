@@ -1,7 +1,7 @@
-﻿import { Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { DecesService } from '../services/deces.service';
 import { DossierDecesResponse } from '../../../models';
 
@@ -19,6 +19,9 @@ export class DossiersListComponent implements OnInit {
   successMsg = '';
   errorMsg = '';
 
+  readonly pageSize = 10;
+  currentPage = 1;
+
   readonly statuts = [
     { value: 'EN_COURS', label: 'En cours' },
     { value: 'INCOMPLET', label: 'Incomplet' },
@@ -33,7 +36,7 @@ export class DossiersListComponent implements OnInit {
 
   get filtered(): DossierDecesResponse[] {
     const q = this.searchTerm.trim().toLowerCase();
-    if (!q) return [];
+    if (!q) return this.dossiers;
     return this.dossiers.filter(d =>
       d.numero.toLowerCase().includes(q) ||
       d.nomComplet.toLowerCase().includes(q) ||
@@ -41,13 +44,49 @@ export class DossiersListComponent implements OnInit {
     );
   }
 
-  constructor(private readonly svc: DecesService, private readonly router: Router) {}
+  get pagedDossiers(): DossierDecesResponse[] {
+    const start = (this.currentPage - 1) * this.pageSize;
+    return this.filtered.slice(start, start + this.pageSize);
+  }
+
+  get totalPages(): number {
+    return Math.max(1, Math.ceil(this.filtered.length / this.pageSize));
+  }
+
+  get pageNumbers(): number[] {
+    return Array.from({ length: this.totalPages }, (_, index) => index + 1);
+  }
+
+  get firstDisplayedItem(): number {
+    return this.filtered.length === 0 ? 0 : (this.currentPage - 1) * this.pageSize + 1;
+  }
+
+  get lastDisplayedItem(): number {
+    return Math.min(this.currentPage * this.pageSize, this.filtered.length);
+  }
+
+  onSearchChange(): void {
+    this.currentPage = 1;
+  }
+
+  goToPage(page: number): void {
+    if (page >= 1 && page <= this.totalPages) this.currentPage = page;
+  }
+
+  private ensureCurrentPageIsValid(): void {
+    this.currentPage = Math.min(this.currentPage, this.totalPages);
+  }
+  constructor(private readonly svc: DecesService, private readonly router: Router, private readonly route: ActivatedRoute) {}
 
   ngOnInit(): void {
+    this.searchTerm = this.route.snapshot.queryParamMap.get('search') || '';
     this.load();
   }
 
-  openAyants(dossier: DossierDecesResponse): void {
+
+  openDetail(dossier: DossierDecesResponse): void {
+    this.router.navigate(['/deces/dossiers', dossier.id]);
+  }  openAyants(dossier: DossierDecesResponse): void {
     this.router.navigate(['/deces/ayants-droit'], { queryParams: { adherentId: dossier.adherentId } });
   }
 
@@ -78,7 +117,7 @@ export class DossiersListComponent implements OnInit {
   private load(): void {
     this.loading = true;
     this.svc.findAll().subscribe({
-      next: d => { this.dossiers = d; this.loading = false; },
+      next: d => { this.dossiers = d; this.ensureCurrentPageIsValid(); this.loading = false; },
       error: () => { this.loading = false; }
     });
   }

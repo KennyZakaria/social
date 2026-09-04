@@ -1,9 +1,10 @@
 package com.social.servicesocial.dto;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import java.time.LocalDate;
 
 @Getter
 @Builder
@@ -14,6 +15,8 @@ public class DossierDecesResponse {
     private Long adherentId;
     private String nomComplet;
     private String matricule;
+    private String matriculeBR;
+    private String cin;
     private LocalDate dateDeces;
     private String lieuDeces;
     private String natureDeces;
@@ -21,4 +24,11 @@ public class DossierDecesResponse {
     private String dpr;
     private String observation;
     private String statut;
+    private LocalDateTime dateCreation;
+    private LocalDateTime dateMaj;
+    private LocalDateTime dateValidation;
+    private LocalDateTime dateCloture;
+    private String validePar;
+    private String cloturePar;
+    private String motifDerniereDecision;
 }

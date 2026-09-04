@@ -14,6 +14,10 @@ public class AyantDroit {
     @Column(nullable = false, length = 30) private String cin;
     @Column(nullable = false, length = 50) private String lienParente;
     private LocalDate dateNaissance;
+    @Column(length = 100) private String lieuNaissance;
+    @Column(length = 100) private String situationFamiliale;
+    @Column(length = 120) private String niveauInstruction;
+    @Column(length = 160) private String activiteEmploi;
     @Column(length = 30) private String telephone;
     @Column(length = 255) private String adresse;
     @Enumerated(EnumType.STRING) @Column(nullable = false, length = 20) private TypeRepartition typeRepartition;

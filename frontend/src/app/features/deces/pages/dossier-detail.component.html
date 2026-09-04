@@ -1,0 +1,194 @@
+<div class="detail-page">
+  <div class="alert alert--success" *ngIf="successMsg" (click)="successMsg=''">{{ successMsg }}</div>
+  <div class="alert alert--error" *ngIf="errorMsg" (click)="errorMsg=''">{{ errorMsg }}</div>
+
+  <section class="detail-hero" *ngIf="dossier as d">
+    <div>
+      <p class="eyebrow">Dossier Décès</p>
+      <h1>{{ d.numero }}</h1>
+      <p class="subtitle">Adhérent : {{ d.nomComplet }}</p>
+    </div>
+    <div class="hero-actions">
+      <span class="status-badge">{{ d.statut }}</span>
+      <a class="btn-secondary" routerLink="/deces/adherents">Retour à la liste</a>      <a class="btn-primary" [routerLink]="['/deces/dossiers', d.id, 'fiche-renseignements']">Fiche de renseignements</a>
+    </div>
+  </section>
+
+  <section class="loading-card" *ngIf="loading">Chargement du dossier...</section>
+
+  <ng-container *ngIf="!loading && dossier as d">
+    <nav class="tabs" aria-label="Onglets détail dossier décès">
+      <button
+        type="button"
+        *ngFor="let tab of tabs"
+        [class.active]="activeTab === tab.key"
+        (click)="selectTab(tab.key)">
+        {{ tab.label }}
+      </button>
+    </nav>
+
+    <section class="panel" *ngIf="activeTab === 'adherent'">
+      <div class="panel-head">
+        <div>
+          <p class="eyebrow">Lecture seule</p>
+          <h2>Informations adhérent</h2>
+        </div>
+      </div>
+
+      <div class="info-grid" *ngIf="adherent as a; else noAdherent">
+        <div><span>Matricule</span><strong>{{ a.matricule }}</strong></div>
+        <div><span>Matricule BR / GR</span><strong>{{ a.matriculeBR }}</strong></div>
+        <div><span>CIN</span><strong>{{ a.cin }}</strong></div>
+        <div><span>Nom</span><strong>{{ a.nomAr }}</strong></div>
+        <div><span>Prénom</span><strong>{{ a.prenomAr }}</strong></div>
+        <div><span>Catégorie</span><strong>{{ a.categorie }}</strong></div>
+        <div><span>Grade</span><strong>{{ a.grade }}</strong></div>
+        <div><span>Date de naissance</span><strong>{{ a.dateNaissance || '—' }}</strong></div>
+        <div><span>Lieu de naissance</span><strong>{{ a.lieuNaissance || '—' }}</strong></div>
+        <div><span>Téléphone principal</span><strong>{{ a.telephone1 || '—' }}</strong></div>
+        <div><span>Téléphone secondaire</span><strong>{{ a.telephone2 || '—' }}</strong></div>
+        <div><span>Email</span><strong>{{ a.email || '—' }}</strong></div>
+        <div class="wide"><span>Adresse</span><strong>{{ a.adresse || '—' }}</strong></div>
+        <div><span>Situation catégorie</span><strong>{{ a.situationCategorie || '—' }}</strong></div>
+        <div><span>Pension</span><strong>{{ a.pension ? 'Oui' : 'Non' }}</strong></div>
+        <div><span>Dernière unité</span><strong>{{ a.dernierUnite || '—' }}</strong></div>
+        <div><span>Formation / région</span><strong>{{ a.formationUnite || '—' }}</strong></div>
+        <div><span>Date de radiation</span><strong>{{ a.dateRadiation || '—' }}</strong></div>
+        <div class="wide"><span>Motif de radiation</span><strong>{{ a.motifRadiation || '—' }}</strong></div>
+      </div>
+      <ng-template #noAdherent><div class="empty-state">Adhérent introuvable.</div></ng-template>
+    </section>
+
+    <section class="panel" *ngIf="activeTab === 'dossier'">
+      <div class="panel-head">
+        <div>
+          <p class="eyebrow">{{ dossierLocked ? 'Lecture seule' : 'Modifiable' }}</p>
+          <h2>Informations du dossier décès</h2>
+        </div>
+        <button class="btn-primary" type="button" [disabled]="dossierLocked || dossierForm.invalid || savingDossier" (click)="saveDossier()">
+          {{ savingDossier ? 'Enregistrement...' : 'Enregistrer les modifications' }}
+        </button>
+      </div>
+
+      <form class="form-grid" [formGroup]="dossierForm">
+        <label><span>Date de décès</span><input type="date" formControlName="dateDeces" /></label>
+        <label><span>Lieu de décès</span><input type="text" formControlName="lieuDeces" /></label>
+        <label><span>Nature du décès</span><input type="text" formControlName="natureDeces" /></label>
+        <label><span>Cause du décès</span><input type="text" formControlName="causeDeces" /></label>
+        <label><span>DPR</span><input type="text" formControlName="dpr" /></label>
+        <label><span>Statut</span><input type="text" [value]="d.statut" disabled /></label>
+        <label><span>Date de création</span><input type="text" [value]="d.dateCreation || '—'" disabled /></label>
+        <label><span>Date de clôture</span><input type="text" [value]="d.dateCloture || '—'" disabled /></label>
+        <label class="wide"><span>Observation</span><textarea rows="4" formControlName="observation"></textarea></label>
+      </form>
+    </section>
+
+    <section class="panel" *ngIf="activeTab === 'ayantsDroit'">
+      <div class="panel-head">
+        <div>
+          <p class="eyebrow">{{ ayants.length }} bénéficiaire(s)</p>
+          <h2>Ayants droit</h2>
+        </div>
+        <button class="btn-primary" type="button" [disabled]="dossierLocked" (click)="openAyantForm()">+ Ajouter un ayant droit</button>
+      </div>
+
+      <form class="inline-form" *ngIf="formAyantOpen" [formGroup]="ayantForm" (ngSubmit)="saveAyant()">
+        <label><span>Nom</span><input formControlName="nom" /></label>
+        <label><span>Prénom</span><input formControlName="prenom" /></label>
+        <label><span>CIN</span><input formControlName="cin" /></label>
+        <label><span>Lien parenté</span><select formControlName="lienParente">
+  <option value="" disabled>Sélectionner le lien</option>
+  <option value="VEUF">VEUF</option>
+  <option value="VEUVE">VEUVE</option>
+  <option value="FILS">FILS</option>
+  <option value="FILLE">FILLE</option>
+  <option value="PERE">PERE</option>
+  <option value="MERE">MERE</option>
+  <option value="AUTRE">AUTRE</option>
+</select></label>
+        <label><span>Date naissance</span><input type="date" formControlName="dateNaissance" /></label>
+        <label><span>Téléphone</span><input formControlName="telephone" /></label>
+        <label class="wide"><span>Adresse</span><input formControlName="adresse" /></label>
+        <label><span>Répartition</span><select formControlName="typeRepartition"><option value="POURCENTAGE">Pourcentage</option><option value="CHARIA">Charia</option></select></label>
+        <label><span>Pourcentage</span><input type="number" min="0" max="100" formControlName="pourcentage" /></label>
+        <div class="form-actions wide">
+          <button class="btn-primary" type="submit" [disabled]="ayantForm.invalid || savingAyant">{{ editingAyantId ? 'Modifier' : 'Ajouter' }}</button>
+          <button class="btn-secondary" type="button" (click)="closeAyantForm()">Annuler</button>
+        </div>
+      </form>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Nom complet</th><th>CIN</th><th>Lien</th><th>Naissance</th><th>Téléphone</th><th>Répartition</th><th>Actions</th></tr></thead>
+          <tbody>
+            <tr *ngFor="let a of ayants">
+              <td><strong>{{ a.prenom }} {{ a.nom }}</strong></td>
+              <td>{{ a.cin }}</td>
+              <td>{{ a.lienParente }}</td>
+              <td>{{ a.dateNaissance || '—' }}</td>
+              <td>{{ a.telephone || '—' }}</td>
+              <td>{{ a.typeRepartition }} <span *ngIf="a.pourcentage">({{ a.pourcentage }}%)</span></td>
+              <td><div class="actions"><button class="btn-ghost" type="button" (click)="openAyantForm(a)" [disabled]="dossierLocked">Modifier</button><button class="btn-danger" type="button" *ngIf="confirmDeleteAyantId !== a.id" (click)="confirmDeleteAyantId = a.id" [disabled]="dossierLocked">Supprimer</button><button class="btn-danger" type="button" *ngIf="confirmDeleteAyantId === a.id" (click)="deleteAyant(a.id)">Confirmer</button></div></td>
+            </tr>
+            <tr *ngIf="ayants.length === 0"><td colspan="7" class="empty-row">Aucun ayant droit enregistré.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel" *ngIf="activeTab === 'pieces'">
+      <div class="panel-head">
+        <div>
+          <p class="eyebrow">Checklist dossier</p>
+          <h2>Pièces justificatives</h2>
+        </div>
+      </div>
+
+      <div class="pieces-grid">
+        <button type="button" class="piece-card" *ngFor="let piece of pieces" [class.present]="piece.present" [disabled]="dossierLocked || piece.saving" (click)="togglePiece(piece)">
+          <span class="piece-icon">{{ piece.present ? '✓' : '×' }}</span>
+          <strong>{{ piece.libelle }}</strong>
+          <small>{{ piece.obligatoire ? 'Obligatoire' : 'Optionnelle' }}</small>
+          <em>{{ pieceState(piece) }}</em>
+        </button>
+      </div>
+
+      <div class="missing-box" *ngIf="controle?.erreurs?.length">
+        <strong>Éléments manquants</strong>
+        <ul><li *ngFor="let err of controle?.erreurs">{{ err }}</li></ul>
+      </div>
+    </section>
+
+    <section class="panel" *ngIf="activeTab === 'validation'">
+      <div class="panel-head">
+        <div>
+          <p class="eyebrow">Contrôle automatique</p>
+          <h2>Validation du dossier</h2>
+        </div>
+        <button class="btn-secondary" type="button" (click)="load()">Rafraîchir</button>
+      </div>
+
+      <div class="progress-card" *ngIf="controle as c">
+        <div class="progress-head"><strong>Progression</strong><span>{{ c.progression }}%</span></div>
+        <div class="progress"><span [style.width.%]="c.progression"></span></div>
+      </div>
+
+      <div class="validation-grid" *ngIf="controle as c">
+        <div class="control-row" *ngFor="let detail of c.details" [class.ok]="detail.complet">
+          <span>{{ detail.complet ? '✓' : '×' }}</span>
+          <div><strong>{{ detail.libelle }}</strong><small>{{ detail.message }}</small></div>
+        </div>
+      </div>
+
+      <div class="missing-box" *ngIf="controle?.erreurs?.length">
+        <strong>Impossible de valider le dossier. Éléments manquants :</strong>
+        <ul><li *ngFor="let err of controle?.erreurs">{{ err }}</li></ul>
+      </div>
+
+      <div class="decision-actions">
+        <button class="btn-primary" type="button" [disabled]="!canSubmit || validating" (click)="submitForValidation()">Soumettre à validation</button>
+        <button class="btn-success" type="button" [disabled]="!canValidate || validating" (click)="validateDossier()">Valider le dossier</button>
+      </div>
+    </section>
+  </ng-container>
+</div>
