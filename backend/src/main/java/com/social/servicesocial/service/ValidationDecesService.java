@@ -5,6 +5,7 @@ import com.social.servicesocial.exception.ConflictException;
 import com.social.servicesocial.exception.NotFoundException;
 import com.social.servicesocial.model.*;
 import com.social.servicesocial.repository.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -47,17 +48,26 @@ public class ValidationDecesService {
         Map<String, Boolean> controles = new LinkedHashMap<>();
 
         Adherent adherent = adherentRepository.findById(dossier.getAdherentId()).orElse(null);
-        boolean adherentOk = adherent != null && notBlank(adherent.getMatricule()) && notBlank(adherent.getCin());
+        boolean adherentOk = adherent != null && notBlank(adherent.getMatricule()) && notBlank(adherent.getCin()) && notBlank(adherent.getNomAr()) && notBlank(adherent.getPrenomAr());
         controles.put("adherent", adherentOk);
         details.add(new ValidationControleResponse("adherent", "Informations adherent", adherentOk,
                 adherentOk ? "Adherent correctement lie." : "Adherent introuvable ou identifiants manquants."));
         if (!adherentOk) erreurs.add("Adherent introuvable ou identifiants manquants.");
 
         boolean decesOk = dossier.getAdherentId() != null && dossier.getDateDeces() != null && notBlank(dossier.getLieuDeces());
+        if (dossier.getDateDeces() != null && dossier.getDateDeces().isAfter(LocalDate.now())) {
+            decesOk = false;
+            erreurs.add("La date de décès ne peut pas être postérieure à aujourd'hui.");
+        }
+        if (adherent != null && adherent.getDateNaissance() != null && dossier.getDateDeces() != null
+                && dossier.getDateDeces().isBefore(adherent.getDateNaissance())) {
+            decesOk = false;
+            erreurs.add("La date de décès doit être postérieure ou égale à la date de naissance.");
+        }
         controles.put("informationsDeces", decesOk);
         details.add(new ValidationControleResponse("informationsDeces", "Informations deces", decesOk,
-                decesOk ? "Date et lieu de deces renseignes." : "Date ou lieu de deces obligatoire manquant."));
-        if (!decesOk) erreurs.add("Date ou lieu de deces obligatoire manquant.");
+                decesOk ? "Date et lieu de décès renseignés." : "Informations de décès incomplètes ou incohérentes."));
+        if (!decesOk && erreurs.stream().noneMatch(e -> e.contains("date de décès"))) erreurs.add("Date ou lieu de décès obligatoire manquant.");
 
         List<AyantDroit> ayants = adherent == null ? List.of() : ayantDroitRepository.findByAdherentIdOrderByIdAsc(adherent.getId());
         List<String> ayantsErrors = new ArrayList<>();
@@ -107,7 +117,7 @@ public class ValidationDecesService {
 
         int okCount = (int) controles.values().stream().filter(Boolean::booleanValue).count();
         int progression = controles.isEmpty() ? 0 : (int) Math.round(okCount * 100.0 / controles.size());
-        return new ValidationResultResponse(erreurs.isEmpty(), progression, erreurs, avertissements, controles, details);
+        return new ValidationResultResponse(erreurs.isEmpty(), progression, erreurs.isEmpty() ? "A_VALIDER" : "INCOMPLET", erreurs, avertissements, controles, details);
     }
 
     @Transactional
@@ -118,9 +128,12 @@ public class ValidationDecesService {
         }
         ValidationResultResponse controle = verifierDossier(dossierId);
         if (!controle.valid()) {
-            throw new ConflictException("Le dossier contient des anomalies bloquantes.");
+            changeStatus(dossier, StatutDossierDeces.INCOMPLET, "SOUMISSION_VALIDATION_INCOMPLETE", String.join(" | ", controle.erreurs()), username);
+            return new DossierValidationResponse(dossierService.toResponse(dossierRepository.save(dossier)), controle);
         }
-        changeStatus(dossier, StatutDossierDeces.A_VALIDER, "SOUMISSION_VALIDATION", "Dossier soumis a validation", username);
+        dossier.setDateSoumissionValidation(LocalDateTime.now());
+        dossier.setSoumisPar(username);
+        changeStatus(dossier, StatutDossierDeces.A_VALIDER, "SOUMISSION_VALIDATION", "Dossier complet transmis pour validation", username);
         return new DossierValidationResponse(dossierService.toResponse(dossierRepository.save(dossier)), controle);
     }
 
@@ -132,17 +145,19 @@ public class ValidationDecesService {
         }
         ValidationResultResponse controle = verifierDossier(dossierId);
         if (!controle.valid()) {
-            throw new ConflictException("Le dossier contient des anomalies bloquantes.");
+            throw new ConflictException("Validation refusée : " + String.join(" | ", controle.erreurs()));
         }
         dossier.setDateValidation(LocalDateTime.now());
         dossier.setValidePar(username);
-        changeStatus(dossier, StatutDossierDeces.VALIDE, "VALIDATION", valueOrDefault(request.commentaire(), "Dossier verifie et valide"), username);
+        changeStatus(dossier, StatutDossierDeces.VALIDE, "VALIDATION_DOSSIER", valueOrDefault(request.commentaire(), "Dossier verifie et valide"), username);
         return new DossierValidationResponse(dossierService.toResponse(dossierRepository.save(dossier)), controle);
     }
 
     @Transactional
     public DossierDecesResponse retourComplement(Long dossierId, RetourComplementRequest request, String username) {
         DossierDeces dossier = requiredAValider(dossierId);
+        dossier.setDateRetourComplement(LocalDateTime.now());
+        dossier.setRetournePar(username);
         changeStatus(dossier, StatutDossierDeces.INCOMPLET, "RETOUR_COMPLEMENT", request.motif(), username);
         return dossierService.toResponse(dossierRepository.save(dossier));
     }
@@ -150,10 +165,19 @@ public class ValidationDecesService {
     @Transactional
     public DossierDecesResponse rejeter(Long dossierId, RejetDecesRequest request, String username) {
         DossierDeces dossier = requiredAValider(dossierId);
-        changeStatus(dossier, StatutDossierDeces.REJETE, "REJET", request.motif(), username);
+        changeStatus(dossier, StatutDossierDeces.REJETE, "REJET_DOSSIER", request.motif(), username);
         return dossierService.toResponse(dossierRepository.save(dossier));
     }
 
+    @Transactional
+    public DossierDecesResponse archiver(Long dossierId, String username) {
+        DossierDeces dossier = required(dossierId);
+        if (dossier.getStatut() != StatutDossierDeces.CLOTURE) {
+            throw new ConflictException("Seul un dossier CLOTURE peut être archivé.");
+        }
+        changeStatus(dossier, StatutDossierDeces.ARCHIVE, "ARCHIVAGE_DOSSIER", "Dossier archivé", username);
+        return dossierService.toResponse(dossierRepository.save(dossier));
+    }
     @Transactional
     public DossierDecesResponse cloturer(Long dossierId, String username) {
         DossierDeces dossier = required(dossierId);
@@ -162,7 +186,7 @@ public class ValidationDecesService {
         }
         dossier.setDateCloture(LocalDateTime.now());
         dossier.setCloturePar(username);
-        changeStatus(dossier, StatutDossierDeces.CLOTURE, "CLOTURE", "Dossier cloture", username);
+        changeStatus(dossier, StatutDossierDeces.CLOTURE, "CLOTURE_DOSSIER", "Dossier clôturé", username);
         return dossierService.toResponse(dossierRepository.save(dossier));
     }
 

@@ -15,12 +15,7 @@
       <p class="page-kicker">Section Décès</p>
       <h2 class="page-title">Dossiers de décès</h2>
     </div>
-    <a class="btn-primary ml-auto" routerLink="/deces/nouveau">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-      </svg>
-      Nouveau dossier
-    </a>
+
   </div>
 
   <!-- Search bar -->
@@ -71,9 +66,7 @@
             <td class="td-meta">{{ d.lieuDeces }}</td>
             <td class="td-meta">{{ d.natureDeces || '—' }}</td>
             <td>
-              <select class="statut-select" [value]="d.statut" (change)="changeStatut(d, $any($event.target).value)">
-                <option *ngFor="let s of statuts" [value]="s.value">{{ s.label }}</option>
-              </select>
+              <span class="statut-badge">{{ d.statut }}</span>
             </td>
             <td>
               <div class="actions-cell">
@@ -84,18 +77,8 @@
                     <path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>
                   </svg>
                 </a>
-                <ng-container *ngIf="confirmDeleteId === d.id; else delBtn">
-                  <button class="action-btn action-btn--confirm" (click)="doDelete(d.id)">Confirmer</button>
-                  <button class="action-btn action-btn--cancel" (click)="confirmDeleteId = null">Annuler</button>
-                </ng-container>
-                <ng-template #delBtn>
-                  <button class="action-btn action-btn--danger" title="Supprimer" (click)="confirmDeleteId = d.id">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                      <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/>
-                      <path d="M10 11v6"/><path d="M14 11v6"/>
-                    </svg>
-                  </button>
-                </ng-template>
+                <button class="action-btn action-btn--view" type="button" *ngIf="d.statut === 'CLOTURE'" title="Archiver le dossier" (click)="archiver(d)">Archiver</button>
+                <span class="td-meta" *ngIf="d.statut !== 'CLOTURE'">Suppression indisponible</span>
               </div>
             </td>
           </tr>

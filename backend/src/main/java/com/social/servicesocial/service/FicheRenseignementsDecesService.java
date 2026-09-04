@@ -16,6 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class FicheRenseignementsDecesService {
     private static final BigDecimal ZERO = BigDecimal.ZERO;
+    private static final Set<String> LIQUIDATION_DESIGNATIONS = Set.of("FRATERNELLE", "MUTUELLE", "DGSS", "CAPITAL_DECES");
+    private static final Set<String> ASSISTANCE_DESIGNATIONS = Set.of("SECOURS", "AGREMENT", "AUTRE");
     private final DossierDecesRepository dossierRepository;
     private final AdherentRepository adherentRepository;
     private final AyantDroitRepository ayantRepository;
@@ -97,10 +99,16 @@ public class FicheRenseignementsDecesService {
                 dossier.getObservation());
     }
 
-    private void saveLiquidations(DossierDeces d, List<FicheRenseignementsDecesRequest.LiquidationInput> values) { for (var x : safe(values)) liquidationRepository.save(LiquidationDroitDeces.builder().dossier(d).designation(x.designation().trim()).montant(amount(x.montant())).beneficiaire(blankToNull(x.beneficiaire())).reference(blankToNull(x.reference())).build()); }
+    private void saveLiquidations(DossierDeces d, List<FicheRenseignementsDecesRequest.LiquidationInput> values) { for (var x : safe(values)) liquidationRepository.save(LiquidationDroitDeces.builder().dossier(d).designation(requiredDesignation(x.designation(), LIQUIDATION_DESIGNATIONS, "liquidation")).montant(amount(x.montant())).beneficiaire(blankToNull(x.beneficiaire())).reference(blankToNull(x.reference())).build()); }
     private void savePensions(DossierDeces d, List<FicheRenseignementsDecesRequest.PensionInput> values, Map<Long, AyantDroit> ayants) { for (var x : safe(values)) pensionRepository.save(PensionDeces.builder().dossier(d).typeBeneficiaire(x.typeBeneficiaire().trim()).ayantDroit(requiredAyant(x.ayantDroitId(), ayants)).numero(blankToNull(x.numero())).montant(amount(x.montant())).build()); }
     private void saveAssurances(DossierDeces d, List<FicheRenseignementsDecesRequest.AssuranceInput> values, Map<Long, AyantDroit> ayants) { for (var x : safe(values)) assuranceRepository.save(AssuranceDeces.builder().dossier(d).typeBeneficiaire(x.typeBeneficiaire().trim()).ayantDroit(requiredAyant(x.ayantDroitId(), ayants)).numeroCheque(blankToNull(x.numeroCheque())).montant(amount(x.montant())).build()); }
-    private void saveAssistances(DossierDeces d, List<FicheRenseignementsDecesRequest.AssistanceInput> values) { for (var x : safe(values)) assistanceRepository.save(AssistanceOctroyeeDeces.builder().dossier(d).designation(x.designation().trim()).montant(amount(x.montant())).date(x.date()).chequeReference(blankToNull(x.chequeReference())).build()); }
+    private void saveAssistances(DossierDeces d, List<FicheRenseignementsDecesRequest.AssistanceInput> values) { for (var x : safe(values)) assistanceRepository.save(AssistanceOctroyeeDeces.builder().dossier(d).designation(requiredDesignation(x.designation(), ASSISTANCE_DESIGNATIONS, "assistance")).montant(amount(x.montant())).date(x.date()).chequeReference(blankToNull(x.chequeReference())).build()); }
+    private static String requiredDesignation(String designation, Set<String> allowed, String type) {
+        String value = designation == null ? "" : designation.trim().toUpperCase(Locale.ROOT);
+        if (!allowed.contains(value)) throw new IllegalArgumentException("Désignation " + type + " invalide.");
+        return value;
+    }
+
     private void saveSituation(DossierDeces d, FicheRenseignementsDecesRequest.SituationFinanciereInput x) { if (x == null) return; SituationFinanciereDeces s = situationRepository.findByDossierId(d.getId()).orElseGet(() -> SituationFinanciereDeces.builder().dossier(d).build()); s.setPmr(amount(x.pmr()));s.setPmi(amount(x.pmi()));s.setSalaire(amount(x.salaire()));s.setAutresRessources(amount(x.autresRessources()));s.setEauElectricite(amount(x.eauElectricite()));s.setFraisMedicaux(amount(x.fraisMedicaux()));s.setFraisScolarite(amount(x.fraisScolarite()));s.setLoyer(amount(x.loyer()));s.setAutresCharges(amount(x.autresCharges()));situationRepository.save(s); }
     private FicheRenseignementsDecesResponse.SituationFinanciere situation(SituationFinanciereDeces s) { BigDecimal pmr = value(s == null ? null : s.getPmr()), pmi = value(s == null ? null : s.getPmi()), salaire = value(s == null ? null : s.getSalaire()), autres = value(s == null ? null : s.getAutresRessources()), eau = value(s == null ? null : s.getEauElectricite()), med = value(s == null ? null : s.getFraisMedicaux()), scol = value(s == null ? null : s.getFraisScolarite()), loyer = value(s == null ? null : s.getLoyer()), autresC = value(s == null ? null : s.getAutresCharges()); BigDecimal ressources = pmr.add(pmi).add(salaire).add(autres), charges = eau.add(med).add(scol).add(loyer).add(autresC); return new FicheRenseignementsDecesResponse.SituationFinanciere(pmr,pmi,salaire,autres,eau,med,scol,loyer,autresC,ressources,charges,ressources.subtract(charges)); }
     private FicheRenseignementsDecesResponse.Ayant ayant(AyantDroit a) { return new FicheRenseignementsDecesResponse.Ayant(a.getId(), a.getNom(), a.getPrenom(), a.getDateNaissance(), a.getLieuNaissance(), a.getCin(), a.getSituationFamiliale(), a.getNiveauInstruction(), a.getActiviteEmploi(), a.getAdresse(), a.getLienParente()); }

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterOutlet, Router } from '@angular/router';
+import { NavigationEnd, RouterOutlet, Router } from '@angular/router';
+import { filter } from 'rxjs';
 import { AuthStateService } from './auth-state.service';
 import { MODULE_MAP } from './module-map';
 import { SidebarComponent, SidebarModule } from './features/sidebar/sidebar.component';
@@ -34,7 +35,18 @@ export class AppComponent {
     ]}
   ];
 
-  constructor(public readonly authState: AuthStateService, private readonly router: Router) {}
+  isPublicPage = false;
+
+  constructor(public readonly authState: AuthStateService, private readonly router: Router) {
+    this.updatePublicPage();
+    this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe(() => {
+      this.updatePublicPage();
+    });
+  }
+
+  private updatePublicPage(): void {
+    this.isPublicPage = this.router.url === '/' || this.router.url === '/home' || this.router.url.startsWith('/login');
+  }
 
   logout(): void {
     this.authState.logout();

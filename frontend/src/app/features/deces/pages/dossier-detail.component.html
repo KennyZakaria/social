@@ -181,13 +181,13 @@
       </div>
 
       <div class="missing-box" *ngIf="controle?.erreurs?.length">
-        <strong>Impossible de valider le dossier. Éléments manquants :</strong>
+        <strong>{{ d.statut === 'INCOMPLET' ? 'Dossier incomplet — éléments à corriger :' : 'Impossible de valider le dossier. Éléments manquants :' }}</strong>
         <ul><li *ngFor="let err of controle?.erreurs">{{ err }}</li></ul>
       </div>
 
       <div class="decision-actions">
-        <button class="btn-primary" type="button" [disabled]="!canSubmit || validating" (click)="submitForValidation()">Soumettre à validation</button>
-        <button class="btn-success" type="button" [disabled]="!canValidate || validating" (click)="validateDossier()">Valider le dossier</button>
+        <button class="btn-primary" type="button" *ngIf="d.statut === 'EN_COURS' || d.statut === 'INCOMPLET'" [disabled]="validating" (click)="submitForValidation()">{{ d.statut === 'INCOMPLET' ? 'Soumettre à nouveau' : 'Soumettre à validation' }}</button>
+        <button class="btn-success" type="button" *ngIf="d.statut === 'A_VALIDER'" [disabled]="!canValidate || validating" (click)="validateDossier()">Valider le dossier</button>
       </div>
     </section>
   </ng-container>

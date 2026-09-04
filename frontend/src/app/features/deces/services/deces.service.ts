@@ -95,6 +95,10 @@ export class DecesService {
     return this.http.post<DossierDecesResponse>(`${this.validationBase}/dossiers/${id}/cloturer`, {});
   }
 
+  archiverDossier(id: number): Observable<DossierDecesResponse> {
+    return this.http.post<DossierDecesResponse>(`${this.validationBase}/dossiers/${id}/archiver`, {});
+  }
+
   getHistorique(id: number): Observable<HistoriqueDossierDecesResponse[]> {
     return this.http.get<HistoriqueDossierDecesResponse[]>(`${this.validationBase}/dossiers/${id}/historique`);
   }

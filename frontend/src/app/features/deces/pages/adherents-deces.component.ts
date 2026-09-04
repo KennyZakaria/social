@@ -10,7 +10,7 @@ type DossierFilter = 'ALL' | 'WITH' | 'WITHOUT';
 
 @Component({
   selector: 'app-adherents-deces',
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule],
   templateUrl: './adherents-deces.component.html',
   styleUrl: './adherents-deces.component.scss'
 })

@@ -6,6 +6,7 @@ import java.util.Map;
 public record ValidationResultResponse(
         boolean valid,
         int progression,
+        String statutSuggere,
         List<String> erreurs,
         List<String> avertissements,
         Map<String, Boolean> controles,

@@ -65,3 +65,11 @@
 
   .page-body { padding: 1rem; }
 }
+
+/* Do not print the application navigation around official documents. */
+@media print {
+  .shell { display: block !important; min-height: 0 !important; }
+  app-sidebar, .topbar { display: none !important; }
+  .main-wrap { display: block !important; min-height: 0 !important; overflow: visible !important; }
+  .page-body { display: block !important; padding: 0 !important; animation: none !important; }
+}

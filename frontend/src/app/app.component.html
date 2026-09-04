@@ -1,4 +1,6 @@
-<div class="shell">
+<router-outlet *ngIf="isPublicPage"></router-outlet>
+
+<div class="shell" *ngIf="!isPublicPage">
   <!-- ══ Sidebar ══════════════════════════════════════════ -->
   <app-sidebar [modules]="modules" [authState]="authState" (logoutRequested)="logout()"></app-sidebar>
 

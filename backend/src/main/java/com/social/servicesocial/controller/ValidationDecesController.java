@@ -62,6 +62,10 @@ public class ValidationDecesController {
         return validationService.cloturer(id, username(principal));
     }
 
+    @PostMapping("/dossiers/{id}/archiver")
+    public DossierDecesResponse archiver(@PathVariable Long id, Principal principal) {
+        return validationService.archiver(id, username(principal));
+    }
     @GetMapping("/dossiers/{id}/historique")
     public List<HistoriqueDossierDecesResponse> historique(@PathVariable Long id) {
         return validationService.historique(id);

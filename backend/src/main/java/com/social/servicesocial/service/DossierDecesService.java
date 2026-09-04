@@ -58,7 +58,7 @@ public class DossierDecesService {
                 .build();
 
         DossierDeces saved = dossierDecesRepository.save(dossier);
-        addHistorique(saved.getId(), "CREATION", null, saved.getStatut(), "Creation du dossier", "system");
+        addHistorique(saved.getId(), "CREATION_DOSSIER", null, saved.getStatut(), "Création du dossier", "system");
         return toResponse(saved);
     }
 
@@ -93,23 +93,17 @@ public class DossierDecesService {
         dossier.setCauseDeces(request.getCauseDeces());
         dossier.setDpr(request.getDpr());
         dossier.setObservation(request.getObservation());
-        addHistorique(dossier.getId(), "MODIFICATION", dossier.getStatut(), dossier.getStatut(), "Modification des informations du dossier", "system");
+        addHistorique(dossier.getId(), "MODIFICATION_DOSSIER", dossier.getStatut(), dossier.getStatut(), "Modification des informations du dossier", "system");
         return toResponse(dossierDecesRepository.save(dossier));
     }
 
     public DossierDecesResponse updateStatut(Long id, String statut) {
-        DossierDeces dossier = required(id);
-        StatutDossierDeces next = parseStatut(statut);
-        changeStatut(dossier, next, "MODIFICATION", "Changement manuel du statut", "system");
-        return toResponse(dossierDecesRepository.save(dossier));
+        throw new ConflictException("Le statut d'un dossier décès est déterminé uniquement par le workflow de validation.");
     }
-
     @Transactional
     public void delete(Long id) {
-        if (!dossierDecesRepository.existsById(id)) {
-            throw new NotFoundException("Dossier deces introuvable : " + id);
-        }
-        dossierDecesRepository.deleteById(id);
+        required(id);
+        throw new ConflictException("La suppression physique d'un dossier décès est interdite. Clôturez puis archivez le dossier.");
     }
 
     DossierDeces required(Long id) {
@@ -145,7 +139,11 @@ public class DossierDecesService {
                 .dateCreation(d.getDateCreation())
                 .dateMaj(d.getDateMaj())
                 .dateValidation(d.getDateValidation())
+                .dateSoumissionValidation(d.getDateSoumissionValidation())
+                .dateRetourComplement(d.getDateRetourComplement())
                 .dateCloture(d.getDateCloture())
+                .soumisPar(d.getSoumisPar())
+                .retournePar(d.getRetournePar())
                 .validePar(d.getValidePar())
                 .cloturePar(d.getCloturePar())
                 .motifDerniereDecision(d.getMotifDerniereDecision())

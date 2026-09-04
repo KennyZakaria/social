@@ -35,7 +35,7 @@
 
     <div class="results-list" *ngIf="filteredDossiers.length > 0">
       <div class="result-item" *ngFor="let d of filteredDossiers" (click)="selectDossier(d)">
-        <div class="result-avatar">{{ d.nomComplet?.charAt(0) }}</div>
+        <div class="result-avatar">{{ d.nomComplet.charAt(0) }}</div>
         <div>
           <div class="result-name">{{ d.nomComplet }}</div>
           <div class="result-meta">{{ d.numero }}<ng-container *ngIf="d.matricule"> · {{ d.matricule }}</ng-container></div>

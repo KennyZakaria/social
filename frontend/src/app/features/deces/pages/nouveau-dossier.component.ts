@@ -23,6 +23,7 @@ export class NouveauDossierDecesComponent implements OnInit {
   rechercheAdherent = '';
   resultats: AdherentRecherche[] = [];
   loading = false;
+  redirecting = false;
   successMsg = '';
   errorMsg = '';
   private searchTimer: any;
@@ -104,8 +105,10 @@ export class NouveauDossierDecesComponent implements OnInit {
     this.decesSvc.create(request).subscribe({
       next: (d) => {
         this.loading = false;
+        this.redirecting = true;
         this.dossiersParAdherent.set(d.adherentId, d);
-        this.router.navigate(['/deces/dossiers', d.id, 'ayants-droit']);
+        this.successMsg = `Dossier ${d.numero} créé avec succès. Ouverture du dossier...`;
+        setTimeout(() => this.router.navigate(['/deces/dossiers', d.id]), 1600);
       },
       error: (e: any) => {
         this.loading = false;

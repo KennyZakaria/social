@@ -114,7 +114,7 @@ export class DossierDetailComponent implements OnInit {
   }
 
   get canSubmit(): boolean {
-    return ['EN_COURS', 'INCOMPLET'].includes(this.dossier?.statut ?? '') && this.controle?.valid === true;
+    return ['EN_COURS', 'INCOMPLET'].includes(this.dossier?.statut ?? '');
   }
 
   selectTab(tab: DetailTab): void {
@@ -274,7 +274,10 @@ export class DossierDetailComponent implements OnInit {
         next: response => {
           this.dossier = response.dossier;
           this.controle = response.controle;
-          this.show('Dossier soumis à validation.');
+          this.patchDossierForm(response.dossier);
+          this.show(response.controle.valid
+            ? 'Dossier complet — transmis au responsable.'
+            : 'Dossier incomplet : corrigez les anomalies puis soumettez à nouveau.');
         },
         error: error => this.showErr(error?.error?.message || 'Soumission impossible.')
       });

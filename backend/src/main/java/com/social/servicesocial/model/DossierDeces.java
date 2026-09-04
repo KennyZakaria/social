@@ -56,7 +56,17 @@ public class DossierDeces {
 
     private LocalDateTime dateValidation;
 
+    private LocalDateTime dateSoumissionValidation;
+
+    private LocalDateTime dateRetourComplement;
+
     private LocalDateTime dateCloture;
+
+    @Column(length = 120)
+    private String soumisPar;
+
+    @Column(length = 120)
+    private String retournePar;
 
     @Column(length = 120)
     private String validePar;

@@ -3,10 +3,7 @@ import { authGuard, moduleGuard } from '../../guards';
 import { DecesDashboardComponent } from './pages/deces-dashboard.component';
 import { DossiersListComponent } from './pages/dossiers-list.component';
 import { NouveauDossierDecesComponent } from './pages/nouveau-dossier.component';
-import { AyantsDroitComponent } from './pages/ayants-droit.component';
-import { ValidationComponent } from './pages/validation.component';
 import { DemandesDecesComponent } from './pages/demandes-deces.component';
-import { PiecesJustificativesComponent } from './pages/pieces-justificatives.component';
 import { AdherentsDecesComponent } from './pages/adherents-deces.component';
 import { DossierDetailComponent } from './pages/dossier-detail.component';
 import { FicheRenseignementsDecesComponent } from './pages/fiche-renseignements-deces.component';
@@ -42,23 +39,18 @@ export const DECES_ROUTES: Routes = [
     component: FicheRenseignementsDecesComponent,
     canActivate: [authGuard, moduleGuard],
     data: { moduleKey: 'deces' }
-  },  {
+  },  
+  {
     path: 'deces/dossiers/:dossierId',
     component: DossierDetailComponent,
     canActivate: [authGuard, moduleGuard],
     data: { moduleKey: 'deces' }
-  },  { path: 'deces/demandes', component: DemandesDecesComponent, canActivate: [authGuard, moduleGuard], data: { moduleKey: 'deces' } },
-  { path: 'deces/pieces-justificatives', component: PiecesJustificativesComponent, canActivate: [authGuard, moduleGuard], data: { moduleKey: 'deces' } },
-  {
-    path: 'deces/ayants-droit',
-    component: AyantsDroitComponent,
-    canActivate: [authGuard, moduleGuard],
-    data: { moduleKey: 'deces' }
-  },
-  {
-    path: 'deces/validation',
-    component: ValidationComponent,
-    canActivate: [authGuard, moduleGuard],
-    data: { moduleKey: 'deces' }
-  },
+  },  
+  { 
+    path: 'deces/demandes', 
+    component: DemandesDecesComponent, 
+    canActivate: [authGuard, moduleGuard], 
+    data: { moduleKey: 'deces' } },
+
+
 ];

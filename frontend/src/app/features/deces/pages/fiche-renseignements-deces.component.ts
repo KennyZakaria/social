@@ -57,6 +57,21 @@ export class FicheRenseignementsDecesComponent implements OnInit {
   exportPdf(): void {
     this.deces.exportFichePdf(this.dossierId).subscribe({ next: blob => { const url = URL.createObjectURL(blob); const link = document.createElement('a'); link.href = url; link.download = `fiche-deces-${this.fiche?.numeroDossier || this.dossierId}.pdf`; link.click(); URL.revokeObjectURL(url); }, error: () => this.error = 'Export PDF impossible.' });
   }
+  liquidationFor(fiche: FicheRenseignementsDeces, designation: string): FicheLiquidation | undefined {
+    return fiche.liquidations.find(item => item.designation === designation);
+  }
+
+  pensionFor(fiche: FicheRenseignementsDeces, type: string): FichePension | undefined {
+    return fiche.pensions.find(item => item.typeBeneficiaire === type);
+  }
+
+  assuranceFor(fiche: FicheRenseignementsDeces, type: string): FicheAssurance | undefined {
+    return fiche.assurances.find(item => item.typeBeneficiaire === type);
+  }
+
+  assistanceFor(fiche: FicheRenseignementsDeces, designation: string): FicheAssistance | undefined {
+    return fiche.assistancesOctroyees.find(item => item.designation === designation);
+  }
   totalResources(): number { const s = this.view?.situationFinanciere; return s ? this.num(s.pmr) + this.num(s.pmi) + this.num(s.salaire) + this.num(s.autresRessources) : 0; }
   totalCharges(): number { const s = this.view?.situationFinanciere; return s ? this.num(s.eauElectricite) + this.num(s.fraisMedicaux) + this.num(s.fraisScolarite) + this.num(s.loyer) + this.num(s.autresCharges) : 0; }
   private financialInput(f: FicheRenseignementsDeces) { const s = f.situationFinanciere; return { pmr: this.num(s.pmr), pmi: this.num(s.pmi), salaire: this.num(s.salaire), autresRessources: this.num(s.autresRessources), eauElectricite: this.num(s.eauElectricite), fraisMedicaux: this.num(s.fraisMedicaux), fraisScolarite: this.num(s.fraisScolarite), loyer: this.num(s.loyer), autresCharges: this.num(s.autresCharges) }; }

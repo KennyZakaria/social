@@ -27,7 +27,11 @@ public class DossierDecesResponse {
     private LocalDateTime dateCreation;
     private LocalDateTime dateMaj;
     private LocalDateTime dateValidation;
+    private LocalDateTime dateSoumissionValidation;
+    private LocalDateTime dateRetourComplement;
     private LocalDateTime dateCloture;
+    private String soumisPar;
+    private String retournePar;
     private String validePar;
     private String cloturePar;
     private String motifDerniereDecision;
