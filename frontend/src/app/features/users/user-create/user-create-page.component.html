@@ -1,0 +1,96 @@
+<div class="page">
+
+  <!-- Alerts -->
+  <div class="alert alert--success" *ngIf="successMsg" (click)="successMsg=''">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+    </svg>
+    {{ successMsg }}
+  </div>
+  <div class="alert alert--error" *ngIf="errorMsg" (click)="errorMsg=''">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>
+    </svg>
+    {{ errorMsg }}
+  </div>
+
+  <!-- Page header -->
+  <div class="page-header">
+    <div class="page-icon page-icon--emerald">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/>
+        <path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>
+      </svg>
+    </div>
+    <div>
+      <p class="page-kicker">Administration</p>
+      <h2 class="page-title">{{ editingUser ? 'Modifier l\'utilisateur' : 'Créer un utilisateur' }}</h2>
+    </div>
+  </div>
+
+  <!-- Create / Edit form -->
+  <div class="card">
+    <div class="card__head">
+      <p class="card__title">{{ editingUser ? 'Modifier l\'utilisateur' : 'Créer un utilisateur' }}</p>
+      <button class="btn-ghost" (click)="cancelEdit()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
+        </svg>
+        Retour à la liste
+      </button>
+    </div>
+    <form [formGroup]="form" (ngSubmit)="editingUser ? updateUser() : createUser()" class="form-body">
+      <div class="form-grid">
+        <div class="field">
+          <label>Nom complet</label>
+          <input formControlName="fullName" placeholder="Jean Dupont" />
+        </div>
+        <div class="field">
+          <label>Nom d'utilisateur</label>
+          <input formControlName="username" placeholder="jean.dupont" />
+        </div>
+        <div class="field">
+          <label>Matricule</label>
+          <input formControlName="matricule" placeholder="AGT-001" />
+        </div>
+        <div class="field">
+          <label>Mot de passe <span class="hint" *ngIf="editingUser">(laisser vide = inchangé)</span></label>
+          <input formControlName="password" type="password" placeholder="Min. 6 caractères" />
+        </div>
+        <div class="field">
+          <label>Rôle</label>
+          <select formControlName="role">
+            <option value="AGENT">Agent</option>
+            <option value="MANAGER">Manager</option>
+            <option value="ADMIN">Admin</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="modules-section">
+        <p class="section-label">Modules autorisés</p>
+        <div class="module-grid">
+          <label class="module-check" *ngFor="let m of modules" [class.module-check--on]="isSelected(m.value)">
+            <input type="checkbox" [checked]="isSelected(m.value)" (change)="toggleModule(m.value, $event)" style="display:none" />
+            <span class="check-box">
+              <svg *ngIf="isSelected(m.value)" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+            </span>
+            {{ m.label }}
+          </label>
+        </div>
+      </div>
+
+      <div class="form-footer">
+        <button class="btn-ghost" type="button" (click)="cancelEdit()">Annuler</button>
+        <button class="btn-primary" [disabled]="form.invalid && !editingUser" type="submit">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v14a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/>
+          </svg>
+          {{ editingUser ? 'Enregistrer' : 'Créer l\'utilisateur' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
