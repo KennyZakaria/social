@@ -8,9 +8,9 @@ public interface UserProfileRepository extends JpaRepository<UserProfile, Long> 
 
     Optional<UserProfile> findByUsername(String username);
 
-    Optional<UserProfile> findByEmail(String email);
+    Optional<UserProfile> findByMatricule(String matricule);
 
     boolean existsByUsername(String username);
 
-    boolean existsByEmail(String email);
+    boolean existsByMatricule(String matricule);
 }

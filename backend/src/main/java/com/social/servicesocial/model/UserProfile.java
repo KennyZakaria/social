@@ -28,8 +28,8 @@ public class UserProfile {
     @Column(nullable = false, unique = true)
     private String username;
 
-    @Column(nullable = false, unique = true)
-    private String email;
+    @Column(name = "matricule", nullable = false, unique = true)
+    private String matricule;
 
     @Column(nullable = false)
     private String passwordHash;
@@ -77,12 +77,12 @@ public class UserProfile {
         this.username = username;
     }
 
-    public String getEmail() {
-        return email;
+    public String getMatricule() {
+        return matricule;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setMatricule(String matricule) {
+        this.matricule = matricule;
     }
 
     public String getPasswordHash() {

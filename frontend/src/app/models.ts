@@ -57,8 +57,8 @@ export interface SignupRequest {
 
 export interface UserProfileRequest {
   username: string;
-  email: string;
-  password: string;
+  matricule: string;
+  password?: string;
   fullName: string;
   role: AppRole;
   allowedModules: string[];
@@ -68,7 +68,7 @@ export interface UserProfileRequest {
 export interface UserProfileResponse {
   id: number;
   username: string;
-  email: string;
+  matricule: string;
   fullName: string;
   role: AppRole;
   allowedModules: string[];
@@ -112,6 +112,87 @@ export interface AdherentPageResponse {
   first: boolean;
   last: boolean;
   empty: boolean;
+}
+
+export type AssuranceRecordType = 'INVALIDITE' | 'DECES';
+
+export interface AssuranceRecordRequest {
+  type: AssuranceRecordType;
+  adherentId: number;
+  designation?: string | null;
+  maladie?: string | null;
+  codeMaladie?: string | null;
+  dateCommission?: string | null;
+  tauxInvalidite?: number | null;
+  imputable?: boolean | null;
+  dateDeces?: string | null;
+  causeDeces?: string | null;
+  referenceEnvoi?: string | null;
+  peculeMontant?: number | null;
+  decesMontant?: number | null;
+}
+
+export interface AssuranceRecordResponse {
+  id: number;
+  numero: string;
+  type: AssuranceRecordType;
+  adherentId: number;
+  nomComplet: string;
+  grade?: string | null;
+  matricule?: string | null;
+  cin?: string | null;
+  matriculeBR?: string | null;
+  uniteActuelle?: string | null;
+  designation?: string | null;
+  maladie?: string | null;
+  codeMaladie?: string | null;
+  dateCommission?: string | null;
+  tauxInvalidite?: number | null;
+  imputable?: boolean | null;
+  dateDeces?: string | null;
+  causeDeces?: string | null;
+  referenceEnvoi?: string | null;
+  peculeMontant?: number | null;
+  decesMontant?: number | null;
+  createdAt: string;
+}
+
+export type MutuelleCourrierType = 'INTERNE' | 'EXTERNE';
+export type MutuelleDossierType = 'ALD' | 'NORMAL' | 'DENTAIRE';
+
+export interface MutuelleDossierRequest {
+  adherentId: number;
+  typeCourrier: MutuelleCourrierType;
+  numeroOrdre: string;
+  numeroEnvoi?: string | null;
+  dateEnvoi?: string | null;
+  dateReception?: string | null;
+  designation: string;
+  typeDossier: MutuelleDossierType;
+  centreSoin?: string | null;
+  observation?: string | null;
+}
+
+export interface MutuelleDossierResponse {
+  id: number;
+  numeroDossier: string;
+  adherentId: number;
+  nomComplet: string;
+  grade?: string | null;
+  matricule?: string | null;
+  cin?: string | null;
+  matriculeBR?: string | null;
+  uniteActuelle?: string | null;
+  typeCourrier: MutuelleCourrierType;
+  numeroOrdre: string;
+  numeroEnvoi?: string | null;
+  dateEnvoi?: string | null;
+  dateReception?: string | null;
+  designation: string;
+  typeDossier: MutuelleDossierType;
+  centreSoin?: string | null;
+  observation?: string | null;
+  createdAt: string;
 }
 
 // ── Section Décès ──────────────────────────────────────────────────────────

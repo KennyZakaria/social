@@ -15,8 +15,8 @@ import { SidebarComponent, SidebarModule } from './features/sidebar/sidebar.comp
 export class AppComponent {
   readonly modules: SidebarModule[] = [
     { key: 'mutuelle', name: 'Section Mutuelle', short: 'MU', module: MODULE_MAP['mutuelle'], subItems: [
-      { label: 'Dossiers', route: ['/module', 'mutuelle', 'dossiers'] },
-      { label: 'Statistiques', route: ['/module', 'mutuelle', 'statistiques'] }
+      { label: 'Adhérents', route: ['/module', 'mutuelle', 'adherents'] },
+      { label: 'Historique Courrier', route: ['/module', 'mutuelle', 'historique'] }
     ]},
     { key: 'assistance-sociale', name: 'Assistance Sociale', short: 'AS', module: MODULE_MAP['assistance-sociale'], subItems: [
       { label: 'Dossiers', route: ['/module', 'assistance-sociale', 'dossiers'] },
@@ -30,8 +30,8 @@ export class AppComponent {
       { label: 'Dossiers', route: ['/module', 'retraites', 'dossiers'] }
     ]},
     { key: 'assurance-sociale', name: 'Assurance Sociale', short: 'AN', module: MODULE_MAP['assurance-sociale'], subItems: [
-      { label: 'Dossiers', route: ['/module', 'assurance-sociale', 'dossiers'] },
-      { label: 'Prestations', route: ['/module', 'assurance-sociale', 'prestations'] }
+      { label: 'Adhérents', route: ['/module', 'assurance-sociale', 'adherents'] },
+      { label: 'Historique', route: ['/module', 'assurance-sociale', 'historique'] }
     ]}
   ];
 

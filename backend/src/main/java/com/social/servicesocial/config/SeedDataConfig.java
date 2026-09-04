@@ -13,6 +13,7 @@ import com.social.servicesocial.repository.MailRecordRepository;
 import com.social.servicesocial.repository.UserProfileRepository;
 import java.time.LocalDate;
 import java.util.EnumSet;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,6 +35,7 @@ public class SeedDataConfig {
     }
 
     @Bean
+    @ConditionalOnProperty(name = "app.seed.enabled", havingValue = "true", matchIfMissing = true)
     CommandLineRunner initData(
             CaseRecordRepository caseRepo,
             MailRecordRepository mailRepo,
@@ -45,7 +47,7 @@ public class SeedDataConfig {
                 // ── ADMIN: full access ────────────────────────────────────────────
                 UserProfile admin = new UserProfile();
                 admin.setUsername("admin");
-                admin.setEmail("admin@social.local");
+                admin.setMatricule("ADM-001");
                 admin.setFullName("Administrateur Service Social");
                 admin.setPasswordHash(passwordEncoder.encode("admin123"));
                 admin.setRole(AppRole.ADMIN);
@@ -56,7 +58,7 @@ public class SeedDataConfig {
                 // ── MANAGER: all modules including bureau d'ordre ──────────────
                 UserProfile manager = new UserProfile();
                 manager.setUsername("manager");
-                manager.setEmail("manager@social.local");
+                manager.setMatricule("MNG-001");
                 manager.setFullName("Responsable Service Social");
                 manager.setPasswordHash(passwordEncoder.encode("manager123"));
                 manager.setRole(AppRole.MANAGER);
@@ -67,7 +69,7 @@ public class SeedDataConfig {
                 // ── AGENT — Bureau d'Ordre ────────────────────────────────────────
                 UserProfile agentBureau = new UserProfile();
                 agentBureau.setUsername("agent.bureau");
-                agentBureau.setEmail("agent.bureau@social.local");
+                agentBureau.setMatricule("AGT-BO-001");
                 agentBureau.setFullName("Agent Bureau d'Ordre");
                 agentBureau.setPasswordHash(passwordEncoder.encode("agent123"));
                 agentBureau.setRole(AppRole.AGENT);
@@ -75,21 +77,32 @@ public class SeedDataConfig {
                 agentBureau.setActive(true);
                 userRepo.save(agentBureau);
 
-                // ── AGENT — Mutuelle + Assurance Sociale ──────────────────────────
+                // ── AGENT — Mutuelle ───────────────────────────────────────────────
                 UserProfile agentMutuelle = new UserProfile();
                 agentMutuelle.setUsername("agent.mutuelle");
-                agentMutuelle.setEmail("agent.mutuelle@social.local");
+                agentMutuelle.setMatricule("AGT-MUT-001");
                 agentMutuelle.setFullName("Agent Section Mutuelle");
                 agentMutuelle.setPasswordHash(passwordEncoder.encode("agent123"));
                 agentMutuelle.setRole(AppRole.AGENT);
-                agentMutuelle.setAllowedModules(EnumSet.of(SocialModule.MUTUELLE, SocialModule.ASSURANCE_SOCIALE));
+                agentMutuelle.setAllowedModules(EnumSet.of(SocialModule.MUTUELLE));
                 agentMutuelle.setActive(true);
                 userRepo.save(agentMutuelle);
+
+                // ── AGENT — Assurance Sociale ─────────────────────────────────────
+                UserProfile agentAssurance = new UserProfile();
+                agentAssurance.setUsername("agent.assurance");
+                agentAssurance.setMatricule("AGT-ASU-001");
+                agentAssurance.setFullName("Agent Assurance Sociale");
+                agentAssurance.setPasswordHash(passwordEncoder.encode("agent123"));
+                agentAssurance.setRole(AppRole.AGENT);
+                agentAssurance.setAllowedModules(EnumSet.of(SocialModule.ASSURANCE_SOCIALE));
+                agentAssurance.setActive(true);
+                userRepo.save(agentAssurance);
 
                 // ── AGENT — Assistance Sociale ────────────────────────────────────
                 UserProfile agentAssistance = new UserProfile();
                 agentAssistance.setUsername("agent.assistance");
-                agentAssistance.setEmail("agent.assistance@social.local");
+                agentAssistance.setMatricule("AGT-ASS-001");
                 agentAssistance.setFullName("Agent Assistance Sociale");
                 agentAssistance.setPasswordHash(passwordEncoder.encode("agent123"));
                 agentAssistance.setRole(AppRole.AGENT);
@@ -100,7 +113,7 @@ public class SeedDataConfig {
                 // ── AGENT — Retraites ─────────────────────────────────────────────
                 UserProfile agentRetraites = new UserProfile();
                 agentRetraites.setUsername("agent.retraites");
-                agentRetraites.setEmail("agent.retraites@social.local");
+                agentRetraites.setMatricule("AGT-RET-001");
                 agentRetraites.setFullName("Agent Section Retraites");
                 agentRetraites.setPasswordHash(passwordEncoder.encode("agent123"));
                 agentRetraites.setRole(AppRole.AGENT);
@@ -111,7 +124,7 @@ public class SeedDataConfig {
                 // ── AGENT — Décès ─────────────────────────────────────────────────
                 UserProfile agentDeces = new UserProfile();
                 agentDeces.setUsername("agent.deces");
-                agentDeces.setEmail("agent.deces@social.local");
+                agentDeces.setMatricule("AGT-DEC-001");
                 agentDeces.setFullName("Agent Section Décès");
                 agentDeces.setPasswordHash(passwordEncoder.encode("agent123"));
                 agentDeces.setRole(AppRole.AGENT);
@@ -122,7 +135,7 @@ public class SeedDataConfig {
                 // ── AGENT — Culture & Loisirs ─────────────────────────────────────
                 UserProfile agentCulture = new UserProfile();
                 agentCulture.setUsername("agent.culture");
-                agentCulture.setEmail("agent.culture@social.local");
+                agentCulture.setMatricule("AGT-CUL-001");
                 agentCulture.setFullName("Agent Culture et Loisirs");
                 agentCulture.setPasswordHash(passwordEncoder.encode("agent123"));
                 agentCulture.setRole(AppRole.AGENT);

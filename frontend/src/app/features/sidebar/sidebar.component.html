@@ -16,7 +16,7 @@
   <!-- Nav (authenticated) -->
   <nav class="nav" *ngIf="authState.isAuthenticated; else guestNav">
 
-    <p class="nav__label">Principal</p>
+   
 
     <a *ngIf="authState.hasRole('MANAGER')" class="nav__item" routerLink="/dashboard" routerLinkActive="nav__item--active">
       <svg class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -57,10 +57,17 @@
 
     <!-- Modules section: visible to MANAGER and AGENT only -->
     <ng-container *ngIf="!authState.hasRole('ADMIN')">
-      <p class="nav__label">Modules</p>
+     
       <ng-container *ngFor="let module of modules">
         <div class="nav__group" *ngIf="canSeeModule(module.module)">
-          <a class="nav__item nav__item--parent" (click)="toggle(module.key)" [routerLink]="['/module', module.key]" routerLinkActive="nav__item--active">
+          <a *ngIf="module.key !== 'assurance-sociale' && module.key !== 'mutuelle'" class="nav__item nav__item--parent" (click)="toggle(module.key)" [routerLink]="['/module', module.key]" routerLinkActive="nav__item--active">
+            <span class="nav__chip">{{ module.short }}</span>
+            <span>{{ module.name }}</span>
+            <svg class="nav__arrow" [class.nav__arrow--open]="isExpanded(module.key)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </a>
+          <a *ngIf="module.key === 'assurance-sociale' || module.key === 'mutuelle'" class="nav__item nav__item--parent" (click)="toggle(module.key)">
             <span class="nav__chip">{{ module.short }}</span>
             <span>{{ module.name }}</span>
             <svg class="nav__arrow" [class.nav__arrow--open]="isExpanded(module.key)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -88,8 +95,8 @@
       </a>
     </ng-container>
 
-    <!-- Administration: ADMIN and MANAGER -->
-    <ng-container *ngIf="authState.hasRole('ADMIN') || authState.hasRole('MANAGER')">
+    <!-- Administration: ADMIN-->
+    <ng-container *ngIf="authState.hasRole('ADMIN') ">
       <p class="nav__label">Administration</p>
       <a class="nav__item" routerLink="/users" routerLinkActive="nav__item--active">
         <svg class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

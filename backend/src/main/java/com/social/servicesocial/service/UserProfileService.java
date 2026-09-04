@@ -35,13 +35,13 @@ public class UserProfileService {
         if (userProfileRepository.existsByUsername(request.getUsername())) {
             throw new IllegalArgumentException("Username already exists");
         }
-        if (userProfileRepository.existsByEmail(request.getEmail())) {
-            throw new IllegalArgumentException("Email already exists");
+        if (userProfileRepository.existsByMatricule(request.getMatricule())) {
+            throw new IllegalArgumentException("Matricule already exists");
         }
 
         UserProfile user = new UserProfile();
         user.setUsername(request.getUsername());
-        user.setEmail(request.getEmail());
+        user.setMatricule(request.getMatricule());
         user.setFullName(request.getFullName());
         user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
         user.setRole(parseRole(request.getRole()));
@@ -53,7 +53,7 @@ public class UserProfileService {
     public UserProfileResponse update(Long id, UserProfileRequest request) {
         UserProfile user = findRequired(id);
 
-        user.setEmail(request.getEmail());
+        user.setMatricule(request.getMatricule());
         user.setFullName(request.getFullName());
         user.setRole(parseRole(request.getRole()));
         user.setAllowedModules(parseModules(request.getAllowedModules()));
@@ -94,7 +94,7 @@ public class UserProfileService {
         UserProfileResponse response = new UserProfileResponse();
         response.setId(user.getId());
         response.setUsername(user.getUsername());
-        response.setEmail(user.getEmail());
+        response.setMatricule(user.getMatricule());
         response.setFullName(user.getFullName());
         response.setRole(user.getRole().name());
         response.setAllowedModules(user.getAllowedModules().stream().map(Enum::name).collect(Collectors.toSet()));
