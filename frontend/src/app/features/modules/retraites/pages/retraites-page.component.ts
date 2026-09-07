@@ -8,8 +8,8 @@ import { AdherentResponse } from '../../../../models';
 
 type Tab = 'fiche' | 'famille' | 'dossier' | 'historique';
 interface Person { id: number; type: 'Conjoint' | 'Enfant' | 'Membre de famille'; nom: string; prenom: string; naissance: string; cin: string; lien: string; charge: boolean; lieu?: string; fonction?: string; mutuelle?: string; mariage?: string; divorce?: string; niveauInstruction?: string; emploi?: string; }
-interface SocialEntry { id: number; identification: string; diagnostic: string; duree: string; }
-interface AssistanceEntry { id: number; nature: string; organisme: string; date: string; observation: string; }
+interface SocialEntry { id: number; identification: string; diagnostic: string; duree: string; confirmed?: boolean; }
+interface AssistanceEntry { id: number; nature: string; organisme: string; date: string; observation: string; confirmed?: boolean; }
 interface BudgetEntry { designation: string; montant: string; }
 
 @Component({
@@ -181,10 +181,14 @@ export class RetraitesPageComponent implements OnInit {
   addRequest(){this.requests.unshift({title:'Nouvelle demande administrative',date:new Date().toLocaleDateString('fr-FR'),pieces:0,status:'En cours'});this.addHistory('Nouvelle demande créée');}
   validate(r:{title:string;status:string}){r.status='Validée';this.addHistory('Demande validée : '+r.title);}
   addHistory(title:string){this.history.unshift({title,detail:`Dossier ${this.profile.dossier}`,date:new Date().toLocaleDateString('fr-FR')});}
-  addSocialData(){ this.socialData.push({ id: Date.now(), identification: '', diagnostic: '', duree: '' }); }
+  addSocialData(){ if (this.socialData.some(item => !item.confirmed)) { this.note('Validez ou supprimez la donnée médico-sociale en cours avant d’en ajouter une autre.'); return; } this.socialData.push({ id: Date.now(), identification: '', diagnostic: '', duree: '', confirmed: false }); }
   removeSocialData(id:number){ this.socialData=this.socialData.filter(item=>item.id!==id); }
-  addAssistance(){ this.assistances.push({ id: Date.now(), nature: '', organisme: '', date: '', observation: '' }); }
+  validateSocialData(item: SocialEntry){ if (!item.identification.trim() || !item.diagnostic.trim()) { this.note('Complétez l’identification et le diagnostic avant de valider.'); return; } item.confirmed = true; }
+  editSocialData(item: SocialEntry){ item.confirmed = false; }
+  addAssistance(){ if (this.assistances.some(item => !item.confirmed)) { this.note('Validez ou supprimez l’assistance en cours avant d’en ajouter une autre.'); return; } this.assistances.push({ id: Date.now(), nature: '', organisme: '', date: '', observation: '', confirmed: false }); }
   removeAssistance(id:number){ this.assistances=this.assistances.filter(item=>item.id!==id); }
+  validateAssistance(item: AssistanceEntry){ if (!item.nature.trim() || !item.organisme.trim() || !item.date) { this.note('Complétez la nature, l’organisme et la date avant de valider.'); return; } item.confirmed = true; }
+  editAssistance(item: AssistanceEntry){ item.confirmed = false; }
   total(rows: BudgetEntry[]){ return rows.reduce((sum,row)=>sum+(Number(String(row.montant).replace(',','.'))||0),0); }
   exportForm(){
     const printable = document.getElementById('social-survey-form')?.cloneNode(true) as HTMLElement | undefined;
