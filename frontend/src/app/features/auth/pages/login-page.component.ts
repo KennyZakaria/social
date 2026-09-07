@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -259,6 +259,9 @@ import { AuthApiService } from '../services/auth-api.service';
   `]
 })
 export class LoginPageComponent {
+  @Input() embedded = false;
+  @Input() returnUrl: string | null = null;
+
   error = '';
   loading = false;
 
@@ -275,17 +278,16 @@ export class LoginPageComponent {
   ) {}
 
   private resolveHome(role: string, modules: string[]): string {
-    return '/dashboard';
     if (role === 'ADMIN')    return '/users';
     if (role === 'MANAGER')  return '/dashboard';
     // AGENT — go to their module
     if (modules.includes('DECES'))            return '/deces/dashboard';
     if (modules.includes('BUREAU_ORDRE'))     return '/bureau-order';
-    if (modules.includes('MUTUELLE'))         return '/module/mutuelle';
+    if (modules.includes('MUTUELLE'))         return '/module/mutuelle/adherents';
     if (modules.includes('ASSISTANCE_SOCIALE')) return '/module/assistance-sociale';
-    if (modules.includes('RETRAITES'))        return '/module/retraites';
+    if (modules.includes('RETRAITES'))        return '/retraites/dashboard';
     if (modules.includes('CULTURE_LOISIRS'))  return '/module/culture-loisirs';
-    if (modules.includes('ASSURANCE_SOCIALE')) return '/module/assurance-sociale';
+    if (modules.includes('ASSURANCE_SOCIALE')) return '/module/assurance-sociale/adherents';
     return '/dashboard';
   }
 
@@ -297,7 +299,7 @@ export class LoginPageComponent {
       next: (res) => {
         this.authState.setAuth(res);
         this.loading = false;
-        this.router.navigate([this.resolveHome(res.role, res.allowedModules)]);
+        this.router.navigate([this.returnUrl ?? this.resolveHome(res.role, res.allowedModules)]);
       },
       error: () => {
         this.loading = false;
