@@ -30,6 +30,7 @@ public class RetraiteDossierService {
     private final RetraiteAssistanceRepository assistanceRepository;
     private final RetraiteRessourceMensuelleRepository ressourceRepository;
     private final RetraiteChargeMensuelleRepository chargeRepository;
+    private final RetraiteHistoriqueRepository historiqueRepository;
 
     @Transactional(readOnly = true)
     public List<RetraiteDossierResponse> list() {
@@ -50,7 +51,7 @@ public class RetraiteDossierService {
         dossier = dossierRepository.save(dossier);
         DossierRetraite retraite = DossierRetraite.builder().dossier(dossier).build();
         apply(retraite, request);
-        retraite = retraiteRepository.save(retraite); replaceDetails(retraite, request); return toResponse(retraite);
+        retraite = retraiteRepository.save(retraite); replaceDetails(retraite, request); record(retraite, "Dossier créé", "Création du dossier " + reference); return toResponse(retraite);
     }
 
     @Transactional
@@ -66,7 +67,7 @@ public class RetraiteDossierService {
         dossier.setDateEvenement(request.dateRadiation());
         dossier.setDescription(request.motif());
         dossier.setStatut(retraite.getStatut());
-        retraite = retraiteRepository.save(retraite); replaceDetails(retraite, request); return toResponse(retraite);
+        retraite = retraiteRepository.save(retraite); replaceDetails(retraite, request); record(retraite, "Dossier mis à jour", "Informations administratives et sociales mises à jour"); return toResponse(retraite);
     }
 
     @Transactional
@@ -74,7 +75,9 @@ public class RetraiteDossierService {
         DossierRetraite retraite = required(id);
         retraite.setStatut(DossierStatut.CLOTURE);
         retraite.getDossier().setStatut(DossierStatut.CLOTURE);
-        return toResponse(retraiteRepository.save(retraite));
+        retraite = retraiteRepository.save(retraite);
+        record(retraite, "Dossier validé et clôturé", "Le dossier n’est plus modifiable");
+        return toResponse(retraite);
     }
 
     private DossierRetraite required(Long id) {
@@ -105,11 +108,13 @@ public class RetraiteDossierService {
                 medicalRepository.findByDossierRetraiteId(d.getId()).stream().map(x -> new RetraiteMedicalDto(x.getIdentification(), x.getDiagnostic(), x.getDuree())).toList(),
                 assistanceRepository.findByDossierRetraiteId(d.getId()).stream().map(x -> new RetraiteAssistanceDto(x.getNature(), x.getOrganisme(), x.getDateAssistance(), x.getObservation())).toList(),
                 ressourceRepository.findByDossierRetraiteId(d.getId()).stream().map(x -> new RetraiteBudgetDto(x.getDesignation(), x.getMontant())).toList(),
-                chargeRepository.findByDossierRetraiteId(d.getId()).stream().map(x -> new RetraiteBudgetDto(x.getDesignation(), x.getMontant())).toList());
+                chargeRepository.findByDossierRetraiteId(d.getId()).stream().map(x -> new RetraiteBudgetDto(x.getDesignation(), x.getMontant())).toList(),
+                historiqueRepository.findByDossierRetraiteIdOrderByDateActionDesc(d.getId()).stream().map(x -> new RetraiteHistoriqueDto(x.getId(), x.getAction(), x.getDetail(), x.getDateAction())).toList());
     }
 
     private String fullName(RetraiteDossierRequest r) { return (r.prenom() + " " + r.nom()).trim(); }
     private String value(String value) { return value == null || value.isBlank() ? "N/A" : value; }
+    private void record(DossierRetraite dossier, String action, String detail) { historiqueRepository.save(RetraiteHistorique.builder().dossierRetraite(dossier).action(action).detail(detail).build()); }
     private void replaceDetails(DossierRetraite d, RetraiteDossierRequest r) {
         affiliationRepository.deleteAll(affiliationRepository.findByDossierRetraiteId(d.getId()));
         familleRepository.deleteAll(familleRepository.findByDossierRetraiteId(d.getId()));

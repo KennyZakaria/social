@@ -14,5 +14,5 @@ public record RetraiteDossierResponse(
         LocalDateTime dateMaj, List<RetraiteAffiliationDto> affiliations,
         List<RetraiteMembreFamilleDto> famille, List<RetraiteMedicalDto> donneesMedicoSociales,
         List<RetraiteAssistanceDto> assistances, List<RetraiteBudgetDto> ressources,
-        List<RetraiteBudgetDto> charges
+        List<RetraiteBudgetDto> charges, List<RetraiteHistoriqueDto> historique
 ) {}

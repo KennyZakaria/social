@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import com.social.servicesocial.dto.RetraiteHistoriqueDto;
 
 @RestController
 @RequestMapping("/api/retraites")
@@ -20,6 +21,7 @@ public class RetraiteDossierController {
 
     @GetMapping public List<RetraiteDossierResponse> list() { return service.list(); }
     @GetMapping("/{id}") public RetraiteDossierResponse get(@PathVariable Long id) { return service.get(id); }
+    @GetMapping("/{id}/historique") public List<RetraiteHistoriqueDto> history(@PathVariable Long id) { return service.get(id).historique(); }
     @PostMapping public ResponseEntity<RetraiteDossierResponse> create(@Valid @RequestBody RetraiteDossierRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.create(request));
     }
