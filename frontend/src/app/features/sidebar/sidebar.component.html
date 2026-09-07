@@ -60,7 +60,7 @@
      
       <ng-container *ngFor="let module of modules">
         <div class="nav__group" *ngIf="canSeeModule(module.module)">
-          <a *ngIf="module.key !== 'assurance-sociale' && module.key !== 'mutuelle'" class="nav__item nav__item--parent" (click)="toggle(module.key)" [routerLink]="['/module', module.key]" routerLinkActive="nav__item--active">
+          <a *ngIf="module.key !== 'assurance-sociale' && module.key !== 'mutuelle'" class="nav__item nav__item--parent" (click)="toggle(module.key)" [routerLink]="module.key === 'retraites' ? '/retraites/dashboard' : ['/module', module.key]" routerLinkActive="nav__item--active">
             <span class="nav__chip">{{ module.short }}</span>
             <span>{{ module.name }}</span>
             <svg class="nav__arrow" [class.nav__arrow--open]="isExpanded(module.key)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

@@ -27,7 +27,10 @@ export class AppComponent {
       { label: 'Événements', route: ['/module', 'culture-loisirs', 'evenements'] }
     ]},
     { key: 'retraites', name: 'Section Retraites', short: 'RE', module: MODULE_MAP['retraites'], subItems: [
-      { label: 'Dossiers', route: ['/module', 'retraites', 'dossiers'] }
+      { label: 'Tableau de bord', route: '/retraites/dashboard' },
+      { label: 'Dossiers', route: '/retraites/dossiers' },
+      { label: 'Nouveau dossier', route: '/retraites/nouveau' },
+      { label: 'Validation', route: '/retraites/validation' }
     ]},
     { key: 'assurance-sociale', name: 'Assurance Sociale', short: 'AN', module: MODULE_MAP['assurance-sociale'], subItems: [
       { label: 'Adhérents', route: ['/module', 'assurance-sociale', 'adherents'] },
