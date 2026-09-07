@@ -1,0 +1,101 @@
+<div class="page">
+
+  <!-- Alerts -->
+  <div class="alert alert--success" *ngIf="successMsg" (click)="successMsg=''">{{ successMsg }}</div>
+  <div class="alert alert--error"   *ngIf="errorMsg"   (click)="errorMsg=''">{{ errorMsg }}</div>
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="page-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/>
+      </svg>
+    </div>
+    <div>
+      <p class="page-kicker">Section Décès</p>
+      <h2 class="page-title">Dossiers de décès</h2>
+    </div>
+
+  </div>
+
+  <!-- Search bar -->
+  <div class="card">
+    <div class="search-wrap search-wrap--full">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <input
+        [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()"
+        placeholder="Rechercher par numéro, nom ou matricule…"
+        class="search-input"
+      />
+      <button type="button" class="search-clear" *ngIf="searchTerm" (click)="searchTerm=''" title="Effacer">✕</button>
+    </div>
+  </div>
+
+  <!-- Dossiers -->
+  <div class="card">
+    <div class="card__head">
+      <p class="card__title">Résultats ({{ filtered.length }})</p>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>N° Dossier</th>
+            <th>Adhérent</th>
+            <th>Matricule</th>
+            <th>Date décès</th>
+            <th>Lieu</th>
+            <th>Nature</th>
+            <th>Statut</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let d of pagedDossiers">
+            <td class="td-mono">{{ d.numero }}</td>
+            <td>
+              <div class="name-cell">
+                <div class="avatar">{{ d.nomComplet.charAt(0) }}</div>
+                <span>{{ d.nomComplet }}</span>
+              </div>
+            </td>
+            <td class="td-meta">{{ d.matricule || '—' }}</td>
+            <td class="td-meta">{{ d.dateDeces }}</td>
+            <td class="td-meta">{{ d.lieuDeces }}</td>
+            <td class="td-meta">{{ d.natureDeces || '—' }}</td>
+            <td>
+              <span class="statut-badge">{{ d.statut }}</span>
+            </td>
+            <td>
+              <div class="actions-cell">
+                <button class="action-btn action-btn--view" title="Voir le dossier" (click)="openDetail(d)">Voir</button>
+                <a class="action-btn action-btn--view" title="Ayants droit" (click)="openAyants(d)">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/>
+                    <path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>
+                  </svg>
+                </a>
+                <button class="action-btn action-btn--view" type="button" *ngIf="d.statut === 'CLOTURE'" title="Archiver le dossier" (click)="archiver(d)">Archiver</button>
+                <span class="td-meta" *ngIf="d.statut !== 'CLOTURE'">Suppression indisponible</span>
+              </div>
+            </td>
+          </tr>
+          <tr *ngIf="filtered.length === 0">
+            <td colspan="8" class="empty-row">
+              {{ loading ? 'Chargement…' : 'Aucun dossier trouvé pour cette recherche.' }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="pagination" *ngIf="filtered.length > 0">
+      <span class="pagination__summary">Affichage {{ firstDisplayedItem }}–{{ lastDisplayedItem }} sur {{ filtered.length }} dossier(s)</span>
+      <div class="pagination__actions">
+        <button type="button" (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1">Précédent</button>
+        <button type="button" *ngFor="let page of pageNumbers" (click)="goToPage(page)" [class.is-active]="page === currentPage">{{ page }}</button>
+        <button type="button" (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages">Suivant</button>
+      </div>
+    </div>  </div>
+</div>

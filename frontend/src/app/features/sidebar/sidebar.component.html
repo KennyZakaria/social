@@ -1,7 +1,7 @@
 <aside class="sidebar">
 
   <!-- Logo -->
-  <a class="sidebar__logo" routerLink="/dashboard" routerLinkActive="sidebar__logo--active" aria-label="Retour au tableau de bord Service Social">
+  <div class="sidebar__logo">
     <div class="logo-icon">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
@@ -11,12 +11,12 @@
       <span class="logo-title">Service Social</span>
       <span class="logo-sub">Plateforme Intégrale</span>
     </div>
-  </a>
+  </div>
 
   <!-- Nav (authenticated) -->
   <nav class="nav" *ngIf="authState.isAuthenticated; else guestNav">
 
-    <p class="nav__label">Principal</p>
+   
 
     <a *ngIf="authState.hasRole('MANAGER')" class="nav__item" routerLink="/dashboard" routerLinkActive="nav__item--active">
       <svg class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -55,32 +55,19 @@
       </div>
     </ng-container>
 
-    <!-- Section Retraites: same navigation structure as Décès -->
-    <ng-container *ngIf="!authState.hasRole('ADMIN') && canSeeModule('RETRAITES')">
-      <div class="nav__group">
-        <a class="nav__item nav__item--parent" (click)="toggle('retraites')" routerLink="/retraites/dashboard" routerLinkActive="nav__item--active">
-          <svg class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>
-          </svg>
-          <span>Section Retraites</span>
-          <svg class="nav__arrow" [class.nav__arrow--open]="isExpanded('retraites')" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="6 9 12 15 18 9"/>
-          </svg>
-        </a>
-        <div class="nav__children" [class.nav__children--open]="isExpanded('retraites')">
-          <a *ngFor="let sub of retraitesSubItems" class="nav__child" [routerLink]="sub.route" routerLinkActive="nav__child--active">
-            {{ sub.label }}
-          </a>
-        </div>
-      </div>
-    </ng-container>
-
     <!-- Modules section: visible to MANAGER and AGENT only -->
     <ng-container *ngIf="!authState.hasRole('ADMIN')">
-      <p class="nav__label">Modules</p>
+     
       <ng-container *ngFor="let module of modules">
         <div class="nav__group" *ngIf="canSeeModule(module.module)">
-          <a class="nav__item nav__item--parent" (click)="toggle(module.key)" [routerLink]="['/module', module.key]" routerLinkActive="nav__item--active">
+          <a *ngIf="module.key !== 'assurance-sociale' && module.key !== 'mutuelle'" class="nav__item nav__item--parent" (click)="toggle(module.key)" [routerLink]="['/module', module.key]" routerLinkActive="nav__item--active">
+            <span class="nav__chip">{{ module.short }}</span>
+            <span>{{ module.name }}</span>
+            <svg class="nav__arrow" [class.nav__arrow--open]="isExpanded(module.key)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </a>
+          <a *ngIf="module.key === 'assurance-sociale' || module.key === 'mutuelle'" class="nav__item nav__item--parent" (click)="toggle(module.key)">
             <span class="nav__chip">{{ module.short }}</span>
             <span>{{ module.name }}</span>
             <svg class="nav__arrow" [class.nav__arrow--open]="isExpanded(module.key)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -108,8 +95,8 @@
       </a>
     </ng-container>
 
-    <!-- Administration: ADMIN and MANAGER -->
-    <ng-container *ngIf="authState.hasRole('ADMIN') || authState.hasRole('MANAGER')">
+    <!-- Administration: ADMIN-->
+    <ng-container *ngIf="authState.hasRole('ADMIN') ">
       <p class="nav__label">Administration</p>
       <a class="nav__item" routerLink="/users" routerLinkActive="nav__item--active">
         <svg class="nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

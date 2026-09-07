@@ -1,14 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
 import { DashboardSummary } from '../../../models';
 import { MODULE_LABELS } from '../../../module-map';
 import { DashboardService } from '../services/dashboard.service';
-import { RetraitesStoreService } from '../../modules/retraites/services/retraites-store.service';
 
 @Component({
     selector: 'app-dashboard-page',
-    imports: [CommonModule, RouterLink],
+    imports: [CommonModule],
     template: `
     <div class="dashboard" *ngIf="summary as s; else loading">
 
@@ -79,18 +77,6 @@ import { RetraitesStoreService } from '../../modules/retraites/services/retraite
           <div class="empty-state" *ngIf="moduleKeys(s).length === 0">
             <p>Aucun dossier enregistré pour le moment.</p>
           </div>
-        </div>
-      </div>
-
-      <div class="card" *ngIf="retraiteDossiers.length">
-        <div class="card__head">
-          <div><p class="card__kicker">Retraités</p><h3 class="card__title">Suivi des dossiers retraités</h3></div>
-        </div>
-        <div class="module-list">
-          <a class="module-row retraite-row" *ngFor="let dossier of retraiteDossiers" [routerLink]="['/module/retraites/dossier', dossier.id]" [queryParams]="dossier.cloture ? { consultation: 'true' } : {}" [title]="dossier.cloture ? 'Lire le dossier clôturé' : 'Ouvrir et modifier le dossier'">
-            <div class="module-row__left"><span class="module-dot" [style.background]="dossier.traite ? '#10b981' : '#f59e0b'"></span><span class="module-name">{{ dossier.nom }} · {{ dossier.situation }}</span></div>
-            <div class="module-row__right"><span class="module-count">{{ dossier.cloture ? 'Clôturé · Lire seulement' : (dossier.traite ? 'Validé · Modifier possible' : dossier.statut + ' · Modifier') }}</span></div>
-          </a>
         </div>
       </div>
     </div>
@@ -217,9 +203,6 @@ import { RetraitesStoreService } from '../../modules/retraites/services/retraite
       &:hover { background: var(--surface-2); }
     }
 
-    .retraite-row { color: inherit; text-decoration: none; cursor: pointer; }
-    .retraite-row:hover { background: var(--primary-light); }
-
     .module-row__left {
       display: flex;
       align-items: center;
@@ -307,9 +290,7 @@ export class DashboardPageComponent implements OnInit {
 
   private readonly palette = ['#6366f1','#8b5cf6','#06b6d4','#10b981','#f59e0b','#ef4444','#ec4899'];
 
-  retraiteDossiers = this.retraitesStore.all();
-
-  constructor(private readonly dashboardService: DashboardService, private readonly retraitesStore: RetraitesStoreService) {}
+  constructor(private readonly dashboardService: DashboardService) {}
 
   ngOnInit(): void {
     this.dashboardService.getSummary().subscribe({

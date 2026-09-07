@@ -30,15 +30,8 @@ export class SidebarComponent {
   readonly decesSubItems: ModuleSubItem[] = [
     { label: 'Tableau de bord', route: '/deces/dashboard' },
     { label: 'Dossiers', route: '/deces/dossiers' },
-    { label: 'Nouveau dossier', route: '/deces/nouveau' },
-    { label: 'Validation', route: '/deces/validation' }
-  ];
-
-  readonly retraitesSubItems: ModuleSubItem[] = [
-    { label: 'Tableau de bord', route: '/retraites/dashboard' },
-    { label: 'Dossiers', route: '/retraites/dossiers' },
-    { label: 'Nouveau dossier', route: '/retraites/nouveau' },
-    { label: 'Validation', route: '/retraites/validation' }
+    { label: 'Adhérents décès', route: '/deces/adherents' },
+    { label: 'Demandes ayants droit', route: '/deces/demandes' }
   ];
 
   private readonly expandedModules = new Set<string>();

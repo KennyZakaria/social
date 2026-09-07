@@ -1,0 +1,391 @@
+/* ============================================================
+   Service Social — Page de connexion
+   Direction : "Sceau de protection" — vert pin profond + or
+   discret, badge circulaire façon sceau institutionnel. Évoque
+   la confiance et la couverture sociale plutôt qu'un style SaaS
+   générique.
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap');
+
+.login-page {
+  /* --- Tokens ------------------------------------------- */
+  --color-deep: #0F3D3A;
+  --color-deep-2: #144A45;
+  --color-surface: #FFFFFF;
+  --color-cream: #FAF6EC;
+  --color-gold: #B4872C;
+  --color-gold-light: #D9AE5C;
+  --color-ink: #182420;
+  --color-ink-soft: #5C6E66;
+  --color-border: #E6E1D3;
+  --color-error-bg: #FBEEEC;
+  --color-error-text: #9A3B34;
+  --color-error-border: #E3B3AC;
+
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-body: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 20px;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 15% 15%, rgba(217, 174, 92, 0.10), transparent 40%),
+    linear-gradient(160deg, var(--color-deep) 0%, var(--color-deep-2) 55%, #0B2E2B 100%);
+  font-family: var(--font-body);
+  color: var(--color-ink);
+}
+
+/* Anneaux concentriques évoquant un sceau, en fond de page */
+.login-page::before,
+.login-page::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid rgba(217, 174, 92, 0.16);
+  pointer-events: none;
+}
+
+.login-page::before {
+  width: 640px;
+  height: 640px;
+  top: -220px;
+  right: -220px;
+  box-shadow: 0 0 0 60px rgba(217, 174, 92, 0.045) inset;
+}
+
+.login-page::after {
+  width: 420px;
+  height: 420px;
+  bottom: -180px;
+  left: -140px;
+  box-shadow: 0 0 0 40px rgba(250, 246, 236, 0.03) inset;
+}
+
+/* ---------------------------------------------------------- */
+/* Carte                                                       */
+/* ---------------------------------------------------------- */
+
+.login-card {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 408px;
+  background: var(--color-surface);
+  border-radius: 18px;
+  padding: 40px 36px 32px;
+  box-shadow:
+    0 30px 60px -20px rgba(6, 26, 24, 0.45),
+    0 1px 0 rgba(255, 255, 255, 0.4) inset;
+  animation: card-rise 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.login-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 24px;
+  right: 24px;
+  height: 3px;
+  border-radius: 0 0 3px 3px;
+  background: linear-gradient(90deg, transparent, var(--color-gold-light), transparent);
+}
+
+@keyframes card-rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------------------------------------------------------- */
+/* Logo (sceau)                                                */
+/* ---------------------------------------------------------- */
+
+.logo {
+  width: 76px;
+  height: 94px;
+  margin: 0 auto 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 10px;
+  background: #050505;
+  box-shadow: 0 0 0 3px var(--color-surface), 0 0 0 4px rgba(180, 135, 44, 0.55), 0 10px 20px -8px rgba(15, 61, 58, 0.55);
+  animation: seal-in 0.7s cubic-bezier(0.22, 1, 0.36, 1) both 0.1s;
+}
+
+@keyframes seal-in {
+  from { opacity: 0; transform: scale(0.8); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+h1 {
+  margin: 0 0 6px;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 600;
+  text-align: center;
+  color: var(--color-deep);
+  letter-spacing: 0.01em;
+}
+
+.subtitle {
+  margin: 0 0 28px;
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--color-ink-soft);
+}
+
+/* ---------------------------------------------------------- */
+/* Formulaire                                                   */
+/* ---------------------------------------------------------- */
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group {
+  margin-bottom: 18px;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  margin-bottom: 6px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-ink-soft);
+}
+
+.form-group input {
+  padding: 11px 14px;
+  border: 1.5px solid var(--color-border);
+  border-radius: 10px;
+  background: var(--color-cream);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  color: var(--color-ink);
+  transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+}
+
+.form-group input::placeholder {
+  color: #9AA69F;
+}
+
+.form-group input:hover {
+  border-color: #D3CBB4;
+}
+
+.form-group input:focus {
+  outline: none;
+  background: var(--color-surface);
+  border-color: var(--color-gold);
+  box-shadow: 0 0 0 3px rgba(180, 135, 44, 0.16);
+}
+
+/* ---------------------------------------------------------- */
+/* Afficher le mot de passe                                     */
+/* ---------------------------------------------------------- */
+
+.show-password {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 2px 0 22px;
+  font-size: 0.84rem;
+  color: var(--color-ink-soft);
+  cursor: pointer;
+  user-select: none;
+}
+
+.show-password input[type="checkbox"] {
+  width: 15px;
+  height: 15px;
+  accent-color: var(--color-gold);
+  cursor: pointer;
+}
+
+/* ---------------------------------------------------------- */
+/* Erreur                                                       */
+/* ---------------------------------------------------------- */
+
+.error {
+  margin: -4px 0 18px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: var(--color-error-bg);
+  border: 1px solid var(--color-error-border);
+  border-left: 3px solid var(--color-error-text);
+  color: var(--color-error-text);
+  font-size: 0.85rem;
+  animation: error-in 0.25s ease both;
+}
+
+@keyframes error-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------------------------------------------------------- */
+/* Bouton de connexion                                          */
+/* ---------------------------------------------------------- */
+
+button[type="submit"] {
+  padding: 13px 20px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(160deg, var(--color-deep-2), var(--color-deep));
+  color: #F4EFE1;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+  box-shadow: 0 10px 22px -10px rgba(15, 61, 58, 0.6);
+}
+
+button[type="submit"]:hover:not(:disabled) {
+  background: linear-gradient(160deg, #175750, var(--color-deep-2));
+  transform: translateY(-1px);
+  box-shadow: 0 14px 26px -10px rgba(15, 61, 58, 0.7);
+}
+
+button[type="submit"]:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+button[type="submit"]:disabled {
+  cursor: not-allowed;
+  background: #7C8A85;
+  box-shadow: none;
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.72; }
+}
+
+/* Anneau de focus visible au clavier */
+button[type="submit"]:focus-visible,
+.back:focus-visible,
+.form-group input:focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 2px;
+}
+
+/* ---------------------------------------------------------- */
+/* Lien retour                                                  */
+/* ---------------------------------------------------------- */
+
+.back {
+  display: block;
+  margin-top: 22px;
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--color-ink-soft);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.back:hover {
+  color: var(--color-gold);
+  text-decoration: underline;
+}
+
+/* ---------------------------------------------------------- */
+/* Compte de test                                               */
+/* ---------------------------------------------------------- */
+
+.test-account {
+  margin-top: 24px;
+  padding: 12px 16px;
+  border: 1px dashed var(--color-border);
+  border-radius: 10px;
+  background: var(--color-cream);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 0.8rem;
+  color: var(--color-ink-soft);
+}
+
+.test-account strong {
+  margin-bottom: 4px;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-gold);
+}
+
+.test-account span {
+  font-family: 'IBM Plex Mono', 'Courier New', monospace;
+  font-size: 0.8rem;
+  color: var(--color-ink);
+}
+
+/* ---------------------------------------------------------- */
+/* Responsive                                                   */
+/* ---------------------------------------------------------- */
+
+@media (max-width: 420px) {
+  .login-card {
+    padding: 32px 22px 26px;
+    border-radius: 14px;
+  }
+
+  .login-page::before,
+  .login-page::after {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .login-card,
+  .logo,
+  .error,
+  button[type="submit"]:disabled {
+    animation: none;
+  }
+}
+.logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+/* Variante intégrée au panneau de connexion de la page d'accueil. */
+.login-page.login-page--embedded {
+  min-height: 100%;
+  padding: 74px 24px 28px;
+  display: block;
+  overflow: visible;
+  background: transparent;
+}
+
+.login-page.login-page--embedded::before,
+.login-page.login-page--embedded::after { display: none; }
+
+.login-page--embedded .login-card {
+  max-width: 408px;
+  margin: 0 auto;
+  padding: 30px 30px 26px;
+  animation: card-rise 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.login-page--embedded .logo { width: 62px; height: 78px; margin-bottom: 14px; }
+.login-page--embedded .subtitle { margin-bottom: 20px; }
+.login-page--embedded .test-account { display: none; }
+.login-page--embedded .back { display: none; }
+.login-page--embedded .login-card {
+  border: 1px solid rgba(180, 135, 44, 0.2);
+  box-shadow: 0 24px 48px -24px rgba(4, 24, 22, 0.52);
+}

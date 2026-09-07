@@ -1,0 +1,681 @@
+<div class="adherents-page">
+
+  <!-- ===================================================== -->
+  <!-- TOOLBAR -->
+  <!-- ===================================================== -->
+
+  <section class="toolbar-card">
+
+    <!-- Recherche -->
+    <div class="search-box">
+
+      <svg
+        class="search-icon"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <circle cx="11" cy="11" r="7"></circle>
+        <line x1="20" y1="20" x2="16.5" y2="16.5"></line>
+      </svg>
+
+      <input
+        type="text"
+        [(ngModel)]="search"
+        (input)="onSearch()"
+        placeholder="Rechercher par matricule, CIN, nom ou prénom..."
+      />
+
+      <button
+        type="button"
+        class="clear-search"
+        *ngIf="search"
+        (click)="clearSearch()"
+      >
+        Effacer
+      </button>
+
+    </div>
+
+
+    <!-- Filtre -->
+    <label class="filter-box">
+
+      <span>Filtrer les dossiers</span>
+
+      <select
+        [(ngModel)]="dossierFilter"
+        (change)="onDossierFilterChange()"
+      >
+        <option value="ALL">Tous les adhérents</option>
+        <option value="WITH">Avec dossier</option>
+        <option value="WITHOUT">Sans dossier</option>
+      </select>
+
+    </label>
+
+
+    <!-- Compteur -->
+    <div class="counter">
+
+      <strong>{{ totalElements }}</strong>
+
+      <span>
+        adhérent{{ totalElements > 1 ? 's' : '' }}
+      </span>
+
+    </div>
+
+  </section>
+
+
+  <!-- ===================================================== -->
+  <!-- ERREUR -->
+  <!-- ===================================================== -->
+
+  <div
+    class="alert alert--error"
+    *ngIf="errorMsg"
+  >
+
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.8"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <circle cx="12" cy="12" r="9"></circle>
+      <line x1="12" y1="8" x2="12" y2="13"></line>
+      <circle cx="12" cy="17" r="0.8" fill="currentColor"></circle>
+    </svg>
+
+    <span>{{ errorMsg }}</span>
+
+  </div>
+
+
+  <!-- ===================================================== -->
+  <!-- TABLE -->
+  <!-- ===================================================== -->
+
+  <section class="table-card">
+
+    <!-- Header -->
+    <div class="table-header">
+
+      <div>
+
+        <h2>Tableau des adhérents</h2>
+
+        <p>
+          Gestion des adhérents et de leurs dossiers Décès.
+        </p>
+
+      </div>
+
+
+      <span
+        class="page-indicator"
+        *ngIf="totalPages > 0"
+      >
+        Page {{ page + 1 }} / {{ totalPages }}
+      </span>
+
+    </div>
+
+
+    <!-- Table -->
+    <div class="table-wrap">
+
+      <table>
+
+        <!-- ====================== -->
+        <!-- TABLE HEADER -->
+        <!-- ====================== -->
+
+        <thead>
+
+          <tr>
+
+            <th>Nom</th>
+
+            <th>Prénom</th>
+
+            <th>Matricule</th>
+
+            <th>CIN</th>
+
+            <th>Catégorie</th>
+
+            <th>Grade</th>
+
+            <th>Situation</th>
+
+            <th>Dossier Décès</th>
+
+            <th class="actions-header">
+              Actions
+            </th>
+
+          </tr>
+
+        </thead>
+
+
+        <!-- ====================== -->
+        <!-- TABLE BODY -->
+        <!-- ====================== -->
+
+        <tbody>
+
+          <tr
+            *ngFor="let adherent of adherents"
+            [class.has-dossier]="adherent.hasDossierDeces"
+          >
+
+            <!-- Nom -->
+            <td>
+
+              <div class="person-cell">
+
+                <span class="avatar">
+                  {{ initials(adherent) }}
+                </span>
+
+                <div class="person-info">
+
+                  <span class="person-name">
+                    {{ adherent.nomAr || '-' }}
+                  </span>
+
+                </div>
+
+              </div>
+
+            </td>
+
+
+            <!-- Prénom -->
+            <td>
+
+              <span class="normal-text">
+                {{ adherent.prenomAr || '-' }}
+              </span>
+
+            </td>
+
+
+            <!-- Matricule -->
+            <td>
+
+              <span class="mono">
+                {{ adherent.matricule || '-' }}
+              </span>
+
+            </td>
+
+
+            <!-- CIN -->
+            <td>
+
+              <span class="mono">
+                {{ adherent.cin || '-' }}
+              </span>
+
+            </td>
+
+
+            <!-- Catégorie -->
+            <td>
+
+              <span>
+                {{ adherent.categorie || '-' }}
+              </span>
+
+            </td>
+
+
+            <!-- Grade -->
+            <td>
+
+              <span>
+                {{ adherent.grade || '-' }}
+              </span>
+
+            </td>
+
+
+            <!-- Situation -->
+            <td>
+
+              <span
+                class="pill pill--soft"
+                *ngIf="adherent.situationCategorie"
+              >
+                {{ adherent.situationCategorie }}
+              </span>
+
+              <span *ngIf="!adherent.situationCategorie">
+                -
+              </span>
+
+            </td>
+
+
+            <!-- Dossier décès -->
+            <td>
+
+              <div class="dossier-status-wrapper">
+
+                <span
+                  class="pill dossier-status"
+                  [class.pill--ok]="adherent.hasDossierDeces"
+                  [class.pill--empty]="!adherent.hasDossierDeces"
+                >
+
+                  <span class="status-dot"></span>
+
+                  {{ statutLabel(adherent.statutDossierDeces) }}
+
+                </span>
+
+
+                <small
+                  class="dossier-number"
+                  *ngIf="adherent.numeroDossierDeces"
+                >
+                  {{ adherent.numeroDossierDeces }}
+                </small>
+
+              </div>
+
+            </td>
+
+
+            <!-- ================================================= -->
+            <!-- ACTIONS -->
+            <!-- ================================================= -->
+
+            <td class="actions-cell">
+
+              <div class="actions">
+
+
+                <!-- ============================================= -->
+                <!-- PAS DE DOSSIER -->
+                <!-- ============================================= -->
+
+                <button
+                  type="button"
+                  class="action-btn action-btn--primary"
+                  *ngIf="!adherent.hasDossierDeces"
+                  (click)="nouveauDossier(adherent)"
+                  title="Créer un nouveau dossier"
+                >
+
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path
+                      d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z">
+                    </path>
+
+                    <polyline points="14 2 14 8 20 8"></polyline>
+
+                    <line
+                      x1="12"
+                      y1="12"
+                      x2="12"
+                      y2="18">
+                    </line>
+
+                    <line
+                      x1="9"
+                      y1="15"
+                      x2="15"
+                      y2="15">
+                    </line>
+
+                  </svg>
+
+                  <span>
+                    Nouveau dossier
+                  </span>
+
+                </button>
+
+
+                <!-- ============================================= -->
+                <!-- DOSSIER EXISTANT -->
+                <!-- ============================================= -->
+
+                <ng-container *ngIf="adherent.hasDossierDeces">
+
+
+                  <!-- VOIR DOSSIER -->
+
+                  <button
+                    type="button"
+                    class="action-icon action-icon--view"
+                    (click)="voirDossier(adherent)"
+                    aria-label="Voir le dossier"
+                  >
+
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+
+                      <path
+                        d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12z">
+                      </path>
+
+                      <circle
+                        cx="12"
+                        cy="12"
+                        r="2.7">
+                      </circle>
+
+                    </svg>
+
+                    <span class="tooltip">
+                      Voir le dossier
+                    </span>
+
+                  </button>
+
+
+                  <!-- AJOUTER AYANT DROIT -->
+
+                  <button
+                    type="button"
+                    class="action-icon action-icon--person"
+                    (click)="ajouterAyantDroit(adherent)"
+                    aria-label="Ajouter un ayant droit"
+                  >
+
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+
+                      <circle
+                        cx="8"
+                        cy="7"
+                        r="4">
+                      </circle>
+
+                      <path
+                        d="M2 21v-2a4 4 0 0 1 4-4h4">
+                      </path>
+
+                      <line
+                        x1="18"
+                        y1="10"
+                        x2="18"
+                        y2="18">
+                      </line>
+
+                      <line
+                        x1="14"
+                        y1="14"
+                        x2="22"
+                        y2="14">
+                      </line>
+
+                    </svg>
+
+                    <span class="tooltip">
+                      Ajouter ayant droit
+                    </span>
+
+                  </button>
+
+
+                  <!-- PIÈCES JUSTIFICATIVES -->
+
+                  <button
+                    type="button"
+                    class="action-icon action-icon--documents"
+                    (click)="piecesJustificatives(adherent)"
+                    aria-label="Pièces justificatives"
+                  >
+
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+
+                      <path
+                        d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z">
+                      </path>
+
+                      <polyline
+                        points="14 2 14 8 20 8">
+                      </polyline>
+
+                      <line
+                        x1="8"
+                        y1="13"
+                        x2="16"
+                        y2="13">
+                      </line>
+
+                      <line
+                        x1="8"
+                        y1="17"
+                        x2="16"
+                        y2="17">
+                      </line>
+
+                    </svg>
+
+                    <span class="tooltip">
+                      Pièces justificatives
+                    </span>
+
+                  </button>
+
+                </ng-container>
+
+              </div>
+
+            </td>
+
+          </tr>
+
+
+          <!-- ================================================= -->
+          <!-- EMPTY -->
+          <!-- ================================================= -->
+
+          <tr *ngIf="!loading && adherents.length === 0">
+
+            <td
+              colspan="9"
+              class="empty-row"
+            >
+
+              <div class="empty-state">
+
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.6"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+
+                  <circle
+                    cx="11"
+                    cy="11"
+                    r="7">
+                  </circle>
+
+                  <line
+                    x1="20"
+                    y1="20"
+                    x2="16.5"
+                    y2="16.5">
+                  </line>
+
+                </svg>
+
+                <strong>
+                  Aucun adhérent trouvé
+                </strong>
+
+                <span>
+                  Essayez de modifier votre recherche ou le filtre.
+                </span>
+
+              </div>
+
+            </td>
+
+          </tr>
+
+
+          <!-- ================================================= -->
+          <!-- LOADING -->
+          <!-- ================================================= -->
+
+          <tr *ngIf="loading">
+
+            <td
+              colspan="9"
+              class="empty-row"
+            >
+
+              <div class="loading-state">
+
+                <span class="spinner"></span>
+
+                <span>
+                  Chargement des adhérents...
+                </span>
+
+              </div>
+
+            </td>
+
+          </tr>
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- PAGINATION -->
+    <!-- ===================================================== -->
+
+    <div
+      class="pagination-wrapper"
+      *ngIf="totalPages > 1"
+    >
+
+      <div class="pagination-info">
+
+        Page
+        <strong>{{ page + 1 }}</strong>
+        sur
+        <strong>{{ totalPages }}</strong>
+
+      </div>
+
+
+      <div class="pagination">
+
+        <!-- Previous -->
+        <button
+          type="button"
+          class="pagination-nav"
+          (click)="previousPage()"
+          [disabled]="page === 0"
+          aria-label="Page précédente"
+        >
+
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+
+          <span>Précédent</span>
+
+        </button>
+
+
+        <!-- Page numbers -->
+        <button
+          type="button"
+          class="pagination-number"
+          *ngFor="let pageNumber of pageNumbers"
+          [class.active]="pageNumber === page + 1"
+          (click)="goToPage(pageNumber)"
+        >
+
+          {{ pageNumber }}
+
+        </button>
+
+
+        <!-- Next -->
+        <button
+          type="button"
+          class="pagination-nav"
+          (click)="nextPage()"
+          [disabled]="page >= totalPages - 1"
+          aria-label="Page suivante"
+        >
+
+          <span>Suivant</span>
+
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+
+        </button>
+
+      </div>
+
+    </div>
+
+  </section>
+
+</div>

@@ -1,6 +1,5 @@
 package com.social.servicesocial.dto;
 
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import java.util.Set;
@@ -8,8 +7,8 @@ import java.util.Set;
 public class UserProfileRequest {
     @NotBlank @Size(max = 80)
     private String username;
-    @NotBlank @Email @Size(max = 254)
-    private String email;
+    @NotBlank @Size(max = 80)
+    private String matricule;
     /** Optional on update: if blank, password is not changed. */
     @Size(min = 6, max = 100)
     private String password;
@@ -28,12 +27,12 @@ public class UserProfileRequest {
         this.username = username;
     }
 
-    public String getEmail() {
-        return email;
+    public String getMatricule() {
+        return matricule;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setMatricule(String matricule) {
+        this.matricule = matricule;
     }
 
     public String getPassword() {

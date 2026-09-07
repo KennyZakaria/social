@@ -34,7 +34,21 @@ export const managerGuard: CanActivateFn = () => {
 };
 
 export const agentRedirectGuard: CanActivateFn = () => {
-  // Every authenticated profile starts on the shared dashboard.
+  const auth = inject(AuthStateService);
+  const router = inject(Router);
+
+  if (auth.hasRole('ADMIN')) return router.createUrlTree(['/users']);
+
+  if (!auth.hasRole('AGENT')) return true;
+
+  const mods = auth.auth?.allowedModules ?? [];
+  if (mods.includes('DECES'))              return router.createUrlTree(['/deces/dashboard']);
+  if (mods.includes('BUREAU_ORDRE'))       return router.createUrlTree(['/bureau-order']);
+  if (mods.includes('MUTUELLE'))           return router.createUrlTree(['/module/mutuelle/adherents']);
+  if (mods.includes('ASSISTANCE_SOCIALE')) return router.createUrlTree(['/module/assistance-sociale']);
+  if (mods.includes('RETRAITES'))          return router.createUrlTree(['/module/retraites']);
+  if (mods.includes('CULTURE_LOISIRS'))    return router.createUrlTree(['/module/culture-loisirs']);
+  if (mods.includes('ASSURANCE_SOCIALE'))  return router.createUrlTree(['/module/assurance-sociale/adherents']);
   return true;
 };
 

@@ -1,0 +1,409 @@
+<a class="skip-link" href="#main-content">Aller au contenu principal</a>
+
+<div class="home-page">
+
+  <!-- HEADER -->
+  <header class="top-header">
+
+    <div class="header-container">
+
+      <a routerLink="/home" class="brand" aria-label="Service Social — Accueil">
+        <div class="brand-logo" aria-hidden="true">SS</div>
+
+        <div class="brand-info">
+          <h1>Service Social</h1>
+          <span>Plateforme de gestion sociale</span>
+        </div>
+      </a>
+
+
+
+      <div class="header-right">
+        <span class="header-status">
+          <span class="status-dot" aria-hidden="true"></span>
+          Système sécurisé
+        </span>
+      </div>
+
+    </div>
+
+  </header>
+
+
+  <!-- HERO -->
+  <section class="hero" aria-labelledby="hero-heading">
+
+    <div class="hero-container">
+
+      <div class="hero-content">
+
+        <span class="hero-label">Plateforme numérique</span>
+
+        <h2 id="hero-heading">
+          Bienvenue sur la plateforme
+          <strong>Service Social</strong>
+        </h2>
+
+        <p>
+          Une solution centralisée pour la gestion, le suivi
+          et le traitement des dossiers du Service Social,
+          accessible à chaque section par un espace dédié.
+        </p>
+
+        <div class="hero-actions">
+          <a href="/login" (click)="openLogin($event, '/bureau-order')" class="btn-primary">
+            Accéder à un espace
+            <span aria-hidden="true">→</span>
+          </a>
+          <a href="#services" class="btn-secondary">
+            Découvrir les sections
+          </a>
+        </div>
+
+      </div>
+
+      <div class="hero-decoration" aria-hidden="true">
+        <div class="decoration-box">
+          <span>SS</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- STATS -->
+    <div class="stats-bar">
+      <div class="stat">
+        <span class="stat-value">7</span>
+        <span class="stat-label">Sections métiers</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value">15 000+</span>
+        <span class="stat-label">Adhérents couverts</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value">100%</span>
+        <span class="stat-label">Dossiers dématérialisés</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value">24/7</span>
+        <span class="stat-label">Disponibilité</span>
+      </div>
+    </div>
+
+  </section>
+
+
+  <!-- MAIN -->
+  <main id="main-content" class="main-container">
+
+    <!-- TITLE -->
+    <div class="section-heading" id="services">
+
+      <div>
+        <span class="section-label">Accès aux services</span>
+
+        <h2>
+          Choisissez votre section
+        </h2>
+      </div>
+
+      <p>
+        Sélectionnez une section pour accéder
+        à son espace sécurisé.
+      </p>
+
+    </div>
+
+
+    <!-- CARDS -->
+    <ul class="sections-grid" role="list">
+
+      <!-- BUREAU D'ORDRE -->
+      <li>
+        <a href="/login" (click)="openLogin($event, '/bureau-order')" class="service-card">
+
+          <div class="service-card-header">
+
+            <div class="service-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="5" width="18" height="14" rx="2"/>
+                <path d="M3 7l9 6 9-6"/>
+              </svg>
+            </div>
+
+            <span class="arrow" aria-hidden="true">→</span>
+
+          </div>
+
+          <h3>Bureau d'ordre</h3>
+
+          <p>
+            Gestion des courriers entrants,
+            sortants, affectations et archivage.
+          </p>
+
+          <div class="service-footer">
+            <span>Accéder à la section</span>
+          </div>
+
+        </a>
+      </li>
+
+
+      <!-- MUTUELLE -->
+      <li>
+        <a href="/login" (click)="openLogin($event, '/module/mutuelle/dossiers')"class="service-card">
+
+          <div class="service-card-header">
+
+            <div class="service-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 20s-7-4.35-9.5-8.5C.9 8.1 2.4 5 5.6 5c1.9 0 3.3 1.1 4.4 2.6C11.1 6.1 12.5 5 14.4 5c3.2 0 4.7 3.1 3.1 6.5C19 15.65 12 20 12 20z"/>
+                <path d="M8 12h2l1.2-2.4L13 14l1-2h2"/>
+              </svg>
+            </div>
+
+            <span class="arrow" aria-hidden="true">→</span>
+
+          </div>
+
+          <h3>Mutuelle</h3>
+
+          <p>
+            Gestion des dossiers médicaux,
+            organismes externes et traitements.
+          </p>
+
+          <div class="service-footer">
+            <span>Accéder à la section</span>
+          </div>
+
+        </a>
+      </li>
+
+
+      <!-- ASSISTANCE -->
+      <li>
+        <a href="/login" (click)="openLogin($event, '/module/assistance-sociale/dossiers')" class="service-card">
+
+          <div class="service-card-header">
+
+            <div class="service-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="9" cy="8" r="3"/>
+                <path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/>
+                <circle cx="17" cy="9" r="2.4"/>
+                <path d="M15.5 14.2c2.6.4 4.5 2.6 4.5 5.3"/>
+              </svg>
+            </div>
+
+            <span class="arrow" aria-hidden="true">→</span>
+
+          </div>
+
+          <h3>Assistance Sociale</h3>
+
+          <p>
+            Suivi des situations sociales,
+            demandes, visites et interventions.
+          </p>
+
+          <div class="service-footer">
+            <span>Accéder à la section</span>
+          </div>
+
+        </a>
+      </li>
+
+
+      <!-- CULTURE -->
+      <li>
+        <a href="/login" (click)="openLogin($event, '/module/culture-loisirs/activites')" class="service-card">
+
+          <div class="service-card-header">
+
+            <div class="service-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="4"/>
+                <path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/>
+              </svg>
+            </div>
+
+            <span class="arrow" aria-hidden="true">→</span>
+
+          </div>
+
+          <h3>Culture & Loisirs</h3>
+
+          <p>
+            Gestion des colonies de vacances,
+            bourses et bénéficiaires.
+          </p>
+
+          <div class="service-footer">
+            <span>Accéder à la section</span>
+          </div>
+
+        </a>
+      </li>
+
+
+      <!-- RETRAITES -->
+      <li>
+        <a href="/login" (click)="openLogin($event, '/module/retraites/dossiers')" class="service-card">
+
+          <div class="service-card-header">
+
+            <div class="service-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="9"/>
+                <path d="M12 7v5l3.2 2"/>
+              </svg>
+            </div>
+
+            <span class="arrow" aria-hidden="true">→</span>
+
+          </div>
+
+          <h3>Retraités</h3>
+
+          <p>
+            Gestion des dossiers, demandes
+            et pièces administratives.
+          </p>
+
+          <div class="service-footer">
+            <span>Accéder à la section</span>
+          </div>
+
+        </a>
+      </li>
+
+
+      <!-- DECES -->
+      <li>
+        <a href="/login" (click)="openLogin($event, '/deces/dashboard')" class="service-card">
+
+          <div class="service-card-header">
+
+            <div class="service-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 3c1.2 1.6 1.8 2.7 1.8 3.7 0 1-0.8 1.7-1.8 1.7s-1.8-0.7-1.8-1.7C10.2 5.7 10.8 4.6 12 3z"/>
+                <rect x="9.5" y="9" width="5" height="10" rx="1"/>
+                <path d="M7 19h10"/>
+              </svg>
+            </div>
+
+            <span class="arrow" aria-hidden="true">→</span>
+
+          </div>
+
+          <h3>Décès</h3>
+
+          <p>
+            Gestion des dossiers de décès,
+            ayants droit et demandes.
+          </p>
+
+          <div class="service-footer">
+            <span>Accéder à la section</span>
+          </div>
+
+        </a>
+      </li>
+
+
+      <!-- ASSURANCE -->
+      <li>
+        <a href="/login" (click)="openLogin($event, '/module/assurance-sociale/dossiers')" class="service-card">
+
+          <div class="service-card-header">
+
+            <div class="service-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 3l7 3v5c0 4.5-3 8.3-7 10-4-1.7-7-5.5-7-10V6l7-3z"/>
+                <path d="M9 12l2 2 4-4"/>
+              </svg>
+            </div>
+
+            <span class="arrow" aria-hidden="true">→</span>
+
+          </div>
+
+          <h3>Assurance Sociale</h3>
+
+          <p>
+            Gestion des contrats, couvertures
+            et prestations d'assurance.
+          </p>
+
+          <div class="service-footer">
+            <span>Accéder à la section</span>
+          </div>
+
+        </a>
+      </li>
+
+    </ul>
+
+
+    <!-- SECURITY INFO -->
+    <section class="security-section" aria-labelledby="security-heading">
+
+      <div class="security-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 12l4 4 10-10"/>
+        </svg>
+      </div>
+
+      <div>
+        <h3 id="security-heading">Accès sécurisé</h3>
+
+        <p>
+          L'accès aux espaces de travail est réservé
+          aux utilisateurs autorisés. Chaque section
+          dispose de son propre espace sécurisé.
+        </p>
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <div class="login-overlay" [class.is-open]="loginOpen" [attr.aria-hidden]="!loginOpen" (click)="closeLogin()">
+    <aside class="login-drawer" role="dialog" aria-modal="true" aria-label="Connexion à votre espace" (click)="$event.stopPropagation()">
+      <button class="drawer-close" type="button" (click)="closeLogin()" aria-label="Fermer la connexion">×</button>
+      <div class="drawer-intro">
+        <span>Accès sécurisé</span>
+        <strong>Connectez-vous pour continuer</strong>
+      </div>
+      <app-login-page [embedded]="true" [returnUrl]="selectedReturnUrl"></app-login-page>
+    </aside>
+  </div>
+  <!-- FOOTER -->
+  <footer class="footer">
+
+    <div class="footer-container">
+
+      <div class="footer-brand">
+        <strong>Service Social</strong>
+        <span>Plateforme de gestion sociale</span>
+      </div>
+
+      <nav class="footer-links" aria-label="Liens de pied de page">
+        <a href="#main-content">Confidentialité</a>
+        <a href="#main-content">Conditions</a>
+        <a href="mailto:contact@service-social.ma">Contact</a>
+      </nav>
+
+      <div class="footer-meta">
+        <span class="footer-center">© 2026 — Tous droits réservés</span>
+        <span class="footer-security">Système sécurisé</span>
+      </div>
+
+    </div>
+
+  </footer>
+
+</div>

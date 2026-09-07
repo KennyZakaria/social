@@ -1,0 +1,496 @@
+@use "sass:color";
+
+// ==========================================================================
+// Tableau de bord — Section Décès
+// Palette calme et institutionnelle (application "Service Social"),
+// couleurs sémantiques par statut de dossier.
+// ==========================================================================
+
+:host {
+  // --- Neutres ---------------------------------------------------------
+  --ss-bg: #f6f7f9;
+  --ss-surface: #ffffff;
+  --ss-border: #e3e7ed;
+  --ss-text: #1f2733;
+  --ss-text-muted: #6b7385;
+  --ss-text-faint: #9aa2b1;
+
+  // --- Accent principal (teal institutionnel) ---------------------------
+  --ss-primary: #2f6f5e;
+  --ss-primary-dark: #24564a;
+  --ss-primary-tint: #e6f1ee;
+
+  // --- Couleurs sémantiques (statistiques / statuts) --------------------
+  --ss-blue: #2b6cb0;
+  --ss-blue-tint: #e9f1fb;
+  --ss-amber: #b7791f;
+  --ss-amber-tint: #fbf1de;
+  --ss-red: #c0392b;
+  --ss-red-tint: #fbeae8;
+  --ss-purple: #6b46c1;
+  --ss-purple-tint: #f0eafb;
+  --ss-green: #227a5b;
+  --ss-green-tint: #e6f5ef;
+  --ss-slate: #475569;
+  --ss-slate-tint: #edf0f4;
+
+  // --- Rythme / rayons ----------------------------------------------------
+  --ss-radius-sm: 8px;
+  --ss-radius-md: 12px;
+  --ss-radius-lg: 16px;
+  --ss-shadow-card: 0 1px 2px rgba(16, 24, 40, 0.04), 0 1px 3px rgba(16, 24, 40, 0.06);
+
+  display: block;
+  color: var(--ss-text);
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.ml-auto {
+  margin-left: auto;
+}
+
+// Focus clavier visible partout où il y a une action.
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--ss-primary);
+  outline-offset: 2px;
+}
+
+// ==========================================================================
+// En-tête de page
+// ==========================================================================
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 28px 32px 48px;
+  background: var(--ss-bg);
+  min-height: 100%;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.page-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border-radius: var(--ss-radius-md);
+  background: var(--ss-primary-tint);
+  color: var(--ss-primary);
+
+  svg {
+    width: 22px;
+    height: 22px;
+  }
+}
+
+.page-kicker {
+  margin: 0 0 2px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ss-text-muted);
+}
+
+.page-title {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--ss-text);
+  letter-spacing: -0.01em;
+}
+
+// ==========================================================================
+// Boutons
+// ==========================================================================
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: none;
+  border-radius: var(--ss-radius-sm);
+  background: var(--ss-primary);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+
+  svg {
+    flex-shrink: 0;
+  }
+
+  &:hover {
+    background: var(--ss-primary-dark);
+  }
+}
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: var(--ss-radius-sm);
+  color: var(--ss-primary);
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background-color 0.15s ease;
+
+  &:hover {
+    background: var(--ss-primary-tint);
+  }
+}
+
+// ==========================================================================
+// Cartes statistiques
+// ==========================================================================
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+}
+
+.stat-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px;
+  background: var(--ss-surface);
+  border: 1px solid var(--ss-border);
+  border-radius: var(--ss-radius-md);
+  box-shadow: var(--ss-shadow-card);
+}
+
+.stat-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: var(--ss-radius-sm);
+
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  // Chaque variante fixe une couleur de fond et une couleur d'icône
+  // (les SVG utilisent stroke="currentColor").
+  &--blue {
+    background: var(--ss-blue-tint);
+    color: var(--ss-blue);
+  }
+  &--amber {
+    background: var(--ss-amber-tint);
+    color: var(--ss-amber);
+  }
+  &--red {
+    background: var(--ss-red-tint);
+    color: var(--ss-red);
+  }
+  &--purple {
+    background: var(--ss-purple-tint);
+    color: var(--ss-purple);
+  }
+  &--green {
+    background: var(--ss-green-tint);
+    color: var(--ss-green);
+  }
+  &--slate {
+    background: var(--ss-slate-tint);
+    color: var(--ss-slate);
+  }
+}
+
+.stat-body {
+  min-width: 0;
+}
+
+.stat-label {
+  margin: 0 0 2px;
+  font-size: 13px;
+  color: var(--ss-text-muted);
+}
+
+.stat-value {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--ss-text);
+  line-height: 1.2;
+}
+
+// ==========================================================================
+// Cartes de navigation
+// ==========================================================================
+
+.nav-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.nav-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 18px;
+  background: var(--ss-surface);
+  border: 1px solid var(--ss-border);
+  border-radius: var(--ss-radius-md);
+  color: var(--ss-text);
+  text-decoration: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+
+  svg:first-child {
+    flex-shrink: 0;
+    color: var(--ss-primary);
+  }
+
+  span {
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .arrow {
+    margin-left: auto;
+    color: var(--ss-text-faint);
+    transition: transform 0.15s ease;
+  }
+
+  &:hover {
+    border-color: var(--ss-primary);
+    box-shadow: var(--ss-shadow-card);
+
+    .arrow {
+      transform: translateX(3px);
+      color: var(--ss-primary);
+    }
+  }
+}
+
+// ==========================================================================
+// Carte de contenu (Derniers dossiers)
+// ==========================================================================
+
+.card {
+  background: var(--ss-surface);
+  border: 1px solid var(--ss-border);
+  border-radius: var(--ss-radius-lg);
+  box-shadow: var(--ss-shadow-card);
+  overflow: hidden;
+}
+
+.card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--ss-border);
+}
+
+.card__title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ss-text);
+}
+
+// ==========================================================================
+// Tableau
+// ==========================================================================
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+thead th {
+  padding: 10px 20px;
+  text-align: left;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ss-text-muted);
+  background: var(--ss-bg);
+  border-bottom: 1px solid var(--ss-border);
+  white-space: nowrap;
+}
+
+tbody td {
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--ss-border);
+  color: var(--ss-text);
+  vertical-align: middle;
+}
+
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+tbody tr:hover td {
+  background: var(--ss-bg);
+}
+
+.td-mono {
+  font-family: "SFMono-Regular", ui-monospace, Menlo, Consolas, monospace;
+  font-size: 13px;
+  color: var(--ss-text-muted);
+}
+
+.name-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--ss-primary-tint);
+  color: var(--ss-primary-dark);
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.empty-row {
+  padding: 32px 20px;
+  text-align: center;
+  color: var(--ss-text-muted);
+}
+
+// ==========================================================================
+// Badges de statut
+//
+// À faire correspondre aux classes renvoyées par getStatutClass() côté
+// composant, p. ex. : 'en-cours' | 'incomplet' | 'a-valider' | 'valide' | 'cloture'
+// ==========================================================================
+
+.stat-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  background: var(--ss-slate-tint);
+  color: var(--ss-slate);
+
+  &.en-cours {
+    background: var(--ss-amber-tint);
+    color: var(--ss-amber);
+  }
+  &.incomplet {
+    background: var(--ss-red-tint);
+    color: var(--ss-red);
+  }
+  &.a-valider {
+    background: var(--ss-purple-tint);
+    color: var(--ss-purple);
+  }
+  &.valide {
+    background: var(--ss-green-tint);
+    color: var(--ss-green);
+  }
+  &.cloture {
+    background: var(--ss-slate-tint);
+    color: var(--ss-slate);
+  }
+}
+
+// ==========================================================================
+// Bouton d'action (icône seule, dans le tableau)
+// ==========================================================================
+
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--ss-border);
+  border-radius: var(--ss-radius-sm);
+  background: var(--ss-surface);
+  color: var(--ss-text-muted);
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+
+  &:hover {
+    background: var(--ss-primary-tint);
+    border-color: var(--ss-primary);
+    color: var(--ss-primary);
+  }
+}
+
+// ==========================================================================
+// Responsive
+// ==========================================================================
+
+@media (max-width: 640px) {
+  .page {
+    padding: 20px 16px 36px;
+  }
+
+  .page-header {
+    .btn-primary {
+      margin-left: 0;
+      width: 100%;
+      justify-content: center;
+    }
+  }
+
+  .stats-grid,
+  .nav-grid {
+    grid-template-columns: 1fr;
+  }
+
+  thead {
+    display: none;
+  }
+
+  tbody td {
+    display: block;
+    padding: 6px 16px;
+    border-bottom: none;
+  }
+
+  tbody tr {
+    display: block;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--ss-border);
+  }
+}
+
+// Respecte la préférence système de réduction des animations.
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
+}

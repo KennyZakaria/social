@@ -4,7 +4,7 @@ import java.util.Set;
 
 public class RegisterRequest {
     private String username;
-    private String email;
+    private String matricule;
     private String password;
     private String fullName;
     private String role;
@@ -18,12 +18,12 @@ public class RegisterRequest {
         this.username = username;
     }
 
-    public String getEmail() {
-        return email;
+    public String getMatricule() {
+        return matricule;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setMatricule(String matricule) {
+        this.matricule = matricule;
     }
 
     public String getPassword() {

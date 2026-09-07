@@ -40,13 +40,13 @@ public class AuthService {
         if (userProfileRepository.existsByUsername(request.getUsername())) {
             throw new IllegalArgumentException("Username already exists");
         }
-        if (userProfileRepository.existsByEmail(request.getEmail())) {
-            throw new IllegalArgumentException("Email already exists");
+        if (userProfileRepository.existsByMatricule(request.getMatricule())) {
+            throw new IllegalArgumentException("Matricule already exists");
         }
 
         UserProfile user = new UserProfile();
         user.setUsername(request.getUsername());
-        user.setEmail(request.getEmail());
+        user.setMatricule(request.getMatricule());
         user.setFullName(request.getFullName());
         user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
         user.setRole(parseRole(request.getRole()));

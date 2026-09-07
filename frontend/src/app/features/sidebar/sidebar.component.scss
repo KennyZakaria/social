@@ -21,11 +21,6 @@
   padding: 1.25rem 1.1rem 1rem;
   border-bottom: 1px solid rgba(255,255,255,0.06);
   flex-shrink: 0;
-  text-decoration: none;
-  cursor: pointer;
-  transition: background 0.15s ease;
-
-  &:hover { background: var(--sb-hover); }
 }
 
 .logo-icon {

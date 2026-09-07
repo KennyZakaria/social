@@ -1,0 +1,76 @@
+﻿<div class="page">
+  <div class="page-header">
+   
+
+    <div>
+      <p class="page-kicker">Section Deces</p>
+      <h2 class="page-title">Nouveau dossier</h2>
+    </div>
+  </div>
+
+  <div class="alert alert--success" *ngIf="successMsg">{{ successMsg }}</div>
+  <div class="alert alert--error" *ngIf="errorMsg">{{ errorMsg }}</div>
+
+
+
+  <div class="card" *ngIf="adherentSelectionne">
+    <div class="card__head">
+      <p class="card__title">
+        Informations du deces
+        <span class="adherent-chip">{{ adherentSelectionne.prenomAr }} {{ adherentSelectionne.nomAr }} - {{ adherentSelectionne.matricule }}</span>
+      </p>
+      <button class="btn-ghost" type="button" (click)="changerAdherent()">Changer d'adherent</button>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="submitDossier()" class="form-body">
+      <div class="form-grid">
+        <div class="field">
+          <label>Date du deces <span class="req">*</span></label>
+          <input formControlName="dateDeces" type="date" />
+        </div>
+
+        <div class="field">
+          <label>Lieu du deces <span class="req">*</span></label>
+          <input formControlName="lieuDeces" placeholder="Ville, wilaya" />
+        </div>
+
+        <div class="field">
+          <label>Nature du deces</label>
+          <select formControlName="natureDeces">
+            <option value="">Selectionner</option>
+            <option>Naturelle</option>
+            <option>Accidentelle</option>
+            <option>Maladie</option>
+            <option>Autre</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Cause du deces</label>
+          <input formControlName="causeDeces" placeholder="Description" />
+        </div>
+
+        <div class="field">
+          <label>DPR</label>
+          <input formControlName="dpr" placeholder="Numero DPR" />
+        </div>
+
+        <div class="field field--wide">
+          <label>Observation</label>
+          <textarea formControlName="observation" rows="3" placeholder="Notes complementaires..."></textarea>
+        </div>
+      </div>
+
+      <div class="form-footer">
+        <button class="btn-ghost" type="button" routerLink="/deces/dossiers">Annuler</button>
+        <button class="btn-primary" type="submit" [disabled]="form.invalid || loading || redirecting">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v14a2 2 0 01-2 2z" />
+            <polyline points="17 21 17 13 7 13 7 21" />
+          </svg>
+          {{ redirecting ? 'Ouverture du dossier...' : (loading ? 'Enregistrement...' : 'Creer le dossier') }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
