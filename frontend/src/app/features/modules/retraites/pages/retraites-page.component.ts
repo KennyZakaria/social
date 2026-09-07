@@ -8,8 +8,8 @@ import { AdherentResponse } from '../../../../models';
 
 type Tab = 'fiche' | 'famille' | 'dossier' | 'historique';
 interface Person { id: number; type: 'Conjoint' | 'Enfant' | 'Membre de famille'; nom: string; prenom: string; naissance: string; cin: string; lien: string; charge: boolean; lieu?: string; fonction?: string; mutuelle?: string; mariage?: string; divorce?: string; niveauInstruction?: string; emploi?: string; }
-interface SocialEntry { id: number; identification: string; diagnostic: string; duree: string; confirmed?: boolean; }
-interface AssistanceEntry { id: number; nature: string; organisme: string; date: string; observation: string; confirmed?: boolean; }
+interface SocialEntry { id: number; identification: string; diagnostic: string; duree: string; confirmed: boolean; }
+interface AssistanceEntry { id: number; nature: string; organisme: string; date: string; observation: string; confirmed: boolean; }
 interface BudgetEntry { designation: string; montant: string; }
 
 @Component({
