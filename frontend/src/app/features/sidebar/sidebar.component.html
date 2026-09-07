@@ -55,8 +55,8 @@
       </div>
     </ng-container>
 
-    <!-- Modules section: visible to MANAGER and AGENT only -->
-    <ng-container *ngIf="!authState.hasRole('ADMIN')">
+    <!-- Modules section: visible according to module access -->
+    <ng-container>
      
       <ng-container *ngFor="let module of modules">
         <div class="nav__group" *ngIf="canSeeModule(module.module)">
