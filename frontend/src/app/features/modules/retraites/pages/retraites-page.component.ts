@@ -76,6 +76,17 @@ export class RetraitesPageComponent implements OnInit {
   get completion(){return Math.round([this.profile.prenom,this.profile.nom,this.profile.cin,this.profile.matricule,this.profile.tel,this.profile.adresse].filter(Boolean).length/6*100);}
   get isSingle(){return String(this.profile.situation).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase() === 'celibataire';}
   onSituationChange(){if(this.isSingle) this.familyAction='';}
+  setHabitation(choice: 'proprietaire' | 'locataire', checked: boolean) {
+    this.profile[choice] = checked;
+    if (checked) this.profile[choice === 'proprietaire' ? 'locataire' : 'proprietaire'] = false;
+  }
+  toggleAffiliation(card: 'carteSpeciale' | 'carteFraternelleAdherent' | 'amc', checked: boolean) {
+    this.membership[card] = checked;
+    if (checked) return;
+    if (card === 'carteSpeciale') { this.membership.carteSpecialeNumero = ''; this.membership.carteSpecialeObservation = ''; }
+    if (card === 'carteFraternelleAdherent') { this.membership.carteFraternelle = ''; this.membership.carteFraternelleObservation = ''; }
+    if (card === 'amc') { this.membership.amcNumero = ''; this.membership.amcObservation = ''; }
+  }
   openFamilyForm(){if(this.familyAction){this.addPerson(this.familyAction);this.familyAction='';}}
   addPerson(type:Person['type']){if(this.isSingle && type !== 'Membre de famille'){this.note('Pour une situation célibataire, l’ajout d’un conjoint ou d’un enfant est indisponible.');return;}this.editing={id:Date.now(),type,nom:'',prenom:'',naissance:'',cin:'',lien:type==='Conjoint'?'Conjoint':type==='Enfant'?'Enfant':'',charge:false};this.editingNewMember=true;this.memberError='';this.memberSubmitted=false;}
   editPerson(person:Person){this.editing={...person};this.editingNewMember=false;this.memberError='';this.memberSubmitted=false;}
