@@ -79,18 +79,20 @@ export class RetraitesPageComponent implements OnInit {
   setHabitation(choice: 'proprietaire' | 'locataire', checked: boolean) {
     this.profile[choice] = checked;
     if (checked) this.profile[choice === 'proprietaire' ? 'locataire' : 'proprietaire'] = false;
+    this.note(checked ? `Habitation mise à jour : ${choice === 'proprietaire' ? 'propriétaire' : 'locataire'}` : 'Habitation mise à jour');
   }
   toggleAffiliation(card: 'carteSpeciale' | 'carteFraternelleAdherent' | 'amc', checked: boolean) {
     this.membership[card] = checked;
-    if (checked) return;
+    if (checked) { this.note('Affiliation activée'); return; }
     if (card === 'carteSpeciale') { this.membership.carteSpecialeNumero = ''; this.membership.carteSpecialeObservation = ''; }
     if (card === 'carteFraternelleAdherent') { this.membership.carteFraternelle = ''; this.membership.carteFraternelleObservation = ''; }
     if (card === 'amc') { this.membership.amcNumero = ''; this.membership.amcObservation = ''; }
+    this.note('Affiliation retirée');
   }
   openFamilyForm(){if(this.familyAction){this.addPerson(this.familyAction);this.familyAction='';}}
   addPerson(type:Person['type']){if(this.isSingle && type !== 'Membre de famille'){this.note('Pour une situation célibataire, l’ajout d’un conjoint ou d’un enfant est indisponible.');return;}this.editing={id:Date.now(),type,nom:'',prenom:'',naissance:'',cin:'',lien:type==='Conjoint'?'Conjoint':type==='Enfant'?'Enfant':'',charge:false};this.editingNewMember=true;this.memberError='';this.memberSubmitted=false;}
-  editPerson(person:Person){this.editing={...person};this.editingNewMember=false;this.memberError='';this.memberSubmitted=false;}
-  remove(id:number){this.family=this.family.filter(p=>p.id!==id);this.addHistory('Membre de famille supprimé');}
+  editPerson(person:Person){this.editing={...person};this.editingNewMember=false;this.memberError='';this.memberSubmitted=false;this.note('Membre de famille ouvert en modification');}
+  remove(id:number){this.family=this.family.filter(p=>p.id!==id);this.addHistory('Membre de famille supprimé');this.note('Membre de famille supprimé');}
   cancelMember(){this.editing=null;this.memberError='';this.memberSubmitted=false;}
   saveMember(){
     if(!this.editing) return;
@@ -181,14 +183,14 @@ export class RetraitesPageComponent implements OnInit {
   addRequest(){this.requests.unshift({title:'Nouvelle demande administrative',date:new Date().toLocaleDateString('fr-FR'),pieces:0,status:'En cours'});this.addHistory('Nouvelle demande créée');}
   validate(r:{title:string;status:string}){r.status='Validée';this.addHistory('Demande validée : '+r.title);}
   addHistory(title:string){this.history.unshift({title,detail:`Dossier ${this.profile.dossier}`,date:new Date().toLocaleDateString('fr-FR')});}
-  addSocialData(){ if (this.socialData.some(item => !item.confirmed)) { this.note('Validez ou supprimez la donnée médico-sociale en cours avant d’en ajouter une autre.'); return; } this.socialData.push({ id: Date.now(), identification: '', diagnostic: '', duree: '', confirmed: false }); }
-  removeSocialData(id:number){ this.socialData=this.socialData.filter(item=>item.id!==id); }
-  validateSocialData(item: SocialEntry){ if (!item.identification.trim() || !item.diagnostic.trim()) { this.note('Complétez l’identification et le diagnostic avant de valider.'); return; } item.confirmed = true; }
-  editSocialData(item: SocialEntry){ item.confirmed = false; }
-  addAssistance(){ if (this.assistances.some(item => !item.confirmed)) { this.note('Validez ou supprimez l’assistance en cours avant d’en ajouter une autre.'); return; } this.assistances.push({ id: Date.now(), nature: '', organisme: '', date: '', observation: '', confirmed: false }); }
-  removeAssistance(id:number){ this.assistances=this.assistances.filter(item=>item.id!==id); }
-  validateAssistance(item: AssistanceEntry){ if (!item.nature.trim() || !item.organisme.trim() || !item.date) { this.note('Complétez la nature, l’organisme et la date avant de valider.'); return; } item.confirmed = true; }
-  editAssistance(item: AssistanceEntry){ item.confirmed = false; }
+  addSocialData(){ if (this.socialData.some(item => !item.confirmed)) { this.note('Validez ou supprimez la donnée médico-sociale en cours avant d’en ajouter une autre.'); return; } this.socialData.push({ id: Date.now(), identification: '', diagnostic: '', duree: '', confirmed: false }); this.note('Nouvelle donnée médico-sociale ajoutée'); }
+  removeSocialData(id:number){ this.socialData=this.socialData.filter(item=>item.id!==id); this.note('Donnée médico-sociale supprimée'); }
+  validateSocialData(item: SocialEntry){ if (!item.identification.trim() || !item.diagnostic.trim()) { this.note('Complétez l’identification et le diagnostic avant de valider.'); return; } item.confirmed = true; this.note('Donnée médico-sociale validée'); }
+  editSocialData(item: SocialEntry){ item.confirmed = false; this.note('Donnée médico-sociale ouverte en modification'); }
+  addAssistance(){ if (this.assistances.some(item => !item.confirmed)) { this.note('Validez ou supprimez l’assistance en cours avant d’en ajouter une autre.'); return; } this.assistances.push({ id: Date.now(), nature: '', organisme: '', date: '', observation: '', confirmed: false }); this.note('Nouvelle assistance ajoutée'); }
+  removeAssistance(id:number){ this.assistances=this.assistances.filter(item=>item.id!==id); this.note('Assistance supprimée'); }
+  validateAssistance(item: AssistanceEntry){ if (!item.nature.trim() || !item.organisme.trim() || !item.date) { this.note('Complétez la nature, l’organisme et la date avant de valider.'); return; } item.confirmed = true; this.note('Assistance validée'); }
+  editAssistance(item: AssistanceEntry){ item.confirmed = false; this.note('Assistance ouverte en modification'); }
   total(rows: BudgetEntry[]){ return rows.reduce((sum,row)=>sum+(Number(String(row.montant).replace(',','.'))||0),0); }
   exportForm(){
     const printable = document.getElementById('social-survey-form')?.cloneNode(true) as HTMLElement | undefined;
