@@ -5,7 +5,7 @@ import java.util.Set;
 public class UserProfileResponse {
     private Long id;
     private String username;
-    private String email;
+    private String matricule;
     private String fullName;
     private String role;
     private Set<String> allowedModules;
@@ -27,12 +27,12 @@ public class UserProfileResponse {
         this.username = username;
     }
 
-    public String getEmail() {
-        return email;
+    public String getMatricule() {
+        return matricule;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setMatricule(String matricule) {
+        this.matricule = matricule;
     }
 
     public String getFullName() {

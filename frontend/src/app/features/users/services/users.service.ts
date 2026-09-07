@@ -25,10 +25,6 @@ export class UsersService {
     return this.http.put<UserProfileResponse>(`${this.baseUrl}/${id}`, payload);
   }
 
-  toggleActive(id: number): Observable<UserProfileResponse> {
-    return this.http.patch<UserProfileResponse>(`${this.baseUrl}/${id}/toggle-active`, {});
-  }
-
   deleteUser(id: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }

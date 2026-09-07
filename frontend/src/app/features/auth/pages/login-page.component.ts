@@ -7,6 +7,7 @@ import { AuthApiService } from '../services/auth-api.service';
 
 @Component({
   selector: 'app-login-page',
+  standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './login-page.component.html',
   styleUrl: './login-page.component.scss'
