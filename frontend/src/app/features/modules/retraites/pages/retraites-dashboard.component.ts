@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { RetraiteDossier, RetraitesStoreService } from '../services/retraites-store.service';
-import { RetraitesExportService } from '../services/retraites-export.service';
 
 @Component({
   selector: 'app-retraites-dashboard',
@@ -12,11 +11,9 @@ import { RetraitesExportService } from '../services/retraites-export.service';
 })
 export class RetraitesDashboardComponent {
   dossiers: RetraiteDossier[] = [];
-  constructor(private readonly store: RetraitesStoreService, private readonly exporter: RetraitesExportService) { this.store.list().subscribe({ next: rows => this.dossiers = rows }); }
+  constructor(private readonly store: RetraitesStoreService) { this.store.list().subscribe({ next: rows => this.dossiers = rows }); }
   count(status: RetraiteDossier['statut']) { return this.dossiers.filter(d => d.statut === status).length; }
   lastUpdate(dossier: RetraiteDossier): string { return dossier.miseAJour || new Date().toLocaleDateString('fr-FR'); }
-  isClosed(dossier: RetraiteDossier): boolean { return this.store.isClosed(dossier); }
-  export(dossier: RetraiteDossier): void { if (this.isClosed(dossier)) this.exporter.export(dossier); }
 
   get recentDossiers() {
     return [...this.dossiers]
