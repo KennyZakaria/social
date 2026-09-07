@@ -18,6 +18,7 @@ export class LoginPageComponent {
 
   error = '';
   loading = false;
+  showPassword = false;
 
   readonly form = this.fb.nonNullable.group({
     username: ['', Validators.required],
@@ -28,38 +29,43 @@ export class LoginPageComponent {
     private readonly fb: FormBuilder,
     private readonly api: AuthApiService,
     private readonly authState: AuthStateService,
-    private readonly router: Router
+    private readonly router: Router,
+    private readonly route: ActivatedRoute
   ) {}
 
-  private resolveHome(role: string, modules: string[]): string {
-    return '/dashboard';
-    if (role === 'ADMIN')    return '/users';
-    if (role === 'MANAGER')  return '/dashboard';
-    // AGENT — go to their module
-    if (modules.includes('DECES'))            return '/deces/dashboard';
-    if (modules.includes('BUREAU_ORDRE'))     return '/bureau-order';
-    if (modules.includes('MUTUELLE'))         return '/module/mutuelle';
-    if (modules.includes('ASSISTANCE_SOCIALE')) return '/module/assistance-sociale';
-    if (modules.includes('RETRAITES'))        return '/module/retraites';
-    if (modules.includes('CULTURE_LOISIRS'))  return '/module/culture-loisirs';
-    if (modules.includes('ASSURANCE_SOCIALE')) return '/module/assurance-sociale';
-    return '/dashboard';
-  }
-
   submit(): void {
+    if (this.form.invalid || this.loading) return;
     this.error = '';
     this.loading = true;
 
     this.api.login(this.form.getRawValue()).subscribe({
-      next: (res) => {
+      next: res => {
         this.authState.setAuth(res);
         this.loading = false;
-        this.router.navigate([this.resolveHome(res.role, res.allowedModules)]);
+        this.router.navigateByUrl(this.safeReturnUrl() ?? this.resolveHome(res.role, res.allowedModules));
       },
-      error: () => {
+      error: err => {
         this.loading = false;
-        this.error = 'Identifiants invalides.';
+        this.error = err?.error?.message || 'Identifiants invalides.';
       }
     });
+  }
+
+  private safeReturnUrl(): string | null {
+    const returnUrl = this.returnUrl ?? this.route.snapshot.queryParamMap.get('returnUrl');
+    return returnUrl && returnUrl.startsWith('/') && !returnUrl.startsWith('//') ? returnUrl : null;
+  }
+
+  private resolveHome(role: string, modules: string[]): string {
+    if (role === 'ADMIN') return '/users';
+    if (role === 'MANAGER') return '/dashboard';
+    if (modules.includes('DECES')) return '/deces/dashboard';
+    if (modules.includes('BUREAU_ORDRE')) return '/bureau-order';
+    if (modules.includes('MUTUELLE')) return '/module/mutuelle';
+    if (modules.includes('ASSISTANCE_SOCIALE')) return '/module/assistance-sociale';
+    if (modules.includes('RETRAITES')) return '/module/retraites';
+    if (modules.includes('CULTURE_LOISIRS')) return '/module/culture-loisirs';
+    if (modules.includes('ASSURANCE_SOCIALE')) return '/module/assurance-sociale';
+    return '/dashboard';
   }
 }
