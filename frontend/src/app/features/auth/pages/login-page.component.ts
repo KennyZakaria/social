@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -259,6 +259,9 @@ import { AuthApiService } from '../services/auth-api.service';
   `]
 })
 export class LoginPageComponent {
+  @Input() embedded = false;
+  @Input() returnUrl: string | null = null;
+
   error = '';
   loading = false;
 
