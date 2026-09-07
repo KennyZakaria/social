@@ -104,9 +104,17 @@ export class RetraitesPageComponent implements OnInit {
     if (this.dossierId) this.store.saveDetails(this.dossierId, this.dossierDetails()).subscribe({ next: () => this.note('Modifications enregistrées dans la base de données'), error: () => this.note('Impossible d’enregistrer les modifications.') });
   }
   validateAndClose(){
-    if (!this.dossierId || this.readOnly) return;
-    this.store.saveDetails(this.dossierId, this.dossierDetails()).subscribe({ next: () => this.store.close(this.dossierId!).subscribe({ next: () => this.router.navigate(['/retraites/validation']), error: () => this.note('Impossible de clôturer le dossier.') }), error: () => this.note('Impossible d’enregistrer avant la clôture.') });
+    if (this.readOnly) return;
+    if (!this.dossierId) {
+      this.store.create(this.dossierDetails()).subscribe({
+        next: dossier => { this.dossierId = dossier.id; this.profile.dossier = dossier.reference; this.closeDossier(dossier.id); },
+        error: () => this.note('Impossible de créer le dossier. Vérifiez le backend.')
+      });
+      return;
+    }
+    this.store.saveDetails(this.dossierId, this.dossierDetails()).subscribe({ next: () => this.closeDossier(this.dossierId!), error: () => this.note('Impossible d’enregistrer avant la clôture.') });
   }
+  private closeDossier(id: number) { this.store.close(id).subscribe({ next: () => this.router.navigate(['/retraites/validation']), error: () => this.note('Impossible de clôturer le dossier.') }); }
   cancelValidation(){ this.router.navigate(['/retraites/validation']); }
   closeConsultation(){ this.router.navigate(['/retraites/dashboard']); }
   cancelNewDossier(){
