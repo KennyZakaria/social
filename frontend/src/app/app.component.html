@@ -1,0 +1,21 @@
+<div class="shell">
+  <!-- ══ Sidebar ══════════════════════════════════════════ -->
+  <app-sidebar [modules]="modules" [authState]="authState" (logoutRequested)="logout()"></app-sidebar>
+
+  <!-- ══ Main area ════════════════════════════════════════ -->
+  <div class="main-wrap">
+    <header class="topbar">
+      <div class="topbar__left">
+        <h1 class="topbar__title">Gestion des Activités</h1>
+        <p class="topbar__sub">Service Social — Application Web Centralisée</p>
+      </div>
+      <div class="topbar__right" *ngIf="!authState.auth">
+        <span class="version-badge">v1.0</span>
+      </div>
+    </header>
+
+    <main class="page-body">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

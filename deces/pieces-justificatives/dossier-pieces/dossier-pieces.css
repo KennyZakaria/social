@@ -1,0 +1,602 @@
+/* =========================================================
+   PAGE
+========================================================= */
+
+.page {
+  min-height: 100%;
+  padding: 30px;
+  background: #f5f7fb;
+  box-sizing: border-box;
+}
+
+
+/* =========================================================
+   BREADCRUMB
+========================================================= */
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 22px;
+  font-size: 14px;
+  color: #64748b;
+}
+
+.breadcrumb a {
+  color: #2563eb;
+  text-decoration: none;
+  font-weight: 500;
+  transition: 0.2s;
+}
+
+.breadcrumb a:hover {
+  color: #1d4ed8;
+  text-decoration: underline;
+}
+
+.breadcrumb span {
+  color: #94a3b8;
+}
+
+.breadcrumb span:last-child {
+  color: #475569;
+  font-weight: 500;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 25px;
+  margin-bottom: 25px;
+}
+
+.page-header h1 {
+  margin: 0 0 7px;
+  font-size: 28px;
+  font-weight: 700;
+  color: #172033;
+}
+
+.page-header p {
+  margin: 0;
+  color: #64748b;
+  font-size: 14px;
+}
+
+
+/* =========================================================
+   ADD BUTTON
+========================================================= */
+
+.btn-add {
+  border: none;
+  border-radius: 8px;
+  background: #2563eb;
+  color: #fff;
+  padding: 12px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: 0.2s;
+  box-shadow: 0 3px 8px rgba(37, 99, 235, 0.18);
+}
+
+.btn-add:hover {
+  background: #1d4ed8;
+  transform: translateY(-1px);
+}
+
+.btn-add:active {
+  transform: translateY(0);
+}
+
+
+/* =========================================================
+   DOSSIER CARD
+========================================================= */
+
+.dossier-card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 22px 24px;
+  margin-bottom: 18px;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+}
+
+.dossier-title {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #e5e7eb;
+  margin-bottom: 20px;
+}
+
+.folder-icon {
+  width: 46px;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: #eff6ff;
+  font-size: 23px;
+}
+
+.dossier-title div:last-child {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.dossier-title span {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.dossier-title strong {
+  font-size: 18px;
+  color: #172033;
+}
+
+
+/* =========================================================
+   DOSSIER DATA
+========================================================= */
+
+.dossier-data {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 20px;
+}
+
+.dossier-data > div {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.dossier-data small {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.dossier-data strong {
+  font-size: 14px;
+  color: #1e293b;
+}
+
+
+/* =========================================================
+   STATUS GENERAL
+========================================================= */
+
+.status {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 12px !important;
+  font-weight: 600;
+  background: #fff7ed;
+  color: #c2410c !important;
+}
+
+
+/* =========================================================
+   PROGRESS CARD
+========================================================= */
+
+.progress-card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin-bottom: 18px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 30px;
+
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+}
+
+.progress-card > div:first-child {
+  min-width: 200px;
+}
+
+.progress-card strong {
+  color: #172033;
+  font-size: 15px;
+}
+
+.progress-card p {
+  margin: 6px 0 0;
+  color: #64748b;
+  font-size: 13px;
+}
+
+
+/* =========================================================
+   PROGRESS
+========================================================= */
+
+.progress-container {
+  flex: 1;
+  max-width: 500px;
+
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.progress-container > strong {
+  min-width: 45px;
+  text-align: right;
+  font-size: 13px;
+}
+
+.progress {
+  flex: 1;
+  height: 9px;
+  overflow: hidden;
+  border-radius: 20px;
+  background: #e2e8f0;
+}
+
+.progress-bar {
+  height: 100%;
+  border-radius: 20px;
+  background: #2563eb;
+  transition: width 0.3s ease;
+}
+
+
+/* =========================================================
+   PIECES CARD
+========================================================= */
+
+.pieces-card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+}
+
+.card-header {
+  padding: 22px 24px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.card-header h2 {
+  margin: 0 0 6px;
+  color: #172033;
+  font-size: 18px;
+}
+
+.card-header p {
+  margin: 0;
+  color: #64748b;
+  font-size: 13px;
+}
+
+
+/* =========================================================
+   PIECES LIST
+========================================================= */
+
+.pieces-list {
+  width: 100%;
+}
+
+
+/* =========================================================
+   PIECE ROW
+========================================================= */
+
+.piece-row {
+  display: grid;
+  grid-template-columns: 48px minmax(200px, 1fr) 140px 240px;
+  align-items: center;
+  gap: 18px;
+
+  padding: 18px 24px;
+
+  border-bottom: 1px solid #eef2f7;
+
+  transition: background 0.2s;
+}
+
+.piece-row:last-child {
+  border-bottom: none;
+}
+
+.piece-row:hover {
+  background: #f8fafc;
+}
+
+
+/* =========================================================
+   PIECE ICON
+========================================================= */
+
+.piece-icon {
+  width: 42px;
+  height: 42px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 9px;
+  background: #f1f5f9;
+
+  font-size: 19px;
+}
+
+
+/* =========================================================
+   PIECE NAME
+========================================================= */
+
+.piece-name {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+
+.piece-name strong {
+  color: #1e293b;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.piece-name small {
+  color: #94a3b8;
+  font-size: 12px;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+/* =========================================================
+   REQUIRED
+========================================================= */
+
+.required {
+  width: fit-content;
+  padding: 3px 7px;
+  border-radius: 5px;
+
+  background: #fef3c7;
+  color: #92400e;
+
+  font-size: 10px;
+  font-weight: 600;
+}
+
+
+/* =========================================================
+   PIECE STATUS
+========================================================= */
+
+.status.provided,
+.status.validated,
+.status.missing {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+
+  padding: 6px 10px;
+  border-radius: 20px;
+
+  font-size: 12px !important;
+  font-weight: 600;
+}
+
+.status.provided {
+  background: #ecfdf5;
+  color: #047857 !important;
+}
+
+.status.validated {
+  background: #eff6ff;
+  color: #1d4ed8 !important;
+}
+
+.status.missing {
+  background: #fef2f2;
+  color: #dc2626 !important;
+}
+
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
+.piece-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 7px;
+}
+
+.piece-actions button {
+  border: none;
+  border-radius: 7px;
+
+  padding: 8px 12px;
+
+  font-size: 12px;
+  font-weight: 600;
+
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+
+/* VIEW */
+
+.btn-view {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.btn-view:hover {
+  background: #dbeafe;
+}
+
+
+/* DELETE */
+
+.btn-delete {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.btn-delete:hover {
+  background: #fee2e2;
+}
+
+
+/* UPLOAD */
+
+.btn-upload {
+  background: #2563eb;
+  color: white;
+}
+
+.btn-upload:hover {
+  background: #1d4ed8;
+}
+
+
+/* =========================================================
+   RESPONSIVE - TABLET
+========================================================= */
+
+@media (max-width: 1200px) {
+
+  .dossier-data {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .piece-row {
+    grid-template-columns: 48px 1fr 130px;
+  }
+
+  .piece-actions {
+    grid-column: 2 / -1;
+    justify-content: flex-start;
+  }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE - MOBILE
+========================================================= */
+
+@media (max-width: 768px) {
+
+  .page {
+    padding: 20px 15px;
+  }
+
+  .page-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .page-header h1 {
+    font-size: 23px;
+  }
+
+  .btn-add {
+    width: 100%;
+  }
+
+  .dossier-card {
+    padding: 18px;
+  }
+
+  .dossier-data {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+  }
+
+  .progress-card {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .progress-container {
+    width: 100%;
+    max-width: none;
+  }
+
+  .card-header {
+    padding: 18px;
+  }
+
+  .piece-row {
+    grid-template-columns: 42px 1fr;
+    gap: 12px;
+    padding: 16px 18px;
+  }
+
+  .piece-row > div:nth-child(3) {
+    grid-column: 2;
+  }
+
+  .piece-actions {
+    grid-column: 2;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 480px) {
+
+  .breadcrumb {
+    flex-wrap: wrap;
+  }
+
+  .dossier-data {
+    grid-template-columns: 1fr;
+  }
+
+  .dossier-title {
+    align-items: flex-start;
+  }
+
+  .progress-container {
+    gap: 8px;
+  }
+
+  .piece-actions button {
+    flex: 1;
+  }
+
+}

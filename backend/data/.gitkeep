@@ -1,0 +1,2 @@
+# The H2 database file (socialdb.mv.db) is created here automatically when the backend starts.
+# It is intentionally ignored from source control because it contains local application data.
