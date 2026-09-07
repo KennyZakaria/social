@@ -7,6 +7,7 @@ import { DemandesDecesComponent } from './pages/demandes-deces.component';
 import { AdherentsDecesComponent } from './pages/adherents-deces.component';
 import { DossierDetailComponent } from './pages/dossier-detail.component';
 import { FicheRenseignementsDecesComponent } from './pages/fiche-renseignements-deces.component';
+import { FicheRenseignementsRetraiteComponent } from './pages/fiche-renseignements-retraite.component';
 
 export const DECES_ROUTES: Routes = [
   { path: 'deces', redirectTo: 'deces/dashboard', pathMatch: 'full' },
@@ -35,6 +36,11 @@ export const DECES_ROUTES: Routes = [
     data: { moduleKey: 'deces' }
   },
   {
+    path: 'deces/dossiers/:id/fiche-renseignements-retraite',
+    component: FicheRenseignementsRetraiteComponent,
+    canActivate: [authGuard, moduleGuard],
+    data: { moduleKey: 'deces' }
+  },  {
     path: 'deces/dossiers/:id/fiche-renseignements',
     component: FicheRenseignementsDecesComponent,
     canActivate: [authGuard, moduleGuard],

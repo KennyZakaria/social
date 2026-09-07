@@ -160,14 +160,6 @@ public class DossierDecesService {
         return numero;
     }
 
-    private StatutDossierDeces parseStatut(String statut) {
-        try {
-            return StatutDossierDeces.valueOf(statut.toUpperCase());
-        } catch (RuntimeException ex) {
-            throw new IllegalArgumentException("Statut dossier deces invalide : " + statut);
-        }
-    }
-
     private void assertTransition(StatutDossierDeces current, StatutDossierDeces next) {
         if (current == next) {
             return;

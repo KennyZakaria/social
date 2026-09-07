@@ -97,7 +97,7 @@ public class UserProfileService {
         response.setEmail(user.getEmail());
         response.setFullName(user.getFullName());
         response.setRole(user.getRole().name());
-        response.setAllowedModules(user.getAllowedModules().stream().map(Enum::name).collect(Collectors.toSet()));
+        response.setAllowedModules(user.getAllowedModules().stream().map(module -> module.name()).collect(Collectors.toSet()));
         response.setActive(user.isActive());
         return response;
     }

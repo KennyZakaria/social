@@ -1593,3 +1593,12 @@ tbody tr:last-child td {
   }
 
 }
+/* Une couleur lisible pour chaque état du dossier Décès. */
+.dossier-status--en-cours { background: #e8f3ff; color: #2476c5; }
+.dossier-status--incomplet { background: #fff1dc; color: #bc7111; }
+.dossier-status--a-valider { background: #f0eaff; color: #7350bc; }
+.dossier-status--valide { background: #e3f7ef; color: #16805e; }
+.dossier-status--rejete { background: #ffebeb; color: #bf4a4a; }
+.dossier-status--cloture { background: #edf1f5; color: #607080; }
+.dossier-status--archive { background: #f0f2f4; color: #77818b; }
+.dossier-status--sans-dossier { background: #fff6df; color: #a66b10; }

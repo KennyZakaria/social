@@ -5,7 +5,6 @@ import com.social.servicesocial.dto.DossierResponse;
 import com.social.servicesocial.model.DossierStatut;
 import com.social.servicesocial.model.SocialModule;
 import com.social.servicesocial.service.DossierService;
-import com.social.servicesocial.service.UserAccessService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

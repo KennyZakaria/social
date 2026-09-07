@@ -69,7 +69,7 @@ public class AdherentService {
         long retraites  = all.stream().filter(a ->
                 "Retraité".equalsIgnoreCase(a.getSituationCategorie()) ||
                 "Retraite".equalsIgnoreCase(a.getSituationCategorie())).count();
-        long pensionnes = all.stream().filter(Adherent::isPension).count();
+        long pensionnes = all.stream().filter(adherent -> adherent.isPension()).count();
         return new AdherentStatistics(total, actifs, retraites, pensionnes);
     }
 

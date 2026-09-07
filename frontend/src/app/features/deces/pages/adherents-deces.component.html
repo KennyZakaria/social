@@ -59,7 +59,15 @@
     </label>
 
 
-    <!-- Compteur -->
+
+    <label class="filter-box">
+      <span>Filtrer par grade</span>
+      <select [(ngModel)]="gradeFilter" (change)="onGradeFilterChange()">
+        <option value="">Tous les grades</option>
+        <option *ngFor="let grade of grades" [value]="grade">{{ grade }}</option>
+      </select>
+    </label>
+        <!-- Compteur -->
     <div class="counter">
 
       <strong>{{ totalElements }}</strong>
@@ -277,6 +285,7 @@
                   class="pill dossier-status"
                   [class.pill--ok]="adherent.hasDossierDeces"
                   [class.pill--empty]="!adherent.hasDossierDeces"
+                  [ngClass]="statutClass(adherent.statutDossierDeces)"
                 >
 
                   <span class="status-dot"></span>

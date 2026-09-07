@@ -98,6 +98,10 @@ export class DossierDetailComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    const requestedTab = this.route.snapshot.queryParamMap.get('tab');
+    if (requestedTab === 'adherent' || requestedTab === 'dossier' || requestedTab === 'ayantsDroit' || requestedTab === 'pieces' || requestedTab === 'validation') {
+      this.activeTab = requestedTab;
+    }
     this.load();
   }
 
@@ -117,6 +121,31 @@ export class DossierDetailComponent implements OnInit {
     return ['EN_COURS', 'INCOMPLET'].includes(this.dossier?.statut ?? '');
   }
 
+  statusClass(statut: string): string {
+    const classes: Record<string, string> = {
+      EN_COURS: 'status--en-cours', INCOMPLET: 'status--incomplet', A_VALIDER: 'status--a-valider',
+      VALIDE: 'status--valide', REJETE: 'status--rejete', CLOTURE: 'status--cloture', ARCHIVE: 'status--archive'
+    };
+    return classes[statut] ?? 'status--archive';
+  }
+  get ficheRenseignementsLabel(): string | null {
+    if (this.adherent?.pension === false) return 'Fiche de renseignements en activité';
+    if (this.adherent?.pension === true) return 'Fiche de renseignements retraité';
+    return null;
+  }
+
+  get situationServiceLabel(): string {
+    if (this.adherent?.pension === false) return 'EN ACTIVITÉ';
+    if (this.adherent?.pension === true) return 'RETRAITÉ';
+    return 'Non renseignée';
+  }
+
+  ouvrirFicheRenseignements(): void {
+    if (!this.dossier || !this.ficheRenseignementsLabel) return;
+    const type = this.adherent?.pension === true ? 'retraite' : 'activite';
+    const ficheRoute = type === 'retraite' ? 'fiche-renseignements-retraite' : 'fiche-renseignements';
+    this.router.navigate(['/deces/dossiers', this.dossier.id, ficheRoute]);
+  }
   selectTab(tab: DetailTab): void {
     this.activeTab = tab;
   }

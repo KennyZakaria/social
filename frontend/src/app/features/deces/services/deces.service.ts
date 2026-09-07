@@ -37,10 +37,11 @@ export class DecesService {
     return this.http.get<AdherentResponse>('http://localhost:8080/api/deces/adherents/' + id);
   }
 
-  getAdherentsAvecDossier(search = '', page = 0, size = 15, hasDossierDeces: boolean | null = null): Observable<DecesAdherentPageResponse> {
+  getAdherentsAvecDossier(search = '', page = 0, size = 15, hasDossierDeces: boolean | null = null, grade = ''): Observable<DecesAdherentPageResponse> {
     let params = new HttpParams().set('page', page).set('size', size);
     if (search.trim()) params = params.set('search', search.trim());
     if (hasDossierDeces !== null) params = params.set('hasDossierDeces', String(hasDossierDeces));
+    if (grade.trim()) params = params.set('grade', grade.trim());
     return this.http.get<DecesAdherentPageResponse>('http://localhost:8080/api/deces/adherents/dossiers-status', { params });
   }
   findById(id: number): Observable<DossierDecesResponse> {

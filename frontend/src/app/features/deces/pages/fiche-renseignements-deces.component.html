@@ -7,7 +7,7 @@
     <header class="fiche-header">
       <div class="official-head">
         <div class="official-left"><strong>ROYAUME DU MAROC</strong></div>
-        <div class="official-title"><h1>FICHE DE RENSEIGNEMENTS<br><em>VEUVE / DÉCÉDÉ EN ACTIVITÉ</em></h1><span>En date du : {{ f.deces.dateFiche || '—' }}</span><span>Mise à jour le : {{ f.deces.dateMiseAJour || '—' }}</span></div>
+        <div class="official-title"><h1>FICHE DE RENSEIGNEMENTS<br><em>VEUVE / DÉCÉDÉ EN ACTIVITÉ</em></h1><span>En date du : {{ formatDate(f.deces.dateFiche) }}</span><span>Mise à jour le : {{ formatDate(f.deces.dateMiseAJour) }}</span></div>
         <div class="official-right"><strong>GENDARMERIE ROYALE</strong><small>SCF SOCIAL</small></div>
       </div>
       <div class="header-actions">
@@ -15,7 +15,6 @@
         <button class="btn secondary" *ngIf="!editing" (click)="startEdit()">Modifier les informations complémentaires</button>
         <button class="btn secondary" *ngIf="editing" (click)="cancelEdit()">Annuler</button>
         <button class="btn secondary" (click)="preview()">Aperçu / Imprimer</button>
-        <button class="btn primary" (click)="exportPdf()">Export PDF</button>
         <button class="btn primary" *ngIf="editing" [disabled]="saving" (click)="save()">{{ saving ? 'Enregistrement...' : 'Enregistrer' }}</button>
       </div>
     </header>
@@ -29,7 +28,7 @@
         <div><label>Date de décès</label><strong>{{ f.deces.dateDeces || '—' }}</strong></div><div><label>Lieu du décès</label><strong>{{ f.deces.lieuDeces || '—' }}</strong></div>
         <div><label>Cause du décès</label><strong>{{ f.deces.causeDeces || '—' }}</strong></div><div><label>Dernière unité</label><strong>{{ f.adherent.derniereUnite || '—' }}</strong></div>
         <div><label>Situation</label><strong>{{ f.adherent.situationCategorie || '—' }}</strong></div><div><label>DPR</label><strong>{{ f.deces.dpr || '—' }}</strong></div>
-        <div><label>Date de fiche</label><strong>{{ f.deces.dateFiche || '—' }}</strong></div><div><label>Dernière mise à jour</label><strong>{{ f.deces.dateMiseAJour || '—' }}</strong></div>
+        <div><label>Date de fiche</label><strong>{{ formatDate(f.deces.dateFiche) }}</strong></div><div><label>Dernière mise à jour</label><strong>{{ formatDate(f.deces.dateMiseAJour) }}</strong></div>
       </div>
     </section>
 
@@ -62,7 +61,7 @@
     <section class="paper-section"><h2><u>Observation</u></h2><textarea *ngIf="editing" [(ngModel)]="f.observation" rows="5" placeholder="Observation générale de la fiche"></textarea><p class="observation" *ngIf="!editing">{{ f.observation || 'Aucune observation.' }}</p></section>
 
     <article class="print-fiche print-page-one">
-      <header class="print-head"><strong>ROYAUME DU MAROC</strong><div><small>SECTION DÉCÈS EN ACTIVITÉ</small><h1>FICHE DE RENSEIGNEMENTS<br><em>VEUVE / DÉCÉDÉ EN ACTIVITÉ</em></h1><p>En date du {{ f.deces.dateFiche || '' }}</p><p>Mise à jour le {{ f.deces.dateMiseAJour || '' }}</p></div><strong>GENDARMERIE ROYALE<br><small>SCF SOCIAL</small></strong></header>
+      <header class="print-head"><strong>ROYAUME DU MAROC</strong><div><h1>FICHE DE RENSEIGNEMENTS<br><em>VEUVE / DÉCÉDÉ EN ACTIVITÉ</em></h1><p>En date du {{ formatDate(f.deces.dateFiche, '') }}</p><p>Mise à jour le {{ formatDate(f.deces.dateMiseAJour, '') }}</p></div><strong>GENDARMERIE ROYALE<br><small>SCF SOCIAL</small></strong></header>
       <h2>IDENTIFICATION DÉCÉDÉ</h2><div class="print-ident"><p>NOM : <b>{{f.adherent.nom}}</b></p><p>PRÉNOM : <b>{{f.adherent.prenom}}</b></p><p>GRADE : <b>{{f.adherent.grade}}</b></p><p>MLES : <b>{{f.adherent.matricule}}</b></p><p>DATE / NAISSANCE : <b>{{f.adherent.dateNaissance}}</b></p><p>CIN : <b>{{f.adherent.cin}}</b></p><p>CAUSE DE DÉCÈS : <b>{{f.deces.causeDeces}}</b></p><p>DATE / DÉCÈS : <b>{{f.deces.dateDeces}}</b></p><p>DERNIÈRE UNITÉ D’AFFECTATION : <b>{{f.adherent.derniereUnite}}</b></p><p>LIEU DE DÉCÈS : <b>{{f.deces.lieuDeces}}</b></p><p>SITUATION FAMILIALE : <b>{{f.adherent.situationCategorie}}</b></p><p>DPR : <b>{{f.deces.dpr}}</b></p></div>
       <h2>IDENTIFICATION AYANTS DROITS<br><u>VEUVE(S) / VEUF</u></h2><div class="print-ident"><ng-container *ngIf="f.veufVeuve as a; else spouseBlank"><p>NOM : <b>{{a.nom}}</b></p><p>PRÉNOM : <b>{{a.prenom}}</b></p><p>DATE / NAISSANCE : <b>{{a.dateNaissance}}</b></p><p>LIEU DE NAISSANCE : <b>{{a.lieuNaissance}}</b></p><p>ACTIVITÉ : <b>{{a.activiteEmploi}}</b></p><p>CIN : <b>{{a.cin}}</b></p><p class="span-two">ADRESSE : <b>{{a.adresse}}</b></p></ng-container><ng-template #spouseBlank><p>NOM :</p><p>PRÉNOM :</p><p>DATE / NAISSANCE :</p><p>LIEU DE NAISSANCE :</p><p>ACTIVITÉ :</p><p>CIN :</p><p class="span-two">ADRESSE :</p></ng-template></div>
       <h2>ORPHELINS</h2><table class="print-table"><thead><tr><th>PRÉNOM</th><th>D. NAISSANCE</th><th>S.F</th><th>NIVEAU D’INSTRUCTION</th><th>EMPLOI</th></tr></thead><tbody><tr *ngFor="let a of f.orphelins"><td>{{a.prenom}}</td><td>{{a.dateNaissance}}</td><td>{{a.situationFamiliale}}</td><td>{{a.niveauInstruction}}</td><td>{{a.activiteEmploi}}</td></tr><tr *ngIf="!f.orphelins.length"><td>&nbsp;</td><td></td><td></td><td></td><td></td></tr></tbody></table>

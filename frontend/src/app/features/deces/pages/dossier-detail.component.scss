@@ -1276,3 +1276,22 @@ td strong {
     animation: none !important;
   }
 }
+.status-badge.status--en-cours { background:#e8f3ff; color:#2476c5; }
+.status-badge.status--incomplet { background:#fff1dc; color:#bc7111; }
+.status-badge.status--a-valider { background:#f0eaff; color:#7350bc; }
+.status-badge.status--valide { background:#e3f7ef; color:#16805e; }
+.status-badge.status--rejete { background:#ffebeb; color:#bf4a4a; }
+.status-badge.status--cloture { background:#edf1f5; color:#607080; }
+.status-badge.status--archive { background:#f0f2f4; color:#77818b; }
+.fiche-unavailable {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 7px 11px;
+  border: 1px solid #f0cf9a;
+  border-radius: var(--ss-radius-sm);
+  background: #fff8ea;
+  color: #a76810;
+  font-size: 12px;
+  font-weight: 650;
+}

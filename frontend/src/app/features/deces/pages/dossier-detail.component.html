@@ -9,8 +9,10 @@
       <p class="subtitle">Adhérent : {{ d.nomComplet }}</p>
     </div>
     <div class="hero-actions">
-      <span class="status-badge">{{ d.statut }}</span>
-      <a class="btn-secondary" routerLink="/deces/adherents">Retour à la liste</a>      <a class="btn-primary" [routerLink]="['/deces/dossiers', d.id, 'fiche-renseignements']">Fiche de renseignements</a>
+      <span class="status-badge" [ngClass]="statusClass(d.statut)">{{ d.statut }}</span>
+      <a class="btn-secondary" routerLink="/deces/adherents">Retour à la liste</a>
+      <button type="button" class="btn-primary" *ngIf="ficheRenseignementsLabel" (click)="ouvrirFicheRenseignements()">{{ ficheRenseignementsLabel }}</button>
+      <span class="fiche-unavailable" *ngIf="adherent && !ficheRenseignementsLabel">Situation de service non renseignée</span>
     </div>
   </section>
 
@@ -50,7 +52,7 @@
         <div><span>Email</span><strong>{{ a.email || '—' }}</strong></div>
         <div class="wide"><span>Adresse</span><strong>{{ a.adresse || '—' }}</strong></div>
         <div><span>Situation catégorie</span><strong>{{ a.situationCategorie || '—' }}</strong></div>
-        <div><span>Pension</span><strong>{{ a.pension ? 'Oui' : 'Non' }}</strong></div>
+        <div><span>Situation de service</span><strong>{{ situationServiceLabel }}</strong></div><div><span>Pension</span><strong>{{ a.pension ? 'Oui' : 'Non' }}</strong></div>
         <div><span>Dernière unité</span><strong>{{ a.dernierUnite || '—' }}</strong></div>
         <div><span>Formation / région</span><strong>{{ a.formationUnite || '—' }}</strong></div>
         <div><span>Date de radiation</span><strong>{{ a.dateRadiation || '—' }}</strong></div>

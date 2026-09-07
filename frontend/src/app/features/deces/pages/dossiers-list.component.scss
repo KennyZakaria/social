@@ -350,3 +350,45 @@ tbody tr:hover td { background: var(--ss-bg); }
 .pagination__actions button:hover:not(:disabled), .pagination__actions button.is-active { border-color: var(--ss-primary); background: var(--ss-primary); color: #fff; }
 .pagination__actions button:disabled { cursor: not-allowed; opacity: .45; }
 @media (max-width: 640px) { .pagination { align-items: flex-start; flex-direction: column; } }
+.statut-badge.status--en-cours { background:#e8f3ff; color:#2476c5; }
+.statut-badge.status--incomplet { background:#fff1dc; color:#bc7111; }
+.statut-badge.status--a-valider { background:#f0eaff; color:#7350bc; }
+.statut-badge.status--valide { background:#e3f7ef; color:#16805e; }
+.statut-badge.status--rejete { background:#ffebeb; color:#bf4a4a; }
+.statut-badge.status--cloture { background:#edf1f5; color:#607080; }
+.statut-badge.status--archive { background:#f0f2f4; color:#77818b; }
+/* Badge de statut encadré dans le tableau des dossiers. */
+.statut-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 28px;
+  padding: 0 10px;
+  border: 1px solid var(--badge-border, currentColor);
+  border-radius: 8px;
+  box-shadow: 0 2px 5px -4px currentColor;
+  font-size: 10.5px;
+  font-weight: 750;
+  letter-spacing: .025em;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.statut-badge::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  flex: 0 0 6px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 0 3px color-mix(in srgb, currentColor 13%, transparent);
+}
+
+.statut-badge.status--en-cours { --badge-border: #b8daf7; }
+.statut-badge.status--incomplet { --badge-border: #f0cf9a; }
+.statut-badge.status--a-valider { --badge-border: #d7c6f4; }
+.statut-badge.status--valide { --badge-border: #a9e3cf; }
+.statut-badge.status--rejete { --badge-border: #f3bbbb; }
+.statut-badge.status--cloture { --badge-border: #ced8e0; }
+.statut-badge.status--archive { --badge-border: #d5d9dd; }
+.td-meta--danger { color: #c44747; font-weight: 650; }

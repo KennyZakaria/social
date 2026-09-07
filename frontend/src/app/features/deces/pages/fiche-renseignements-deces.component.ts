@@ -53,6 +53,12 @@ export class FicheRenseignementsDecesComponent implements OnInit {
   addAssurance(): void { this.draft?.assurances.push({ typeBeneficiaire: 'VEUVE_VEUF', montant: 0 }); }
   addAssistance(): void { this.draft?.assistancesOctroyees.push({ designation: 'SECOURS', montant: 0 }); }
   remove<T>(items: T[], index: number): void { items.splice(index, 1); }
+  formatDate(value?: string, fallback = '—'): string {
+    if (!value) return fallback;
+    const match = /^(\d{4})-(\d{2})-(\d{2})/.exec(value);
+    return match ? `${match[3]}/${match[2]}/${match[1]}` : fallback;
+  }
+
   preview(): void { window.print(); }
   exportPdf(): void {
     this.deces.exportFichePdf(this.dossierId).subscribe({ next: blob => { const url = URL.createObjectURL(blob); const link = document.createElement('a'); link.href = url; link.download = `fiche-deces-${this.fiche?.numeroDossier || this.dossierId}.pdf`; link.click(); URL.revokeObjectURL(url); }, error: () => this.error = 'Export PDF impossible.' });
