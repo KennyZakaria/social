@@ -10,6 +10,9 @@ import com.social.servicesocial.model.SocialModule;
 import com.social.servicesocial.repository.DossierRepository;
 import com.social.servicesocial.repository.DossierRetraiteRepository;
 import lombok.RequiredArgsConstructor;
+import com.social.servicesocial.dto.*;
+import com.social.servicesocial.model.*;
+import com.social.servicesocial.repository.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +24,12 @@ import java.util.List;
 public class RetraiteDossierService {
     private final DossierRetraiteRepository retraiteRepository;
     private final DossierRepository dossierRepository;
+    private final RetraiteAffiliationRepository affiliationRepository;
+    private final RetraiteMembreFamilleRepository familleRepository;
+    private final RetraiteDonneeMedicoSocialeRepository medicalRepository;
+    private final RetraiteAssistanceRepository assistanceRepository;
+    private final RetraiteRessourceMensuelleRepository ressourceRepository;
+    private final RetraiteChargeMensuelleRepository chargeRepository;
 
     @Transactional(readOnly = true)
     public List<RetraiteDossierResponse> list() {
@@ -41,7 +50,7 @@ public class RetraiteDossierService {
         dossier = dossierRepository.save(dossier);
         DossierRetraite retraite = DossierRetraite.builder().dossier(dossier).build();
         apply(retraite, request);
-        return toResponse(retraiteRepository.save(retraite));
+        retraite = retraiteRepository.save(retraite); replaceDetails(retraite, request); return toResponse(retraite);
     }
 
     @Transactional
@@ -57,7 +66,7 @@ public class RetraiteDossierService {
         dossier.setDateEvenement(request.dateRadiation());
         dossier.setDescription(request.motif());
         dossier.setStatut(retraite.getStatut());
-        return toResponse(retraiteRepository.save(retraite));
+        retraite = retraiteRepository.save(retraite); replaceDetails(retraite, request); return toResponse(retraite);
     }
 
     @Transactional
@@ -87,10 +96,32 @@ public class RetraiteDossierService {
 
     private RetraiteDossierResponse toResponse(DossierRetraite d) {
         return new RetraiteDossierResponse(d.getId(), d.getDossier().getNumero(), d.getAdherentId(),
-                d.getNom(), d.getPrenom(), d.getDossier().getMatricule(), d.getCin(), d.getGrade(),
-                d.getDateRadiation(), d.getSituationFamiliale(), d.getStatut(), d.getDateCreation(), d.getDateMaj());
+                d.getNom(), d.getPrenom(), d.getDossier().getMatricule(), d.getCin(), d.getMatriculeBr(), d.getGrade(),
+                d.getDateNaissance(), d.getDateRadiation(), d.getMotif(), d.getTelephoneGsm(), d.getTelephoneFixe(),
+                d.getAffectation(), d.getAdresse(), d.getSituationFamiliale(), d.getHabitation(), d.isProprietaire(),
+                d.isLocataire(), d.getHabitationPrecision(), d.getDateEnquete(), d.getStatut(), d.getDateCreation(), d.getDateMaj(),
+                affiliationRepository.findByDossierRetraiteId(d.getId()).stream().map(x -> new RetraiteAffiliationDto(x.getTypeCarte(), x.isTitulaire(), x.getNumeroCarte(), x.getObservation())).toList(),
+                familleRepository.findByDossierRetraiteId(d.getId()).stream().map(x -> new RetraiteMembreFamilleDto(x.getType(), x.getNom(), x.getPrenom(), x.getDateNaissance(), x.getCin(), x.getActivite(), x.getNiveauInstruction(), x.getEmploi(), x.isPersonneACharge())).toList(),
+                medicalRepository.findByDossierRetraiteId(d.getId()).stream().map(x -> new RetraiteMedicalDto(x.getIdentification(), x.getDiagnostic(), x.getDuree())).toList(),
+                assistanceRepository.findByDossierRetraiteId(d.getId()).stream().map(x -> new RetraiteAssistanceDto(x.getNature(), x.getOrganisme(), x.getDateAssistance(), x.getObservation())).toList(),
+                ressourceRepository.findByDossierRetraiteId(d.getId()).stream().map(x -> new RetraiteBudgetDto(x.getDesignation(), x.getMontant())).toList(),
+                chargeRepository.findByDossierRetraiteId(d.getId()).stream().map(x -> new RetraiteBudgetDto(x.getDesignation(), x.getMontant())).toList());
     }
 
     private String fullName(RetraiteDossierRequest r) { return (r.prenom() + " " + r.nom()).trim(); }
     private String value(String value) { return value == null || value.isBlank() ? "N/A" : value; }
+    private void replaceDetails(DossierRetraite d, RetraiteDossierRequest r) {
+        affiliationRepository.deleteAll(affiliationRepository.findByDossierRetraiteId(d.getId()));
+        familleRepository.deleteAll(familleRepository.findByDossierRetraiteId(d.getId()));
+        medicalRepository.deleteAll(medicalRepository.findByDossierRetraiteId(d.getId()));
+        assistanceRepository.deleteAll(assistanceRepository.findByDossierRetraiteId(d.getId()));
+        ressourceRepository.deleteAll(ressourceRepository.findByDossierRetraiteId(d.getId()));
+        chargeRepository.deleteAll(chargeRepository.findByDossierRetraiteId(d.getId()));
+        if (r.affiliations()!=null) r.affiliations().forEach(x->affiliationRepository.save(RetraiteAffiliation.builder().dossierRetraite(d).typeCarte(x.typeCarte()).titulaire(x.titulaire()).numeroCarte(x.numeroCarte()).observation(x.observation()).build()));
+        if (r.famille()!=null) r.famille().forEach(x->familleRepository.save(RetraiteMembreFamille.builder().dossierRetraite(d).type(x.type()).nom(x.nom()).prenom(x.prenom()).dateNaissance(x.dateNaissance()).cin(x.cin()).activite(x.activite()).niveauInstruction(x.niveauInstruction()).emploi(x.emploi()).personneACharge(x.personneACharge()).build()));
+        if (r.donneesMedicoSociales()!=null) r.donneesMedicoSociales().forEach(x->medicalRepository.save(RetraiteDonneeMedicoSociale.builder().dossierRetraite(d).identification(x.identification()).diagnostic(x.diagnostic()).duree(x.duree()).build()));
+        if (r.assistances()!=null) r.assistances().forEach(x->assistanceRepository.save(RetraiteAssistance.builder().dossierRetraite(d).nature(x.nature()).organisme(x.organisme()).dateAssistance(x.date()).observation(x.observation()).build()));
+        if (r.ressources()!=null) r.ressources().forEach(x->ressourceRepository.save(RetraiteRessourceMensuelle.builder().dossierRetraite(d).designation(x.designation()).montant(x.montant()).build()));
+        if (r.charges()!=null) r.charges().forEach(x->chargeRepository.save(RetraiteChargeMensuelle.builder().dossierRetraite(d).designation(x.designation()).montant(x.montant()).build()));
+    }
 }

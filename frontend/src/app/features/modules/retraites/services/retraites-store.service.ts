@@ -1,82 +1,32 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Observable, map, tap } from 'rxjs';
 
-export interface RetraiteDossier {
-  id: number;
-  reference: string;
-  nom: string;
-  matricule: string;
-  situation: string;
-  traite: boolean;
-  statut: 'En cours' | 'Validé';
-  miseAJour: string;
-  cloture?: boolean;
-  details?: {
-    profile: Record<string, unknown>;
-    family: unknown[];
-    benefits: unknown[];
-    requests: unknown[];
-    history: unknown[];
-    membership?: Record<string, unknown>;
-  };
-}
-
+export interface RetraiteDossier { id: number; reference: string; nom: string; matricule: string; situation: string; traite: boolean; statut: 'En cours' | 'Validé'; miseAJour: string; cloture?: boolean; details?: { profile: Record<string, unknown>; family: unknown[]; benefits: unknown[]; requests: unknown[]; history: unknown[]; membership?: Record<string, unknown>; socialData?: unknown[]; assistances?: unknown[]; resources?: unknown[]; charges?: unknown[]; }; }
 export interface RetraitesActivity { reference: string; nom: string; action: string; date: string; }
 
 @Injectable({ providedIn: 'root' })
 export class RetraitesStoreService {
-  private readonly key = 'service-social-retraites-dossiers';
-  private readonly historyKey = 'service-social-retraites-history';
-  private readonly resetKey = 'service-social-retraites-reset-20260902';
-  private readonly defaults: RetraiteDossier[] = [];
-
-  constructor() {
-    if (!localStorage.getItem(this.resetKey)) {
-      localStorage.removeItem(this.key);
-      localStorage.removeItem(this.historyKey);
-      localStorage.setItem(this.resetKey, 'done');
-    }
-  }
-
-  all(): RetraiteDossier[] { return this.read(); }
-  get(id: number): RetraiteDossier | undefined { return this.read().find(dossier => dossier.id === id); }
+  private readonly url = 'http://localhost:8080/api/retraites';
+  private cache: RetraiteDossier[] = [];
+  constructor(private readonly http: HttpClient) {}
+  list(): Observable<RetraiteDossier[]> { return this.http.get<unknown[]>(this.url).pipe(map(rows => rows.map(row => this.map(row))), tap(rows => this.cache = rows)); }
+  get(id: number): Observable<RetraiteDossier> { return this.http.get<unknown>(`${this.url}/${id}`).pipe(map(row => this.map(row))); }
+  all(): RetraiteDossier[] { return this.cache; }
   isClosed(dossier: RetraiteDossier): boolean { return dossier.cloture === true || dossier.statut === 'Validé'; }
-  create(initial: Partial<Pick<RetraiteDossier, 'nom' | 'matricule' | 'situation'>> = {}): RetraiteDossier {
-    const id = Date.now();
-    const dossier: RetraiteDossier = { id, reference: `RET-${new Date().getFullYear()}-${String(id).slice(-4)}`, nom: initial.nom || 'Nouveau retraité', matricule: initial.matricule || '—', situation: initial.situation || 'À renseigner', traite: false, statut: 'En cours', miseAJour: new Date().toLocaleDateString('fr-FR') };
-    this.write([dossier, ...this.read()]);
-    this.record(dossier, 'Dossier créé');
-    return dossier;
+  create(details: NonNullable<RetraiteDossier['details']>): Observable<RetraiteDossier> { return this.http.post<unknown>(this.url, this.request(details)).pipe(map(row => this.map(row))); }
+  saveDetails(id: number, details: NonNullable<RetraiteDossier['details']>): Observable<RetraiteDossier> { return this.http.put<unknown>(`${this.url}/${id}`, this.request(details)).pipe(map(row => this.map(row))); }
+  close(id: number): Observable<RetraiteDossier> { return this.http.post<unknown>(`${this.url}/${id}/close`, {}).pipe(map(row => this.map(row))); }
+  activities(): RetraitesActivity[] { return []; }
+  private map(value: unknown): RetraiteDossier {
+    const row: any = value; const profile = { dossier: row.reference, adherentId: row.adherentId ?? null, prenom: row.prenom ?? '', nom: row.nom ?? '', matricule: row.matricule ?? '', cin: row.cin ?? '', grade: row.grade ?? '', naissance: row.dateNaissance ?? '', radiation: row.dateRadiation ?? '', motif: row.motif ?? '', tel: row.telephoneGsm ?? '', telephoneFixe: row.telephoneFixe ?? '', unite: row.affectation ?? '', adresse: row.adresse ?? '', situation: row.situationFamiliale ?? '', habitation: row.habitation ?? '', proprietaire: !!row.proprietaire, locataire: !!row.locataire, habitationPrecision: row.habitationPrecision ?? '', dateEnquete: row.dateEnquete ?? '' };
+    const membership: Record<string, unknown> = {}; (row.affiliations ?? []).forEach((x: any) => { if (x.typeCarte === 'Carte spéciale') Object.assign(membership, { carteSpeciale: x.titulaire, carteSpecialeNumero: x.numeroCarte ?? '', carteSpecialeObservation: x.observation ?? '' }); if (x.typeCarte === 'Carte fraternelle') Object.assign(membership, { carteFraternelleAdherent: x.titulaire, carteFraternelle: x.numeroCarte ?? '', carteFraternelleObservation: x.observation ?? '' }); if (x.typeCarte === 'A.M.C.') Object.assign(membership, { amc: x.titulaire, amcNumero: x.numeroCarte ?? '', amcObservation: x.observation ?? '' }); });
+    const closed = row.statut === 'CLOTURE';
+    return { id: row.id, reference: row.reference, nom: `${row.prenom ?? ''} ${row.nom ?? ''}`.trim(), matricule: row.matricule ?? '', situation: row.situationFamiliale ?? '', traite: closed, statut: closed ? 'Validé' : 'En cours', cloture: closed, miseAJour: row.dateMaj ?? row.dateCreation ?? '', details: { profile, family: (row.famille ?? []).map((x: any, i: number) => ({ ...x, id: i + 1, naissance: x.dateNaissance ?? '', lien: x.type ?? '', charge: x.personneACharge ?? false, fonction: x.activite ?? '' })), benefits: [], requests: [], history: [], membership, socialData: (row.donneesMedicoSociales ?? []).map((x: any, i: number) => ({ ...x, id: i + 1 })), assistances: (row.assistances ?? []).map((x: any, i: number) => ({ ...x, id: i + 1 })), resources: row.ressources ?? [], charges: row.charges ?? [] } };
   }
-  saveDetails(id: number, details: NonNullable<RetraiteDossier['details']>): void {
-    const dossier = this.get(id);
-    if (!dossier || dossier.traite || this.isClosed(dossier)) return;
-    const profile = details.profile;
-    const updated: RetraiteDossier = {
-      ...dossier,
-      nom: `${String(profile['prenom'] || '')} ${String(profile['nom'] || '')}`.trim() || dossier.nom,
-      matricule: String(profile['matricule'] || dossier.matricule),
-      situation: String(profile['situation'] || dossier.situation),
-      details,
-      miseAJour: new Date().toLocaleDateString('fr-FR')
-    };
-    this.write(this.read().map(item => item.id === id ? updated : item));
+  private request(details: NonNullable<RetraiteDossier['details']>) {
+    const p = details.profile as Record<string, any>; const membership = details.membership as Record<string, any> ?? {};
+    const affiliations = [{ typeCarte: 'Carte spéciale', titulaire: !!membership['carteSpeciale'], numeroCarte: membership['carteSpecialeNumero'] ?? '', observation: membership['carteSpecialeObservation'] ?? '' }, { typeCarte: 'Carte fraternelle', titulaire: !!membership['carteFraternelleAdherent'], numeroCarte: membership['carteFraternelle'] ?? '', observation: membership['carteFraternelleObservation'] ?? '' }, { typeCarte: 'A.M.C.', titulaire: !!membership['amc'], numeroCarte: membership['amcNumero'] ?? '', observation: membership['amcObservation'] ?? '' }];
+    return { adherentId: p['adherentId'] ?? null, nom: p['nom'] ?? '', prenom: p['prenom'] ?? '', matricule: p['matricule'] ?? '', cin: p['cin'] ?? '', matriculeBr: p['matricule'] ?? '', grade: p['grade'] ?? '', dateNaissance: p['naissance'] || null, dateRadiation: p['radiation'] || null, motif: p['motif'] ?? '', telephoneGsm: p['tel'] ?? '', telephoneFixe: p['telephoneFixe'] ?? '', affectation: p['unite'] ?? '', adresse: p['adresse'] ?? '', situationFamiliale: p['situation'] ?? '', habitation: p['habitation'] ?? '', proprietaire: !!p['proprietaire'], locataire: !!p['locataire'], habitationPrecision: p['habitationPrecision'] ?? '', dateEnquete: p['dateEnquete'] || null, statut: 'EN_COURS', affiliations, famille: (details.family as any[] ?? []).map(x => ({ type: x.type, nom: x.nom, prenom: x.prenom, dateNaissance: x.naissance || null, cin: x.cin, activite: x.fonction ?? '', niveauInstruction: x.niveauInstruction ?? '', emploi: x.emploi ?? '', personneACharge: !!x.charge })), donneesMedicoSociales: (details.socialData as any[] ?? []).map(x => ({ identification: x.identification, diagnostic: x.diagnostic, duree: x.duree })), assistances: (details.assistances as any[] ?? []).map(x => ({ nature: x.nature, organisme: x.organisme, date: x.date || null, observation: x.observation })), ressources: (details.resources as any[] ?? []).map(x => ({ designation: x.designation, montant: Number(String(x.montant ?? 0).replace(',', '.')) || 0 })), charges: (details.charges as any[] ?? []).map(x => ({ designation: x.designation, montant: Number(String(x.montant ?? 0).replace(',', '.')) || 0 })) };
   }
-  activities(): RetraitesActivity[] { const saved = localStorage.getItem(this.historyKey); return saved ? JSON.parse(saved) : []; }
-  close(id: number): void {
-    const dossier = this.get(id);
-    if (!dossier || this.isClosed(dossier)) return;
-    const updated = { ...dossier, traite: true, statut: 'Validé' as const, cloture: true, miseAJour: new Date().toLocaleDateString('fr-FR') };
-    this.write(this.read().map(d => d.id === id ? updated : d));
-    this.record(updated, 'Dossier clôturé');
-  }
-  private read(): RetraiteDossier[] {
-    const saved = localStorage.getItem(this.key);
-    const dossiers: Array<RetraiteDossier | (Omit<RetraiteDossier, 'statut'> & { statut: 'À traiter' })> = saved ? JSON.parse(saved) : this.defaults;
-    return dossiers.map(dossier => ({
-      ...dossier,
-      statut: dossier.cloture ? 'Validé' : (dossier.statut === 'À traiter' ? 'En cours' : dossier.statut)
-    }));
-  }
-  private write(rows: RetraiteDossier[]): void { localStorage.setItem(this.key, JSON.stringify(rows)); }
-  private record(dossier: RetraiteDossier, action: string): void { const item: RetraitesActivity = { reference: dossier.reference, nom: dossier.nom, action, date: new Date().toLocaleString('fr-FR') }; localStorage.setItem(this.historyKey, JSON.stringify([item, ...this.activities()])); }
 }

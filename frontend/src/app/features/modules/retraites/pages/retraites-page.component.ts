@@ -30,7 +30,7 @@ export class RetraitesPageComponent implements OnInit {
   searchError = '';
   private draftSnapshot = '';
   private searchTimer?: ReturnType<typeof setTimeout>;
-  profile = {dossier:'RET-2026-0142',prenom:'Ahmed',nom:'El Mansouri',prenomAr:'',nomAr:'',naissance:'',lieu:'',cin:'',situation:'Marié(e)',matricule:'MAT-45871',corps:'',grade:'Sous-officier',categorie:'Retraité',entree:'',radiation:'',motif:'Limite d’âge',pension:true,unite:'',formation:'',region:'Rabat-Salé-Kénitra',tel:'',tel2:'',telephoneFixe:'',email:'',adresse:'',dateEnquete:'',habitation:'',proprietaire:false,locataire:false,habitationPrecision:'',observation:''};
+  profile: any = {dossier:'RET-2026-0142',prenom:'Ahmed',nom:'El Mansouri',prenomAr:'',nomAr:'',naissance:'',lieu:'',cin:'',situation:'Marié(e)',matricule:'MAT-45871',corps:'',grade:'Sous-officier',categorie:'Retraité',entree:'',radiation:'',motif:'Limite d’âge',pension:true,unite:'',formation:'',region:'Rabat-Salé-Kénitra',tel:'',tel2:'',telephoneFixe:'',email:'',adresse:'',dateEnquete:'',habitation:'',proprietaire:false,locataire:false,habitationPrecision:'',observation:''};
   socialData: SocialEntry[] = [];
   assistances: AssistanceEntry[] = [];
   resources: BudgetEntry[] = [{ designation: 'Pension de retraite', montant: '' }, { designation: 'Pension de réforme', montant: '' }, { designation: 'Autres ressources', montant: '' }];
@@ -49,8 +49,7 @@ export class RetraitesPageComponent implements OnInit {
     const id = Number(this.route.snapshot.paramMap.get('id'));
     if (id) {
       this.dossierId = id;
-      const dossier = this.store.get(id);
-      if (dossier) {
+      this.store.get(id).subscribe({ next: dossier => {
         this.readOnly = this.readOnly || dossier.traite || this.store.isClosed(dossier);
         const names = dossier.nom.trim().split(/\s+/);
         this.profile = { ...this.profile, dossier: dossier.reference, prenom: names.shift() || '', nom: names.join(' '), matricule: dossier.matricule, situation: dossier.situation };
@@ -68,7 +67,9 @@ export class RetraitesPageComponent implements OnInit {
           this.charges = extra.charges || this.charges;
         }
         this.loadPhoto();
-      }
+      }, error: () => this.note('Impossible de charger ce dossier depuis le serveur.') });
+    } else {
+      this.store.list().subscribe();
     }
     this.route.paramMap.subscribe(p=>{const f=p.get('feature');this.tab=({demandes:'dossier',pieces:'dossier',historique:'historique',dossiers:'fiche'} as Record<string,Tab>)[f||'']||'fiche';});
   }
@@ -92,24 +93,19 @@ export class RetraitesPageComponent implements OnInit {
     if (this.readOnly) return;
     const missing = [this.profile.prenom, this.profile.nom, this.profile.cin, this.profile.matricule, this.profile.tel].some(value => !String(value).trim());
     if (missing) { this.note('Veuillez renseigner tous les champs obligatoires marqués d’un astérisque.'); return; }
-    let created = false;
     if (this.isNewDossier && !this.dossierId) {
-      const dossier = this.store.create({ nom: `${this.profile.prenom} ${this.profile.nom}`.trim(), matricule: this.profile.matricule, situation: this.profile.categorie || this.profile.situation });
-      this.dossierId = dossier.id;
-      this.profile.dossier = dossier.reference;
-      this.isNewDossier = false;
-      created = true;
+      this.store.create(this.dossierDetails()).subscribe({ next: dossier => {
+        this.dossierId = dossier.id; this.profile.dossier = dossier.reference; this.isNewDossier = false;
+        this.note('Dossier enregistré dans la base de données'); this.router.navigate(['/retraites/dashboard']);
+      }, error: () => this.note('Impossible d’enregistrer le dossier. Vérifiez le backend.') });
+      return;
     }
     this.addHistory('Fiche administrative mise à jour');
-    if (this.dossierId) this.store.saveDetails(this.dossierId, this.dossierDetails());
-    this.note('Modifications enregistrées');
-    if (created) this.router.navigate(['/retraites/dashboard']);
+    if (this.dossierId) this.store.saveDetails(this.dossierId, this.dossierDetails()).subscribe({ next: () => this.note('Modifications enregistrées dans la base de données'), error: () => this.note('Impossible d’enregistrer les modifications.') });
   }
   validateAndClose(){
     if (!this.dossierId || this.readOnly) return;
-    this.store.saveDetails(this.dossierId, this.dossierDetails());
-    this.store.close(this.dossierId);
-    this.router.navigate(['/retraites/validation']);
+    this.store.saveDetails(this.dossierId, this.dossierDetails()).subscribe({ next: () => this.store.close(this.dossierId!).subscribe({ next: () => this.router.navigate(['/retraites/validation']), error: () => this.note('Impossible de clôturer le dossier.') }), error: () => this.note('Impossible d’enregistrer avant la clôture.') });
   }
   cancelValidation(){ this.router.navigate(['/retraites/validation']); }
   closeConsultation(){ this.router.navigate(['/retraites/dashboard']); }
@@ -136,7 +132,7 @@ export class RetraitesPageComponent implements OnInit {
       return;
     }
     this.selectedAdherent=adherent;
-    this.profile={...this.profile,dossier:`RET-${new Date().getFullYear()}-NOUVEAU`,prenom:adherent.prenomAr,nom:adherent.nomAr,prenomAr:adherent.prenomAr,nomAr:adherent.nomAr,naissance:adherent.dateNaissance || '',lieu:adherent.lieuNaissance || '',cin:adherent.cin || '',situation:adherent.situationCategorie || '',matricule:adherent.matriculeBR || '',corps:adherent.matricule || '',grade:adherent.grade || '',categorie:adherent.categorie || '',radiation:adherent.dateRadiation || '',motif:adherent.motifRadiation || '',pension:adherent.pension,unite:adherent.dernierUnite || '',formation:adherent.formationUnite || '',tel:adherent.telephone1 || '',tel2:adherent.telephone2 || '',email:adherent.email || '',adresse:adherent.adresse || '',observation:''};
+    this.profile={...this.profile,dossier:`RET-${new Date().getFullYear()}-NOUVEAU`,adherentId:adherent.id,prenom:adherent.prenomAr,nom:adherent.nomAr,prenomAr:adherent.prenomAr,nomAr:adherent.nomAr,naissance:adherent.dateNaissance || '',lieu:adherent.lieuNaissance || '',cin:adherent.cin || '',situation:adherent.situationCategorie || '',matricule:adherent.matriculeBR || '',corps:adherent.matricule || '',grade:adherent.grade || '',categorie:adherent.categorie || '',radiation:adherent.dateRadiation || '',motif:adherent.motifRadiation || '',pension:adherent.pension,unite:adherent.dernierUnite || '',formation:adherent.formationUnite || '',tel:adherent.telephone1 || '',tel2:adherent.telephone2 || '',email:adherent.email || '',adresse:adherent.adresse || '',observation:''};
     this.adherentResults=[];
     this.loadPhoto();
     this.draftSnapshot = this.currentDraftSnapshot();

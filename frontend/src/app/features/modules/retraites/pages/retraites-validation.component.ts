@@ -11,8 +11,8 @@ import { RetraiteDossier, RetraitesStoreService } from '../services/retraites-st
 })
 export class RetraitesValidationComponent {
   tab: 'pending' | 'all' = 'pending';
-  dossiers: RetraiteDossier[] = this.store.all();
-  constructor(private readonly store: RetraitesStoreService, private readonly router: Router) {}
+  dossiers: RetraiteDossier[] = [];
+  constructor(private readonly store: RetraitesStoreService, private readonly router: Router) { this.store.list().subscribe({ next: rows => this.dossiers = rows }); }
   get pending() { return this.dossiers.filter(d => !d.traite); }
   get displayed() { return this.tab === 'pending' ? this.pending : this.dossiers; }
   openForValidation(dossier: RetraiteDossier) { this.router.navigate(['/module/retraites/dossier', dossier.id], { queryParams: { validation: 'true' } }); }

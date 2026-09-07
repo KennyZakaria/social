@@ -4,6 +4,7 @@ import com.social.servicesocial.model.DossierStatut;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.util.List;
 
 public record RetraiteDossierRequest(
         Long adherentId,
@@ -26,5 +27,8 @@ public record RetraiteDossierRequest(
         boolean locataire,
         String habitationPrecision,
         LocalDate dateEnquete,
-        DossierStatut statut
+        DossierStatut statut, List<RetraiteAffiliationDto> affiliations,
+        List<RetraiteMembreFamilleDto> famille, List<RetraiteMedicalDto> donneesMedicoSociales,
+        List<RetraiteAssistanceDto> assistances, List<RetraiteBudgetDto> ressources,
+        List<RetraiteBudgetDto> charges
 ) {}

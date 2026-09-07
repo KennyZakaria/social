@@ -8,6 +8,6 @@ import { RetraitesStoreService } from '../services/retraites-store.service';
   styleUrl: './retraites-global-history-page.component.css'
 })
 export class RetraitesGlobalHistoryPageComponent {
-  activities = this.store.activities();
-  constructor(private readonly store: RetraitesStoreService) {}
+  activities: { reference: string; nom: string; action: string; date: string; }[] = [];
+  constructor(private readonly store: RetraitesStoreService) { this.store.list().subscribe(rows => this.activities = rows.map(dossier => ({ reference: dossier.reference, nom: dossier.nom, action: dossier.traite ? 'Dossier clôturé' : 'Dossier en cours', date: dossier.miseAJour }))); }
 }

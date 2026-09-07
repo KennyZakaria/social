@@ -11,8 +11,8 @@ import { RetraitesExportService } from '../services/retraites-export.service';
   styleUrl: './retraites-dashboard.component.css'
 })
 export class RetraitesDashboardComponent {
-  dossiers = this.store.all();
-  constructor(private readonly store: RetraitesStoreService, private readonly exporter: RetraitesExportService) {}
+  dossiers: RetraiteDossier[] = [];
+  constructor(private readonly store: RetraitesStoreService, private readonly exporter: RetraitesExportService) { this.store.list().subscribe({ next: rows => this.dossiers = rows }); }
   count(status: RetraiteDossier['statut']) { return this.dossiers.filter(d => d.statut === status).length; }
   lastUpdate(dossier: RetraiteDossier): string { return dossier.miseAJour || new Date().toLocaleDateString('fr-FR'); }
   isClosed(dossier: RetraiteDossier): boolean { return this.store.isClosed(dossier); }
