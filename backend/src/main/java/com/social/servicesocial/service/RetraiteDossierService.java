@@ -105,6 +105,29 @@ public class RetraiteDossierService {
         target.setObservation(r.observation());
         target.setAdresseEM(r.adresseEM());
         target.setCode(r.code());
+        target.setCarteFondation(r.carteFondation());
+        target.setNumeroPmr(r.numeroPmr());
+        target.setMontantPmr(r.montantPmr());
+        target.setNumeroPmi(r.numeroPmi());
+        target.setMontantPmi(r.montantPmi());
+        target.setProfessionActuelle(r.professionActuelle());
+        target.setColisRamadan(r.colisRamadan());
+        target.setRegionResidence(r.regionResidence());
+        target.setSituationLogement(r.situationLogement());
+        target.setHayRabat(r.hayRabat());
+        target.setObservationSociale(r.observationSociale());
+        target.setCinSocial(r.cinSocial());
+        target.setMatriculeSocial(r.matriculeSocial());
+        target.setMotifEnquete(r.motifEnquete());
+        target.setNumeroDossier(r.numeroDossier());
+        target.setCartePrelevementCmr(r.cartePrelevementCmr());
+        target.setSituationFraternelle(r.situationFraternelle());
+        target.setAnneeAdhesion(r.anneeAdhesion());
+        target.setModeReglement(r.modeReglement());
+        target.setNumeroRecu(r.numeroRecu());
+        target.setDatePaiement(r.datePaiement());
+        target.setObservationAdhesion(r.observationAdhesion());
+        target.setAvecPhoto(r.avecPhoto());
         target.setAdherentId(r.adherentId()); target.setNom(r.nom()); target.setPrenom(r.prenom());
         target.setCin(r.cin()); target.setMatriculeBr(r.matriculeBr()); target.setGrade(r.grade());
         target.setDateNaissance(r.dateNaissance()); target.setDateRadiation(r.dateRadiation());
@@ -117,13 +140,13 @@ public class RetraiteDossierService {
     }
 
     private RetraiteDossierResponse toResponse(DossierRetraite d) {
-        return new RetraiteDossierResponse(d.getNomAr(), d.getPrenomAr(), d.getLieuNaissance(), d.getMatriculeCorps(), d.getCategorie(), d.getSituationCategorie(), d.getPension(), d.getDateEntreeService(), d.getMotifRadiationSanction(), d.getDateDeces(), d.getCauseDeces(), d.getNatureDeces(), d.getFormationUnite(), d.getDerniereRegion(), d.getTelephoneGsm2(), d.getEmail(), d.getObservation(), d.getAdresseEM(), d.getCode(), d.getId(), d.getDossier().getNumero(), d.getAdherentId(),
+        return new RetraiteDossierResponse(d.getNomAr(), d.getPrenomAr(), d.getLieuNaissance(), d.getMatriculeCorps(), d.getCategorie(), d.getSituationCategorie(), d.getPension(), d.getDateEntreeService(), d.getMotifRadiationSanction(), d.getDateDeces(), d.getCauseDeces(), d.getNatureDeces(), d.getFormationUnite(), d.getDerniereRegion(), d.getTelephoneGsm2(), d.getEmail(), d.getObservation(), d.getAdresseEM(), d.getCode(), d.getCarteFondation(), d.getNumeroPmr(), d.getMontantPmr(), d.getNumeroPmi(), d.getMontantPmi(), d.getProfessionActuelle(), d.getColisRamadan(), d.getRegionResidence(), d.getSituationLogement(), d.getHayRabat(), d.getObservationSociale(), d.getCinSocial(), d.getMatriculeSocial(), d.getMotifEnquete(), d.getNumeroDossier(), d.getCartePrelevementCmr(), d.getSituationFraternelle(), d.getAnneeAdhesion(), d.getModeReglement(), d.getNumeroRecu(), d.getDatePaiement(), d.getObservationAdhesion(), d.getAvecPhoto(), d.getId(), d.getDossier().getNumero(), d.getAdherentId(),
                 d.getNom(), d.getPrenom(), d.getDossier().getMatricule(), d.getCin(), d.getMatriculeBr(), d.getGrade(),
                 d.getDateNaissance(), d.getDateRadiation(), d.getMotif(), d.getTelephoneGsm(), d.getTelephoneFixe(),
                 d.getAffectation(), d.getAdresse(), d.getSituationFamiliale(), d.getHabitation(), d.isProprietaire(),
                 d.isLocataire(), d.getHabitationPrecision(), d.getDateEnquete(), d.getStatut(), d.getDateCreation(), d.getDateMaj(),
                 affiliationRepository.findByDossierRetraiteId(d.getId()).stream().map(x -> new RetraiteAffiliationDto(x.getTypeCarte(), x.isTitulaire(), x.getNumeroCarte(), x.getObservation())).toList(),
-                familleRepository.findByDossierRetraiteId(d.getId()).stream().map(x -> new RetraiteMembreFamilleDto(x.getType(), x.getNom(), x.getPrenom(), x.getDateNaissance(), x.getCin(), x.getActivite(), x.getNiveauInstruction(), x.getEmploi(), x.isPersonneACharge())).toList(),
+                familleRepository.findByDossierRetraiteId(d.getId()).stream().map(x -> new RetraiteMembreFamilleDto(x.getLieu(), x.getMutuelle(), x.getLieuTravail(), x.getMariage(), x.getDivorce(), x.getSituationFamiliale(), x.getLien(), x.getType(), x.getNom(), x.getPrenom(), x.getDateNaissance(), x.getCin(), x.getActivite(), x.getNiveauInstruction(), x.getEmploi(), x.isPersonneACharge())).toList(),
                 medicalRepository.findByDossierRetraiteId(d.getId()).stream().map(x -> new RetraiteMedicalDto(x.getIdentification(), x.getDiagnostic(), x.getDuree())).toList(),
                 assistanceRepository.findByDossierRetraiteId(d.getId()).stream().map(x -> new RetraiteAssistanceDto(x.getNature(), x.getOrganisme(), x.getDateAssistance(), x.getObservation())).toList(),
                 ressourceRepository.findByDossierRetraiteId(d.getId()).stream().map(x -> new RetraiteBudgetDto(x.getDesignation(), x.getMontant())).toList(),
@@ -142,7 +165,7 @@ public class RetraiteDossierService {
         ressourceRepository.deleteAll(ressourceRepository.findByDossierRetraiteId(d.getId()));
         chargeRepository.deleteAll(chargeRepository.findByDossierRetraiteId(d.getId()));
         if (r.affiliations()!=null) r.affiliations().forEach(x->affiliationRepository.save(RetraiteAffiliation.builder().dossierRetraite(d).typeCarte(x.typeCarte()).titulaire(x.titulaire()).numeroCarte(x.numeroCarte()).observation(x.observation()).build()));
-        if (r.famille()!=null) r.famille().forEach(x->familleRepository.save(RetraiteMembreFamille.builder().dossierRetraite(d).type(x.type()).nom(x.nom()).prenom(x.prenom()).dateNaissance(x.dateNaissance()).cin(x.cin()).activite(x.activite()).niveauInstruction(x.niveauInstruction()).emploi(x.emploi()).personneACharge(x.personneACharge()).build()));
+        if (r.famille()!=null) r.famille().forEach(x->familleRepository.save(RetraiteMembreFamille.builder().dossierRetraite(d).lieu(x.lieu()).mutuelle(x.mutuelle()).lieuTravail(x.lieuTravail()).mariage(x.mariage()).divorce(x.divorce()).situationFamiliale(x.situationFamiliale()).lien(x.lien()).type(x.type()).nom(x.nom()).prenom(x.prenom()).dateNaissance(x.dateNaissance()).cin(x.cin()).activite(x.activite()).niveauInstruction(x.niveauInstruction()).emploi(x.emploi()).personneACharge(x.personneACharge()).build()));
         if (r.donneesMedicoSociales()!=null) r.donneesMedicoSociales().forEach(x->medicalRepository.save(RetraiteDonneeMedicoSociale.builder().dossierRetraite(d).identification(x.identification()).diagnostic(x.diagnostic()).duree(x.duree()).build()));
         if (r.assistances()!=null) r.assistances().forEach(x->assistanceRepository.save(RetraiteAssistance.builder().dossierRetraite(d).nature(x.nature()).organisme(x.organisme()).dateAssistance(x.date()).observation(x.observation()).build()));
         if (r.ressources()!=null) r.ressources().forEach(x->ressourceRepository.save(RetraiteRessourceMensuelle.builder().dossierRetraite(d).designation(x.designation()).montant(x.montant()).build()));

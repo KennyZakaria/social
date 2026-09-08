@@ -8,7 +8,7 @@ import { AdherentsService } from '../../../adherents/services/adherents.service'
 import { AdherentResponse } from '../../../../models';
 
 type Tab = 'fiche' | 'famille' | 'dossier' | 'historique';
-interface Person { id: number; type: 'Conjoint' | 'Enfant' | 'Membre de famille'; nom: string; prenom: string; naissance: string; cin: string; lien: string; charge: boolean; lieu?: string; fonction?: string; mutuelle?: string; mariage?: string; divorce?: string; niveauInstruction?: string; emploi?: string; }
+interface Person { lieuTravail?: string; situationFamiliale?: string; id: number; type: 'Conjoint' | 'Enfant' | 'Membre de famille'; nom: string; prenom: string; naissance: string; cin: string; lien: string; charge: boolean; lieu?: string; fonction?: string; mutuelle?: string; mariage?: string; divorce?: string; niveauInstruction?: string; emploi?: string; }
 interface SocialEntry { id: number; identification: string; diagnostic: string; duree: string; confirmed: boolean; }
 interface AssistanceEntry { id: number; nature: string; organisme: string; date: string; observation: string; confirmed: boolean; }
 interface BudgetEntry { designation: string; montant: string; }
@@ -65,7 +65,13 @@ export class RetraitesPageComponent implements OnInit {
           this.socialData = extra.socialData || [];
           this.assistances = extra.assistances || [];
           this.resources = extra.resources || this.resources;
-          this.charges = extra.charges || this.charges;
+          this.charges = extra.charges?.length ? extra.charges : this.charges;
+        }
+        if (this.profile.adherentId && !this.readOnly) {
+          this.adherentsService.get(this.profile.adherentId).subscribe({
+            next: adherent => { this.prefillAdherent(adherent); this.loadPhoto(); },
+            error: () => this.note('Impossible de rafraîchir les informations adhérent. Les données du dossier sont affichées.')
+          });
         }
         this.loadPhoto();
       }, error: () => this.note('Impossible de charger ce dossier depuis le serveur.') });
@@ -73,9 +79,6 @@ export class RetraitesPageComponent implements OnInit {
       this.store.list().subscribe();
     }
     this.route.paramMap.subscribe(p=>{const f=p.get('feature');this.tab=({demandes:'dossier',pieces:'dossier',historique:'historique',dossiers:'fiche'} as Record<string,Tab>)[f||'']||'fiche';});
-  }
-  get situationCategorieOptions(): string[] {
-    return [...new Set([this.profile.situationCategorie, 'Actif', 'Retraité', 'Réformé', 'Radié', 'Réserviste'].filter((value): value is string => typeof value === 'string' && value.length > 0))];
   }
   get completion(){return Math.round([this.profile.prenom,this.profile.nom,this.profile.cin,this.profile.matricule,this.profile.tel,this.profile.adresse].filter(Boolean).length/6*100);}
   get isSingle(){return String(this.profile.situation).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase() === 'celibataire';}
@@ -150,6 +153,34 @@ export class RetraitesPageComponent implements OnInit {
     this.searchError='';
     this.searchTimer=setTimeout(()=>this.adherentsService.list(search,0,10).subscribe({next:page=>{this.adherentResults=page.content;this.searching=false;},error:()=>{this.adherentResults=[];this.searching=false;this.searchError='Impossible de charger les adhérents. Vérifiez que le backend est démarré et reconnectez-vous.';}}),300);
   }
+  private prefillAdherent(adherent: AdherentResponse): void {
+    this.profile = { ...this.profile,
+      adherentId: adherent.id,
+      prenom: adherent.prenomAr ?? '',
+      nom: adherent.nomAr ?? '',
+      prenomAr: adherent.prenomAr ?? '',
+      nomAr: adherent.nomAr ?? '',
+      naissance: adherent.dateNaissance ?? '',
+      lieu: adherent.lieuNaissance ?? '',
+      cin: adherent.cin ?? '',
+      situationCategorie: adherent.situationCategorie ?? '',
+      dateDeces: adherent.dateDeces ?? '',
+      causeDeces: adherent.causeDeces ?? '',
+      matricule: adherent.matriculeBR ?? '',
+      corps: adherent.matricule ?? '',
+      grade: adherent.grade ?? '',
+      categorie: adherent.categorie ?? '',
+      radiation: adherent.dateRadiation ?? '',
+      motif: adherent.motifRadiation ?? '',
+      pension: adherent.pension,
+      unite: adherent.dernierUnite ?? '',
+      formation: adherent.formationUnite ?? '',
+      tel: adherent.telephone1 ?? '',
+      tel2: adherent.telephone2 ?? '',
+      email: adherent.email ?? '',
+      adresse: adherent.adresse ?? '',
+    };
+  }
   selectAdherent(adherent: AdherentResponse){
     const dossier = this.existingDossier(adherent);
     if (dossier) {
@@ -158,7 +189,8 @@ export class RetraitesPageComponent implements OnInit {
       return;
     }
     this.selectedAdherent=adherent;
-    this.profile={...this.profile,dossier:`RET-${new Date().getFullYear()}-NOUVEAU`,adherentId:adherent.id,prenom:adherent.prenomAr,nom:adherent.nomAr,prenomAr:adherent.prenomAr,nomAr:adherent.nomAr,naissance:adherent.dateNaissance || '',lieu:adherent.lieuNaissance || '',cin:adherent.cin || '',situation:'',situationCategorie:adherent.situationCategorie || '',dateDeces:adherent.dateDeces || '',causeDeces:adherent.causeDeces || '',region:'',natureDeces:'',motifRadiationSanction:'',adresseEM:'',code:'',entree:'',dateEnquete:'',matricule:adherent.matriculeBR || '',corps:adherent.matricule || '',grade:adherent.grade || '',categorie:adherent.categorie || '',radiation:adherent.dateRadiation || '',motif:adherent.motifRadiation || '',pension:adherent.pension,unite:adherent.dernierUnite || '',formation:adherent.formationUnite || '',tel:adherent.telephone1 || '',tel2:adherent.telephone2 || '',email:adherent.email || '',adresse:adherent.adresse || '',observation:''};
+    this.profile = {...this.profile, dossier:`RET-${new Date().getFullYear()}-NOUVEAU`, situation:'', region:'', natureDeces:'', motifRadiationSanction:'', adresseEM:'', code:'', entree:'', dateEnquete:'', observation:''};
+    this.prefillAdherent(adherent);
     this.adherentResults=[];
     this.loadPhoto();
     this.draftSnapshot = this.currentDraftSnapshot();
