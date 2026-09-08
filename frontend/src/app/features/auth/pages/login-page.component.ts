@@ -35,6 +35,7 @@ export class LoginPageComponent {
 
   submit(): void {
     if (this.form.invalid || this.loading) return;
+    
     this.error = '';
     this.loading = true;
 
