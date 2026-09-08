@@ -1,3 +1,4 @@
+import { SimpleDatePipe } from './simple-date.pipe';
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -6,7 +7,7 @@ import { RetraiteDossier, RetraitesStoreService } from '../services/retraites-st
 import { RetraitesExportService } from '../services/retraites-export.service';
 
 @Component({
-  selector: 'app-retraites-list-page', imports: [CommonModule, FormsModule],
+  selector: 'app-retraites-list-page', imports: [SimpleDatePipe, CommonModule, FormsModule],
   templateUrl: './retraites-list-page.component.html',
   styleUrl: './retraites-list-page.component.css'
 })

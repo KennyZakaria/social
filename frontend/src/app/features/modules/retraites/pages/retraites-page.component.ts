@@ -1,3 +1,4 @@
+import { SimpleDatePipe } from './simple-date.pipe';
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -14,7 +15,7 @@ interface BudgetEntry { designation: string; montant: string; }
 
 @Component({
   selector: 'app-retraites-page',
-  imports: [CommonModule, FormsModule],
+  imports: [SimpleDatePipe, CommonModule, FormsModule],
   templateUrl: './retraites-page.component.html',
   styleUrl: './retraites-page.component.css',
   styles: ['.actions > button:first-child { display: none; }.budget-input{width:100%;border-collapse:collapse}.budget-input th,.budget-input td{padding:.7rem;border-bottom:1px solid var(--border);text-align:left;font-size:.78rem}.budget-input th{background:var(--surface-2);color:var(--text-2);font-weight:700}.budget-input input{width:100%;box-sizing:border-box;border:1px solid var(--border);border-radius:6px;padding:.45rem;background:var(--surface)}']

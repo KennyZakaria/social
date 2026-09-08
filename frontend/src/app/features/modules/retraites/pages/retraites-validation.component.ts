@@ -1,3 +1,4 @@
+import { SimpleDatePipe } from './simple-date.pipe';
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
@@ -5,7 +6,7 @@ import { RetraiteDossier, RetraitesStoreService } from '../services/retraites-st
 
 @Component({
   selector: 'app-retraites-validation',
-  imports: [CommonModule, RouterLink],
+  imports: [SimpleDatePipe, CommonModule, RouterLink],
   templateUrl: './retraites-validation.component.html',
   styleUrl: './retraites-validation.component.css'
 })
