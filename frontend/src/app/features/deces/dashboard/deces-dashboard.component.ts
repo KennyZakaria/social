@@ -39,8 +39,8 @@ export class DecesDashboardComponent implements OnInit {
     this.svc.findAll().subscribe({ next: d => { this.dossiers = d; this.loading = false; }, error: () => { this.loading = false; } });
   }
 
-  openAyants(dossier: DossierDecesResponse): void {
-    this.router.navigate(['/deces/ayants-droit'], { queryParams: { adherentId: dossier.adherentId } });
+  openDetail(dossier: DossierDecesResponse): void {
+    void this.router.navigate(['/deces/dossiers', dossier.id]);
   }
 
   getStatutLabel(s: string): string { return STATUT_LABELS[s] ?? s; }

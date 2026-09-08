@@ -71,7 +71,7 @@ export class NouveauDossierDecesComponent implements OnInit {
   selectAdherent(a: AdherentRecherche): void {
     if (a.hasDossierDeces) {
       const dossier = a.dossierNumero ? ` ${a.dossierNumero}` : '';
-      this.errorMsg = `Cet adherent a deja un dossier de deces${dossier}. Il ne peut pas etre selectionne.`;
+      this.errorMsg = `Cet adhérent a déjà un dossier de décès${dossier}. Il ne peut pas être sélectionné.`;
       setTimeout(() => this.errorMsg = '', 5000);
       return;
     }
@@ -82,10 +82,7 @@ export class NouveauDossierDecesComponent implements OnInit {
   }
 
   changerAdherent(): void {
-    this.adherentSelectionne = null;
-    this.rechercheAdherent = '';
-    this.resultats = [];
-    this.errorMsg = '';
+    void this.router.navigate(['/deces/adherents']);
   }
 
   submitDossier(): void {
@@ -112,7 +109,7 @@ export class NouveauDossierDecesComponent implements OnInit {
       },
       error: (e: any) => {
         this.loading = false;
-        this.errorMsg = e?.error?.message || 'Erreur lors de la creation du dossier.';
+        this.errorMsg = e?.error?.message || 'Erreur lors de la création du dossier.';
         setTimeout(() => this.errorMsg = '', 5000);
       }
     });
