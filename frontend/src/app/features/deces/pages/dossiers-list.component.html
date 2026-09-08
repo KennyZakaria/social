@@ -78,7 +78,6 @@
                   </svg>
                 </button>
                 <button class="action-btn action-btn--view" type="button" *ngIf="d.statut === 'CLOTURE'" title="Archiver le dossier" (click)="archiver(d)">Archiver</button>
-                <span class="td-meta td-meta--danger" *ngIf="d.statut !== 'CLOTURE'">Suppression indisponible</span>
               </div>
             </td>
           </tr>

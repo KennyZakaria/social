@@ -243,7 +243,7 @@
             <td>
 
               <span>
-                {{ adherent.categorie || '-' }}
+                {{ categorieLabel(adherent.categorie) }}
               </span>
 
             </td>
@@ -263,14 +263,12 @@
             <td>
 
               <span
-                class="pill pill--soft"
-                *ngIf="adherent.situationCategorie"
+                class="service-status"
+                [class.service-status--retired]="adherent.situationCategorie === 'RETRAITE'"
+                [class.service-status--active]="adherent.situationCategorie !== 'RETRAITE'"
               >
-                {{ adherent.situationCategorie }}
-              </span>
-
-              <span *ngIf="!adherent.situationCategorie">
-                -
+                <span class="service-status__dot"></span>
+                {{ adherent.situationCategorie === 'RETRAITE' ? 'Retraité' : 'En activité' }}
               </span>
 
             </td>

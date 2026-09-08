@@ -38,7 +38,7 @@ export class FicheRenseignementsRetraiteComponent implements OnInit {
       next: result => {
         this.adherent = result.adherent;
         this.fiche = result.fiche;
-        if (!this.adherent.pension) this.error = 'Cette fiche est réservée aux adhérents retraités.';
+        if (this.adherent.situationCategorie !== 'RETRAITE') this.error = 'Cette fiche est réservée aux adhérents retraités.';
       },
       error: () => this.error = 'Impossible de charger la fiche de renseignements retraité.'
     });

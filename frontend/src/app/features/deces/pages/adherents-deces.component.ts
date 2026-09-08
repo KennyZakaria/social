@@ -132,13 +132,22 @@ export class AdherentsDecesComponent implements OnInit {
 
   piecesJustificatives(adherent: DecesAdherentResponse): void {
     if (!adherent.dossierDecesId) return;
-    this.router.navigate(['/deces/pieces-justificatives'], { queryParams: { dossierId: adherent.dossierDecesId } });
+    this.router.navigate(['/deces/dossiers', adherent.dossierDecesId], { queryParams: { tab: 'pieces' } });
   }
 
   initials(adherent: DecesAdherentResponse): string {
     return `${adherent.prenomAr?.charAt(0) ?? ''}${adherent.nomAr?.charAt(0) ?? ''}`.toUpperCase() || 'AD';
   }
 
+  categorieLabel(categorie?: string | null): string {
+    const labels: Record<string, string> = {
+      SOUS_OFFICIERS: 'Sous-officiers',
+      OFFICIERS: 'Officiers',
+      OFFICIERS_SUPERIEURS: 'Officiers supérieurs',
+      OFFICIERS_GENERAUX: 'Officiers généraux'
+    };
+    return categorie ? labels[categorie] ?? categorie : '—';
+  }
   statutClass(statut?: string | null): string {
     const classes: Record<string, string> = {
       EN_COURS: 'dossier-status--en-cours',

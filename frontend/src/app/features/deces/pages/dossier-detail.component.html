@@ -109,10 +109,14 @@
   <option value="AUTRE">AUTRE</option>
 </select></label>
         <label><span>Date naissance</span><input type="date" formControlName="dateNaissance" /></label>
+        <label><span>Lieu de naissance</span><input formControlName="lieuNaissance" placeholder="Ville de naissance" /></label>
+        <label><span>Situation familiale</span><input formControlName="situationFamiliale" placeholder="Célibataire, marié(e)..." /></label>
+        <label><span>Niveau d’instruction</span><input formControlName="niveauInstruction" placeholder="Niveau d’études" /></label>
+        <label><span>Activité / emploi</span><input formControlName="activiteEmploi" placeholder="Profession ou activité" /></label>
         <label><span>Téléphone</span><input formControlName="telephone" /></label>
         <label class="wide"><span>Adresse</span><input formControlName="adresse" /></label>
-        <label><span>Répartition</span><select formControlName="typeRepartition"><option value="POURCENTAGE">Pourcentage</option><option value="CHARIA">Charia</option></select></label>
-        <label><span>Pourcentage</span><input type="number" min="0" max="100" formControlName="pourcentage" /></label>
+        <label><span>Répartition</span><select formControlName="typeRepartition" (change)="onRepartitionChange()"><option value="POURCENTAGE">Pourcentage</option><option value="CHARIA">Charia</option></select></label>
+        <label *ngIf="ayantForm.controls.typeRepartition.value === 'POURCENTAGE'"><span>Pourcentage *</span><input type="number" min="0" max="100" formControlName="pourcentage" /></label>
         <div class="form-actions wide">
           <button class="btn-primary" type="submit" [disabled]="ayantForm.invalid || savingAyant">{{ editingAyantId ? 'Modifier' : 'Ajouter' }}</button>
           <button class="btn-secondary" type="button" (click)="closeAyantForm()">Annuler</button>

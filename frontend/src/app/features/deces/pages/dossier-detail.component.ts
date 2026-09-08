@@ -82,6 +82,10 @@ export class DossierDetailComponent implements OnInit {
     cin: ['', Validators.required],
     lienParente: ['', Validators.required],
     dateNaissance: [''],
+    lieuNaissance: [''],
+    situationFamiliale: [''],
+    niveauInstruction: [''],
+    activiteEmploi: [''],
     telephone: [''],
     adresse: [''],
     typeRepartition: ['POURCENTAGE' as 'POURCENTAGE' | 'CHARIA', Validators.required],
@@ -128,22 +132,23 @@ export class DossierDetailComponent implements OnInit {
     };
     return classes[statut] ?? 'status--archive';
   }
+  get isRetraite(): boolean {
+    return this.adherent?.situationCategorie === 'RETRAITE';
+  }
+
   get ficheRenseignementsLabel(): string | null {
-    if (this.adherent?.pension === false) return 'Fiche de renseignements en activité';
-    if (this.adherent?.pension === true) return 'Fiche de renseignements retraité';
-    return null;
+    if (!this.adherent?.situationCategorie) return null;
+    return this.isRetraite ? 'Fiche de renseignements retraité' : 'Fiche de renseignements en activité';
   }
 
   get situationServiceLabel(): string {
-    if (this.adherent?.pension === false) return 'EN ACTIVITÉ';
-    if (this.adherent?.pension === true) return 'RETRAITÉ';
-    return 'Non renseignée';
+    if (!this.adherent?.situationCategorie) return 'Non renseignée';
+    return this.isRetraite ? 'RETRAITÉ' : 'EN ACTIVITÉ';
   }
 
   ouvrirFicheRenseignements(): void {
     if (!this.dossier || !this.ficheRenseignementsLabel) return;
-    const type = this.adherent?.pension === true ? 'retraite' : 'activite';
-    const ficheRoute = type === 'retraite' ? 'fiche-renseignements-retraite' : 'fiche-renseignements';
+    const ficheRoute = this.isRetraite ? 'fiche-renseignements-retraite' : 'fiche-renseignements';
     this.router.navigate(['/deces/dossiers', this.dossier.id, ficheRoute]);
   }
   selectTab(tab: DetailTab): void {
@@ -208,13 +213,28 @@ export class DossierDetailComponent implements OnInit {
       cin: ayant?.cin ?? '',
       lienParente: ayant?.lienParente ?? '',
       dateNaissance: ayant?.dateNaissance ?? '',
+      lieuNaissance: ayant?.lieuNaissance ?? '',
+      situationFamiliale: ayant?.situationFamiliale ?? '',
+      niveauInstruction: ayant?.niveauInstruction ?? '',
+      activiteEmploi: ayant?.activiteEmploi ?? '',
       telephone: ayant?.telephone ?? '',
       adresse: ayant?.adresse ?? '',
       typeRepartition: (ayant?.typeRepartition as 'POURCENTAGE' | 'CHARIA') ?? 'POURCENTAGE',
       pourcentage: ayant?.pourcentage ?? null
     });
+    this.onRepartitionChange();
   }
 
+  onRepartitionChange(): void {
+    const percentage = this.ayantForm.controls.pourcentage;
+    if (this.ayantForm.controls.typeRepartition.value === 'POURCENTAGE') {
+      percentage.setValidators([Validators.required, Validators.min(0), Validators.max(100)]);
+    } else {
+      percentage.clearValidators();
+      percentage.setValue(null);
+    }
+    percentage.updateValueAndValidity();
+  }
   closeAyantForm(): void {
     this.formAyantOpen = false;
     this.editingAyantId = null;
@@ -231,6 +251,10 @@ export class DossierDetailComponent implements OnInit {
       cin: raw.cin,
       lienParente: raw.lienParente,
       dateNaissance: raw.dateNaissance || undefined,
+      lieuNaissance: raw.lieuNaissance || undefined,
+      situationFamiliale: raw.situationFamiliale || undefined,
+      niveauInstruction: raw.niveauInstruction || undefined,
+      activiteEmploi: raw.activiteEmploi || undefined,
       telephone: raw.telephone || undefined,
       adresse: raw.adresse || undefined,
       typeRepartition: raw.typeRepartition,

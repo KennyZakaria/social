@@ -130,6 +130,7 @@ public class DecesAdherentController {
                 adherent.getCategorie(),
                 adherent.getGrade(),
                 adherent.getSituationCategorie(),
+                adherent.isPension(),
                 dossier != null,
                 dossier == null ? null : dossier.getId(),
                 dossier == null ? null : dossier.getNumero(),

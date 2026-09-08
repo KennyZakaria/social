@@ -58,12 +58,12 @@ export class LoginPageComponent {
 
   private resolveHome(role: string, modules: string[]): string {
     if (role === 'ADMIN') return '/users';
+    if (modules.includes('RETRAITES')) return '/retraites/dashboard';
     if (role === 'MANAGER') return '/dashboard';
     if (modules.includes('DECES')) return '/deces/dashboard';
     if (modules.includes('BUREAU_ORDRE')) return '/bureau-order';
     if (modules.includes('MUTUELLE')) return '/module/mutuelle';
     if (modules.includes('ASSISTANCE_SOCIALE')) return '/module/assistance-sociale';
-    if (modules.includes('RETRAITES')) return '/module/retraites';
     if (modules.includes('CULTURE_LOISIRS')) return '/module/culture-loisirs';
     if (modules.includes('ASSURANCE_SOCIALE')) return '/module/assurance-sociale';
     return '/dashboard';

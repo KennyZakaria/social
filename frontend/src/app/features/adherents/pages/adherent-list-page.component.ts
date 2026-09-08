@@ -105,34 +105,40 @@ import { AdherentsService } from '../services/adherents.service';
             <div class="form-grid">
               <div class="field">
                 <label>Catégorie</label>
-                <input formControlName="categorie" placeholder="Officier"/>
+                <select formControlName="categorie" (change)="onCategorieChange()">
+                  <option value="" disabled>Sélectionner une catégorie</option>
+                  <option value="SOUS_OFFICIERS">Sous-officiers</option>
+                  <option value="OFFICIERS">Officiers</option>
+                  <option value="OFFICIERS_SUPERIEURS">Officiers supérieurs</option>
+                  <option value="OFFICIERS_GENERAUX">Officiers généraux</option>
+                </select>
               </div>
               <div class="field">
                 <label>Grade</label>
-                <select formControlName="grade">
-  <option value="" disabled>Sélectionner un grade</option>
-  <optgroup label="Sous-officiers">
-    <option value="M/G">M/G</option>
-    <option value="M/C">M/C</option>
-    <option value="Adj">Adj</option>
-    <option value="A/C">A/C</option>
-  </optgroup>
-  <optgroup label="Officiers">
-    <option value="Sous-lieutenant">Sous-lieutenant</option>
-    <option value="Lieutenant">Lieutenant</option>
-    <option value="Capitaine">Capitaine</option>
-  </optgroup>
-  <optgroup label="Officiers supérieurs">
-    <option value="Commandant">Commandant</option>
-    <option value="Lieutenant-colonel">Lieutenant-colonel</option>
-    <option value="Colonel">Colonel</option>
-    <option value="Colonel-major">Colonel-major</option>
-  </optgroup>
-  <optgroup label="Officiers généraux">
-    <option value="Général de brigade">Général de brigade</option>
-    <option value="Général de division">Général de division</option>
-  </optgroup>
-</select>
+                <select formControlName="grade" [disabled]="!form.controls.categorie.value">
+                  <option value="" disabled>Sélectionner un grade</option>
+                  <optgroup *ngIf="form.controls.categorie.value === 'SOUS_OFFICIERS'" label="Sous-officiers">
+                    <option value="M/G">M/G</option>
+                    <option value="M/C">M/C</option>
+                    <option value="Adj">Adj</option>
+                    <option value="A/C">A/C</option>
+                  </optgroup>
+                  <optgroup *ngIf="form.controls.categorie.value === 'OFFICIERS'" label="Officiers">
+                    <option value="Sous-lieutenant">Sous-lieutenant</option>
+                    <option value="Lieutenant">Lieutenant</option>
+                    <option value="Capitaine">Capitaine</option>
+                  </optgroup>
+                  <optgroup *ngIf="form.controls.categorie.value === 'OFFICIERS_SUPERIEURS'" label="Officiers supérieurs">
+                    <option value="Commandant">Commandant</option>
+                    <option value="Lieutenant-colonel">Lieutenant-colonel</option>
+                    <option value="Colonel">Colonel</option>
+                    <option value="Colonel-major">Colonel-major</option>
+                  </optgroup>
+                  <optgroup *ngIf="form.controls.categorie.value === 'OFFICIERS_GENERAUX'" label="Officiers généraux">
+                    <option value="Général de brigade">Général de brigade</option>
+                    <option value="Général de division">Général de division</option>
+                  </optgroup>
+                </select>
               </div>
               <div class="field">
                 <label>Matricule BR</label>
@@ -152,18 +158,12 @@ import { AdherentsService } from '../services/adherents.service';
               </div>
               <div class="field">
                 <label>Situation catégorie</label>
-                <input formControlName="situationCategorie" placeholder="Actif"/>
+                <select formControlName="situationCategorie">
+                  <option value="EN_ACTIVITE">En activité</option>
+                  <option value="RETRAITE">Retraité</option>
+                </select>
               </div>
-              <div class="field field--check">
-                <label class="toggle-label">
-                  <span class="toggle-wrap">
-                    <input type="checkbox" formControlName="pension" class="toggle-input"/>
-                    <span class="toggle-track"></span>
-                  </span>
-                  Pension
-                </label>
-              </div>
-            </div>
+          </div>
           </div>
 
           <div class="form-section">
@@ -255,7 +255,7 @@ import { AdherentsService } from '../services/adherents.service';
                 </td>
                 <td>
                   <div>
-                    <span class="cat-badge">{{ a.categorie }}</span>
+                    <span class="cat-badge">{{ categorieLabel(a.categorie) }}</span>
                     <div class="grade-sub">{{ a.grade }}</div>
                   </div>
                 </td>
@@ -457,8 +457,8 @@ export class AdherentListPageComponent implements OnInit {
   readonly form = this.fb.nonNullable.group({
     prenomAr:          ['', Validators.required],
     nomAr:             ['', Validators.required],
-    categorie:         ['', Validators.required],
-    grade:             ['', Validators.required],
+    categorie:         ['SOUS_OFFICIERS', Validators.required],
+    grade:             ['M/G', Validators.required],
     matriculeBR:       ['', Validators.required],
     matricule:         ['', Validators.required],
     dateNaissance:     ['', Validators.required],
@@ -473,7 +473,7 @@ export class AdherentListPageComponent implements OnInit {
     telephone2:        [null as string | null],
     adresse:           ['', Validators.required],
     email:             ['', [Validators.required, Validators.email]],
-    situationCategorie:['', Validators.required],
+    situationCategorie:['EN_ACTIVITE', Validators.required],
     pension:           [false],
     cin:               ['', Validators.required],
   });
@@ -482,6 +482,9 @@ export class AdherentListPageComponent implements OnInit {
 
   ngOnInit(): void { this.load(); }
 
+  onCategorieChange(): void {
+    this.form.controls.grade.setValue('');
+  }
   onSearch(): void {
     clearTimeout(this.searchTimer);
     this.searchTimer = setTimeout(() => { this.currentPage = 0; this.load(); }, 350);
@@ -491,7 +494,7 @@ export class AdherentListPageComponent implements OnInit {
 
   openCreate(): void {
     this.editingId = null;
-    this.form.reset({ pension: false });
+    this.form.reset({ categorie: 'SOUS_OFFICIERS', grade: 'M/G', situationCategorie: 'EN_ACTIVITE', pension: false });
     this.formOpen = true;
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
@@ -503,10 +506,11 @@ export class AdherentListPageComponent implements OnInit {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  closeForm(): void { this.formOpen = false; this.editingId = null; this.form.reset({ pension: false }); }
+  closeForm(): void { this.formOpen = false; this.editingId = null; this.form.reset({ categorie: 'SOUS_OFFICIERS', grade: 'M/G', situationCategorie: 'EN_ACTIVITE', pension: false }); }
 
   saveAdherent(): void {
     const payload = this.form.getRawValue() as any;
+    payload.pension = payload.situationCategorie === 'RETRAITE';
     const obs = this.editingId
       ? this.svc.update(this.editingId, payload)
       : this.svc.create(payload);
@@ -523,9 +527,18 @@ export class AdherentListPageComponent implements OnInit {
     });
   }
 
+  categorieLabel(categorie: string): string {
+    const labels: Record<string, string> = {
+      SOUS_OFFICIERS: 'Sous-officiers',
+      OFFICIERS: 'Officiers',
+      OFFICIERS_SUPERIEURS: 'Officiers supérieurs',
+      OFFICIERS_GENERAUX: 'Officiers généraux'
+    };
+    return labels[categorie] ?? categorie ?? '—';
+  }
   getSitClass(sit: string): string {
     const s = (sit || '').toLowerCase();
-    if (s.includes('actif')) return 'sit-badge sit--actif';
+    if (s.includes('activ') || s.includes('actif')) return 'sit-badge sit--actif';
     if (s.includes('radi')) return 'sit-badge sit--radié';
     if (s.includes('déc') || s.includes('dec')) return 'sit-badge sit--décédé';
     return 'sit-badge sit--default';
