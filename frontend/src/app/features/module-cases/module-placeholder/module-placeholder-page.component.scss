@@ -1,0 +1,22 @@
+.page { display: flex; flex-direction: column; gap: 1.25rem; }
+    .page-header { display: flex; align-items: center; gap: 1rem; }
+    .page-icon {
+      width: 48px; height: 48px; border-radius: var(--r-lg);
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+      background: var(--primary-light); color: var(--primary);
+      svg { width: 22px; height: 22px; }
+    }
+    .page-kicker {
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--text-3);
+    }
+    .page-title { font-size: 1.35rem; font-weight: 700; letter-spacing: -0.02em; color: var(--text-1); margin-top: 2px; }
+    .card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--r-lg); overflow: hidden; box-shadow: var(--sh-sm);
+    }
+    .placeholder {
+      padding: 3rem 1.25rem; text-align: center; font-size: 0.9rem; color: var(--text-2);
+    }
+    .placeholder p { margin: 0 0 0.4rem; }
+    .muted { color: var(--text-3); font-size: 0.8rem; }

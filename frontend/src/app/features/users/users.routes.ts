@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { adminGuard, authGuard } from '../../guards';
+import { adminGuard, authGuard } from '../../core/auth/guards';
 import { UserListPageComponent } from './user-list/user-list-page.component';
 import { UserCreatePageComponent } from './user-create/user-create-page.component';
 

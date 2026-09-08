@@ -1,0 +1,127 @@
+<div class="page">
+
+      <!-- Page header -->
+      <div class="page-header">
+        <div class="page-icon page-icon--violet">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+          </svg>
+        </div>
+        <div>
+          <h2 class="page-title">Bureau d'Ordre</h2>
+          <p class="page-sub">Gestion des courriers entrants et sortants</p>
+        </div>
+      </div>
+
+      <!-- New mail form -->
+      <div class="card">
+        <div class="card__head">
+          <p class="card__title">Enregistrer un courrier</p>
+        </div>
+        <form [formGroup]="form" (ngSubmit)="createMail()" class="form-grid">
+          <div class="field">
+            <label>N° Courrier</label>
+            <input formControlName="mailNumber" placeholder="ex: CO-2025-001" />
+          </div>
+          <div class="field">
+            <label>Objet</label>
+            <input formControlName="subject" placeholder="Objet du courrier" />
+          </div>
+          <div class="field">
+            <label>Expéditeur</label>
+            <input formControlName="senderName" placeholder="Nom expéditeur" />
+          </div>
+          <div class="field">
+            <label>Section destinataire</label>
+            <input formControlName="receiverSection" placeholder="Section" />
+          </div>
+          <div class="field">
+            <label>Direction</label>
+            <select formControlName="direction">
+              <option value="INCOMING">Entrant</option>
+              <option value="OUTGOING">Sortant</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Statut</label>
+            <select formControlName="status">
+              <option value="REGISTERED">Enregistré</option>
+              <option value="ASSIGNED">Assigné</option>
+              <option value="IN_PROGRESS">En cours</option>
+              <option value="CLOSED">Clôturé</option>
+            </select>
+          </div>
+          <div class="field field--check">
+            <label class="toggle-label">
+              <span class="toggle-wrap">
+                <input type="checkbox" formControlName="urgent" class="toggle-input" />
+                <span class="toggle-track"></span>
+              </span>
+              Courrier urgent
+            </label>
+          </div>
+          <div class="field field--action">
+            <button class="btn-primary" [disabled]="form.invalid" type="submit">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+              Enregistrer
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Search + table -->
+      <div class="card">
+        <div class="card__head">
+          <p class="card__title">Courriers ({{ mails.length }})</p>
+          <div class="search-wrap">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <input [formControl]="searchControl" class="search-input" placeholder="Recherche multicritère..." (keyup.enter)="search()" />
+            <button class="btn-search" (click)="search()">Rechercher</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Numéro</th>
+                <th>Objet</th>
+                <th>Expéditeur</th>
+                <th>Section</th>
+                <th>Direction</th>
+                <th>Statut</th>
+                <th>Urgent</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let m of mails">
+                <td><code class="ref-code">{{ m.mailNumber }}</code></td>
+                <td class="td-subject">{{ m.subject }}</td>
+                <td>{{ m.senderName }}</td>
+                <td>{{ m.receiverSection }}</td>
+                <td>
+                  <span class="badge" [class]="'badge--' + m.direction.toLowerCase()">
+                    {{ m.direction === 'INCOMING' ? 'Entrant' : 'Sortant' }}
+                  </span>
+                </td>
+                <td>
+                  <span class="badge" [class]="'badge--' + m.status.toLowerCase()">
+                    {{ statusLabel(m.status) }}
+                  </span>
+                </td>
+                <td>
+                  <span *ngIf="m.urgent" class="badge badge--urgent">Urgent</span>
+                  <span *ngIf="!m.urgent" class="text-muted">—</span>
+                </td>
+              </tr>
+              <tr *ngIf="mails.length === 0">
+                <td colspan="7" class="empty-row">Aucun courrier enregistré.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>

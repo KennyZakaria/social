@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AuthStateService } from '../../auth-state.service';
+import { AuthStateService } from '../../core/auth/auth-state.service';
 
 @Component({
   selector: 'app-navbar',

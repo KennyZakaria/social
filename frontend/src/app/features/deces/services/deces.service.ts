@@ -15,7 +15,7 @@ import {
   ValidationResultResponse,
   FicheRenseignementsDeces,
   FicheRenseignementsDecesRequest
-} from '../../../models';
+} from '../../../core/models/models';
 
 @Injectable({ providedIn: 'root' })
 export class DecesService {

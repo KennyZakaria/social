@@ -1,0 +1,108 @@
+<div class="page">
+
+      <!-- Page header -->
+      <div class="page-header">
+        <div class="page-icon page-icon--indigo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/>
+          </svg>
+        </div>
+        <div>
+          <p class="page-kicker">Module fonctionnel</p>
+          <h2 class="page-title">{{ moduleLabel }}</h2>
+        </div>
+      </div>
+
+      <!-- Add case form -->
+      <div class="card">
+        <div class="card__head">
+          <p class="card__title">Nouveau dossier</p>
+        </div>
+        <form [formGroup]="form" (ngSubmit)="createCase()" class="form-grid">
+          <div class="field">
+            <label>Référence</label>
+            <input formControlName="referenceCode" placeholder="ex: REF-2025-001" />
+          </div>
+          <div class="field">
+            <label>Intitulé dossier</label>
+            <input formControlName="title" placeholder="Titre du dossier" />
+          </div>
+          <div class="field">
+            <label>Nom adhérent</label>
+            <input formControlName="memberName" placeholder="Nom de l'adhérent" />
+          </div>
+          <div class="field">
+            <label>Priorité</label>
+            <input formControlName="priority" placeholder="ex: NORMALE, HAUTE" />
+          </div>
+          <div class="field">
+            <label>Statut</label>
+            <select formControlName="status">
+              <option value="OPEN">Ouvert</option>
+              <option value="IN_PROGRESS">En cours</option>
+              <option value="PENDING">En attente</option>
+              <option value="COMPLETED">Complété</option>
+              <option value="ARCHIVED">Archivé</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Date d'échéance</label>
+            <input formControlName="dueDate" type="date" />
+          </div>
+          <div class="field field--notes">
+            <label>Notes</label>
+            <textarea formControlName="notes" placeholder="Commentaires et observations..."></textarea>
+          </div>
+          <div class="field field--action">
+            <button class="btn-primary" [disabled]="form.invalid" type="submit">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+              Ajouter le dossier
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Cases table -->
+      <div class="card">
+        <div class="card__head">
+          <p class="card__title">Dossiers ({{ cases.length }})</p>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Référence</th>
+                <th>Titre</th>
+                <th>Adhérent</th>
+                <th>Statut</th>
+                <th>Priorité</th>
+                <th>Échéance</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let c of cases">
+                <td><code class="ref-code">{{ c.referenceCode }}</code></td>
+                <td class="td-title">{{ c.title }}</td>
+                <td>{{ c.memberName }}</td>
+                <td>
+                  <span class="badge" [class]="'badge--' + c.status.toLowerCase()">
+                    {{ statusLabel(c.status) }}
+                  </span>
+                </td>
+                <td>
+                  <span class="priority-pill" [class]="'priority--' + (c.priority || 'normale').toLowerCase()">
+                    {{ c.priority || 'Normale' }}
+                  </span>
+                </td>
+                <td class="td-date">{{ c.dueDate ? (c.dueDate | date:'dd/MM/yyyy') : '—' }}</td>
+              </tr>
+              <tr *ngIf="cases.length === 0">
+                <td colspan="6" class="empty-row">Aucun dossier enregistré pour ce module.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
