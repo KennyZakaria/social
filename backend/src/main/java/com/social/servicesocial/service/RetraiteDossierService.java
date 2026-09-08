@@ -86,6 +86,25 @@ public class RetraiteDossierService {
     }
 
     private void apply(DossierRetraite target, RetraiteDossierRequest r) {
+        target.setNomAr(r.nomAr());
+        target.setPrenomAr(r.prenomAr());
+        target.setLieuNaissance(r.lieuNaissance());
+        target.setMatriculeCorps(r.matriculeCorps());
+        target.setCategorie(r.categorie());
+        target.setSituationCategorie(r.situationCategorie());
+        target.setPension(r.pension());
+        target.setDateEntreeService(r.dateEntreeService());
+        target.setMotifRadiationSanction(r.motifRadiationSanction());
+        target.setDateDeces(r.dateDeces());
+        target.setCauseDeces(r.causeDeces());
+        target.setNatureDeces(r.natureDeces());
+        target.setFormationUnite(r.formationUnite());
+        target.setDerniereRegion(r.derniereRegion());
+        target.setTelephoneGsm2(r.telephoneGsm2());
+        target.setEmail(r.email());
+        target.setObservation(r.observation());
+        target.setAdresseEM(r.adresseEM());
+        target.setCode(r.code());
         target.setAdherentId(r.adherentId()); target.setNom(r.nom()); target.setPrenom(r.prenom());
         target.setCin(r.cin()); target.setMatriculeBr(r.matriculeBr()); target.setGrade(r.grade());
         target.setDateNaissance(r.dateNaissance()); target.setDateRadiation(r.dateRadiation());
@@ -98,7 +117,7 @@ public class RetraiteDossierService {
     }
 
     private RetraiteDossierResponse toResponse(DossierRetraite d) {
-        return new RetraiteDossierResponse(d.getId(), d.getDossier().getNumero(), d.getAdherentId(),
+        return new RetraiteDossierResponse(d.getNomAr(), d.getPrenomAr(), d.getLieuNaissance(), d.getMatriculeCorps(), d.getCategorie(), d.getSituationCategorie(), d.getPension(), d.getDateEntreeService(), d.getMotifRadiationSanction(), d.getDateDeces(), d.getCauseDeces(), d.getNatureDeces(), d.getFormationUnite(), d.getDerniereRegion(), d.getTelephoneGsm2(), d.getEmail(), d.getObservation(), d.getAdresseEM(), d.getCode(), d.getId(), d.getDossier().getNumero(), d.getAdherentId(),
                 d.getNom(), d.getPrenom(), d.getDossier().getMatricule(), d.getCin(), d.getMatriculeBr(), d.getGrade(),
                 d.getDateNaissance(), d.getDateRadiation(), d.getMotif(), d.getTelephoneGsm(), d.getTelephoneFixe(),
                 d.getAffectation(), d.getAdresse(), d.getSituationFamiliale(), d.getHabitation(), d.isProprietaire(),

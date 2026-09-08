@@ -74,6 +74,9 @@ export class RetraitesPageComponent implements OnInit {
     }
     this.route.paramMap.subscribe(p=>{const f=p.get('feature');this.tab=({demandes:'dossier',pieces:'dossier',historique:'historique',dossiers:'fiche'} as Record<string,Tab>)[f||'']||'fiche';});
   }
+  get situationCategorieOptions(): string[] {
+    return [...new Set([this.profile.situationCategorie, 'Actif', 'Retraité', 'Réformé', 'Radié', 'Réserviste'].filter((value): value is string => typeof value === 'string' && value.length > 0))];
+  }
   get completion(){return Math.round([this.profile.prenom,this.profile.nom,this.profile.cin,this.profile.matricule,this.profile.tel,this.profile.adresse].filter(Boolean).length/6*100);}
   get isSingle(){return String(this.profile.situation).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase() === 'celibataire';}
   onSituationChange(){if(this.isSingle) this.familyAction='';}
@@ -110,12 +113,12 @@ export class RetraitesPageComponent implements OnInit {
     if (this.isNewDossier && !this.dossierId) {
       this.store.create(this.dossierDetails()).subscribe({ next: dossier => {
         this.dossierId = dossier.id; this.profile.dossier = dossier.reference; this.isNewDossier = false;
-        this.note('Dossier enregistré dans la base de données'); this.router.navigate(['/retraites/dashboard']);
+        this.router.navigate(['/retraites/dossiers']);
       }, error: () => this.note('Impossible d’enregistrer le dossier. Vérifiez le backend.') });
       return;
     }
     this.addHistory('Fiche administrative mise à jour');
-    if (this.dossierId) this.store.saveDetails(this.dossierId, this.dossierDetails()).subscribe({ next: () => this.note('Modifications enregistrées dans la base de données'), error: () => this.note('Impossible d’enregistrer les modifications.') });
+    if (this.dossierId) this.store.saveDetails(this.dossierId, this.dossierDetails()).subscribe({ next: () => this.router.navigate(['/retraites/dossiers']), error: () => this.note('Impossible d’enregistrer les modifications.') });
   }
   validateAndClose(){
     if (this.readOnly) return;
@@ -130,6 +133,7 @@ export class RetraitesPageComponent implements OnInit {
   }
   private closeDossier(id: number) { this.store.close(id).subscribe({ next: () => this.router.navigate(['/retraites/validation']), error: () => this.note('Impossible de clôturer le dossier.') }); }
   cancelValidation(){ this.router.navigate(['/retraites/validation']); }
+  returnToDossiers(){ this.router.navigate(['/retraites/dossiers']); }
   closeConsultation(){ this.router.navigate(['/retraites/dashboard']); }
   cancelNewDossier(){
     if (this.hasDraftChanges() && !window.confirm('Abandonner les modifications non enregistrées ?')) return;
@@ -154,7 +158,7 @@ export class RetraitesPageComponent implements OnInit {
       return;
     }
     this.selectedAdherent=adherent;
-    this.profile={...this.profile,dossier:`RET-${new Date().getFullYear()}-NOUVEAU`,adherentId:adherent.id,prenom:adherent.prenomAr,nom:adherent.nomAr,prenomAr:adherent.prenomAr,nomAr:adherent.nomAr,naissance:adherent.dateNaissance || '',lieu:adherent.lieuNaissance || '',cin:adherent.cin || '',situation:adherent.situationCategorie || '',matricule:adherent.matriculeBR || '',corps:adherent.matricule || '',grade:adherent.grade || '',categorie:adherent.categorie || '',radiation:adherent.dateRadiation || '',motif:adherent.motifRadiation || '',pension:adherent.pension,unite:adherent.dernierUnite || '',formation:adherent.formationUnite || '',tel:adherent.telephone1 || '',tel2:adherent.telephone2 || '',email:adherent.email || '',adresse:adherent.adresse || '',observation:''};
+    this.profile={...this.profile,dossier:`RET-${new Date().getFullYear()}-NOUVEAU`,adherentId:adherent.id,prenom:adherent.prenomAr,nom:adherent.nomAr,prenomAr:adherent.prenomAr,nomAr:adherent.nomAr,naissance:adherent.dateNaissance || '',lieu:adherent.lieuNaissance || '',cin:adherent.cin || '',situation:'',situationCategorie:adherent.situationCategorie || '',dateDeces:adherent.dateDeces || '',causeDeces:adherent.causeDeces || '',region:'',natureDeces:'',motifRadiationSanction:'',adresseEM:'',code:'',entree:'',dateEnquete:'',matricule:adherent.matriculeBR || '',corps:adherent.matricule || '',grade:adherent.grade || '',categorie:adherent.categorie || '',radiation:adherent.dateRadiation || '',motif:adherent.motifRadiation || '',pension:adherent.pension,unite:adherent.dernierUnite || '',formation:adherent.formationUnite || '',tel:adherent.telephone1 || '',tel2:adherent.telephone2 || '',email:adherent.email || '',adresse:adherent.adresse || '',observation:''};
     this.adherentResults=[];
     this.loadPhoto();
     this.draftSnapshot = this.currentDraftSnapshot();

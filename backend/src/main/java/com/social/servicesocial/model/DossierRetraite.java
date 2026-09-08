@@ -16,6 +16,25 @@ public class DossierRetraite {
     @JoinColumn(name = "dossier_id", nullable = false, unique = true)
     private Dossier dossier;
 
+    private String nomAr;
+    private String prenomAr;
+    private String lieuNaissance;
+    private String matriculeCorps;
+    private String categorie;
+    private String situationCategorie;
+    private Boolean pension;
+    private LocalDate dateEntreeService;
+    private String motifRadiationSanction;
+    private LocalDate dateDeces;
+    private String causeDeces;
+    private String natureDeces;
+    private String formationUnite;
+    private String derniereRegion;
+    private String telephoneGsm2;
+    private String email;
+    private String observation;
+    private String adresseEM;
+    private String code;
     private Long adherentId;
     @Column(nullable = false, length = 100) private String nom;
     @Column(nullable = false, length = 100) private String prenom;
