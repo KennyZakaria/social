@@ -87,7 +87,7 @@ import { AdherentsService } from '../services/adherents.service';
               </div>
               <div class="field">
                 <label>Lieu de naissance</label>
-                <input formControlName="lieuNaissance" placeholder="Alger"/>
+                <input formControlName="lieuNaissance" placeholder="Maroc"/>
               </div>
               <div class="field">
                 <label>CIN</label>

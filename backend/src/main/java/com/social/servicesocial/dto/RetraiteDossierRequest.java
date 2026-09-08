@@ -1,10 +1,11 @@
 package com.social.servicesocial.dto;
 
-import com.social.servicesocial.model.DossierStatut;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.List;
+
+import com.social.servicesocial.model.DossierStatut;
+
+import jakarta.validation.constraints.NotBlank;
 
 public record RetraiteDossierRequest(
         Long adherentId,

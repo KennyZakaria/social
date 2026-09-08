@@ -9,6 +9,7 @@ import {
   AyantDroitRequest,
   AyantDroitResponse,
   DossierDecesResponse,
+  HistoriqueDossierDecesResponse,
   PieceJustificativeResponse,
   ValidationResultResponse
 } from '../../../models';
@@ -16,7 +17,7 @@ import { DecesService } from '../services/deces.service';
 import { AyantsDroitService } from '../services/ayants-droit.service';
 import { PiecesJustificativesService } from '../services/pieces-justificatives.service';
 
-type DetailTab = 'adherent' | 'dossier' | 'ayantsDroit' | 'pieces' | 'validation';
+type DetailTab = 'adherent' | 'dossier' | 'ayantsDroit' | 'pieces' | 'validation' | 'historique';
 type PieceType = 'ACTE_DECES' | 'CIN_ADHERENT' | 'LIVRET_FAMILLE' | 'RIB_BENEFICIAIRE';
 
 interface ChecklistPiece {
@@ -48,7 +49,8 @@ export class DossierDetailComponent implements OnInit {
     { key: 'dossier', label: 'Dossier Décès' },
     { key: 'ayantsDroit', label: 'Ayants droit' },
     { key: 'pieces', label: 'Pièces justificatives' },
-    { key: 'validation', label: 'Validation' }
+    { key: 'validation', label: 'Validation' },
+    { key: 'historique', label: 'Historique' }
   ];
 
   dossier: DossierDecesResponse | null = null;
@@ -56,6 +58,7 @@ export class DossierDetailComponent implements OnInit {
   ayants: AyantDroitResponse[] = [];
   pieces: ChecklistPiece[] = this.clonePieces();
   controle: ValidationResultResponse | null = null;
+  historique: HistoriqueDossierDecesResponse[] = [];
 
   loading = false;
   savingDossier = false;
@@ -103,7 +106,7 @@ export class DossierDetailComponent implements OnInit {
 
   ngOnInit(): void {
     const requestedTab = this.route.snapshot.queryParamMap.get('tab');
-    if (requestedTab === 'adherent' || requestedTab === 'dossier' || requestedTab === 'ayantsDroit' || requestedTab === 'pieces' || requestedTab === 'validation') {
+    if (requestedTab === 'adherent' || requestedTab === 'dossier' || requestedTab === 'ayantsDroit' || requestedTab === 'pieces' || requestedTab === 'validation' || requestedTab === 'historique') {
       this.activeTab = requestedTab;
     }
     this.load();
@@ -117,6 +120,13 @@ export class DossierDetailComponent implements OnInit {
     return ['VALIDE', 'CLOTURE', 'ARCHIVE'].includes(this.dossier?.statut ?? '');
   }
 
+  get canCloturer(): boolean {
+    return this.dossier?.statut === 'VALIDE';
+  }
+
+  get canArchiver(): boolean {
+    return this.dossier?.statut === 'CLOTURE';
+  }
   get canValidate(): boolean {
     return this.dossier?.statut === 'A_VALIDER' && this.controle?.valid === true;
   }
@@ -328,6 +338,7 @@ export class DossierDetailComponent implements OnInit {
           this.dossier = response.dossier;
           this.controle = response.controle;
           this.patchDossierForm(response.dossier);
+          this.refreshHistorique();
           this.show(response.controle.valid
             ? 'Dossier complet — transmis au responsable.'
             : 'Dossier incomplet : corrigez les anomalies puis soumettez à nouveau.');
@@ -346,12 +357,44 @@ export class DossierDetailComponent implements OnInit {
           this.dossier = response.dossier;
           this.controle = response.controle;
           this.patchDossierForm(response.dossier);
+          this.refreshHistorique();
           this.show('Dossier validé avec succès.');
         },
         error: error => this.showErr(error?.error?.message || 'Validation impossible.')
       });
   }
 
+  cloturerDossier(): void {
+    if (!this.dossier || !this.canCloturer || this.validating) return;
+    if (!window.confirm('Clôturer ce dossier validé ? Cette action bloque les modifications.')) return;
+    this.validating = true;
+    this.decesService.cloturerDossier(this.dossier.id)
+      .pipe(finalize(() => this.validating = false))
+      .subscribe({
+        next: dossier => {
+          this.dossier = dossier;
+          this.patchDossierForm(dossier);
+          this.show('Dossier clôturé avec succès. Vous pouvez maintenant l’archiver.');
+        },
+        error: error => this.showErr(error?.error?.message || 'Clôture impossible.')
+      });
+  }
+
+  archiverDossier(): void {
+    if (!this.dossier || !this.canArchiver || this.validating) return;
+    if (!window.confirm('Archiver ce dossier clôturé ? Cette action est définitive.')) return;
+    this.validating = true;
+    this.decesService.archiverDossier(this.dossier.id)
+      .pipe(finalize(() => this.validating = false))
+      .subscribe({
+        next: dossier => {
+          this.dossier = dossier;
+          this.patchDossierForm(dossier);
+          this.show('Dossier archivé avec succès.');
+        },
+        error: error => this.showErr(error?.error?.message || 'Archivage impossible.')
+      });
+  }
   pieceState(piece: ChecklistPiece): string {
     if (piece.saving) return 'Sauvegarde...';
     return piece.present ? 'Présente' : 'Manquante';
@@ -362,13 +405,15 @@ export class DossierDetailComponent implements OnInit {
       adherent: this.decesService.getAdherent(dossier.adherentId).pipe(catchError(() => of(null))),
       ayants: this.ayantsService.list(dossier.adherentId).pipe(catchError(() => of([] as AyantDroitResponse[]))),
       pieces: this.piecesService.list(dossier.id).pipe(catchError(() => of([] as PieceJustificativeResponse[]))),
-      controle: this.decesService.getControleValidation(dossier.id).pipe(catchError(() => of(null)))
+      controle: this.decesService.getControleValidation(dossier.id).pipe(catchError(() => of(null))),
+      historique: this.decesService.getHistorique(dossier.id).pipe(catchError(() => of([] as HistoriqueDossierDecesResponse[])))
     }).subscribe(result => {
       this.adherent = result.adherent;
       this.ayants = result.ayants;
       this.pieces = this.clonePieces();
       result.pieces.forEach(piece => this.mergePiece(piece));
       this.controle = result.controle;
+      this.historique = result.historique;
     });
   }
 
@@ -380,6 +425,26 @@ export class DossierDetailComponent implements OnInit {
     });
   }
 
+  refreshHistorique(): void {
+    if (!this.dossier) return;
+    this.decesService.getHistorique(this.dossier.id).subscribe({
+      next: historique => this.historique = historique,
+      error: () => this.historique = []
+    });
+  }
+
+  historiqueLabel(action: string): string {
+    const labels: Record<string, string> = {
+      CREATION_DOSSIER: 'Création du dossier',
+      SOUMISSION_VALIDATION: 'Soumission à validation',
+      VALIDATION_DOSSIER: 'Dossier validé',
+      RETOUR_COMPLEMENT: 'Retour pour complément',
+      REJET_DOSSIER: 'Dossier rejeté',
+      CLOTURE_DOSSIER: 'Dossier clôturé',
+      ARCHIVAGE_DOSSIER: 'Dossier archivé'
+    };
+    return labels[action] ?? action;
+  }
   private patchDossierForm(dossier: DossierDecesResponse): void {
     this.dossierForm.patchValue({
       dateDeces: dossier.dateDeces ?? '',

@@ -12,6 +12,8 @@
       <span class="status-badge" [ngClass]="statusClass(d.statut)">{{ d.statut }}</span>
       <a class="btn-secondary" routerLink="/deces/adherents">Retour à la liste</a>
       <button type="button" class="btn-primary" *ngIf="ficheRenseignementsLabel" (click)="ouvrirFicheRenseignements()">{{ ficheRenseignementsLabel }}</button>
+      <button type="button" class="btn-success" *ngIf="canCloturer" [disabled]="validating" (click)="cloturerDossier()">Clôturer le dossier</button>
+      <button type="button" class="btn-danger" *ngIf="canArchiver" [disabled]="validating" (click)="archiverDossier()">Archiver le dossier</button>
       <span class="fiche-unavailable" *ngIf="adherent && !ficheRenseignementsLabel">Situation de service non renseignée</span>
     </div>
   </section>
@@ -196,5 +198,30 @@
         <button class="btn-success" type="button" *ngIf="d.statut === 'A_VALIDER'" [disabled]="!canValidate || validating" (click)="validateDossier()">Valider le dossier</button>
       </div>
     </section>
-  </ng-container>
+
+    <section class="panel" *ngIf="activeTab === 'historique'">
+      <div class="panel-head">
+        <div>
+          <p class="eyebrow">Traçabilité</p>
+          <h2>Historique du dossier</h2>
+        </div>
+        <button class="btn-secondary" type="button" (click)="refreshHistorique()">Rafraîchir</button>
+      </div>
+
+      <div class="history-timeline" *ngIf="historique.length; else noHistorique">
+        <article class="history-entry" *ngFor="let event of historique">
+          <span class="history-entry__dot"></span>
+          <div class="history-entry__content">
+            <strong>{{ historiqueLabel(event.action) }}</strong>
+            <p *ngIf="event.commentaire">{{ event.commentaire }}</p>
+            <div class="history-entry__meta">
+              <span *ngIf="event.ancienStatut || event.nouveauStatut">{{ event.ancienStatut || '—' }} → {{ event.nouveauStatut || '—' }}</span>
+              <span>{{ event.username || 'Système' }}</span>
+              <time>{{ event.dateAction | date:'dd/MM/yyyy HH:mm' }}</time>
+            </div>
+          </div>
+        </article>
+      </div>
+      <ng-template #noHistorique><div class="empty-state">Aucune action enregistrée pour ce dossier.</div></ng-template>
+    </section>  </ng-container>
 </div>
