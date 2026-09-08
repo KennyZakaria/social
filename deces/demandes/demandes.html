@@ -1,0 +1,424 @@
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="page-header">
+
+    <div>
+
+      <div class="breadcrumb">
+
+        <a routerLink="/deces/dashboard">
+          Décès
+        </a>
+
+        <span>/</span>
+
+        <span class="current">
+          Demandes
+        </span>
+
+      </div>
+
+      <h1>Demandes</h1>
+
+      <p>
+        Gestion et suivi des demandes liées aux dossiers de décès
+      </p>
+
+    </div>
+
+
+    <button
+      class="btn-primary"
+      type="button"
+      (click)="nouvelleDemande()">
+
+      + Nouvelle demande
+
+    </button>
+
+  </div>
+
+
+  <!-- STATISTICS -->
+  <div class="stats-grid">
+
+    <div class="stat-card">
+
+      <div class="stat-icon">
+        📋
+      </div>
+
+      <div>
+
+        <span>Total demandes</span>
+
+        <strong>
+          {{ total }}
+        </strong>
+
+      </div>
+
+    </div>
+
+
+    <div class="stat-card">
+
+      <div class="stat-icon">
+        ⏳
+      </div>
+
+      <div>
+
+        <span>En cours</span>
+
+        <strong>
+          {{ enCours }}
+        </strong>
+
+      </div>
+
+    </div>
+
+
+    <div class="stat-card">
+
+      <div class="stat-icon">
+        🔍
+      </div>
+
+      <div>
+
+        <span>À valider</span>
+
+        <strong>
+          {{ aValider }}
+        </strong>
+
+      </div>
+
+    </div>
+
+
+    <div class="stat-card">
+
+      <div class="stat-icon">
+        ✓
+      </div>
+
+      <div>
+
+        <span>Validées</span>
+
+        <strong>
+          {{ validees }}
+        </strong>
+
+      </div>
+
+    </div>
+
+
+    <div class="stat-card">
+
+      <div class="stat-icon">
+        ⚠️
+      </div>
+
+      <div>
+
+        <span>Incomplètes</span>
+
+        <strong>
+          {{ incompletes }}
+        </strong>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- SEARCH / FILTERS -->
+  <div class="filter-card">
+
+    <div class="filter-title">
+
+      <div>
+
+        <h2>Recherche</h2>
+
+        <p>
+          Rechercher une demande par dossier, adhérent ou matricule
+        </p>
+
+      </div>
+
+    </div>
+
+
+    <div class="filters">
+
+      <!-- SEARCH -->
+      <div class="search-box">
+
+        <label>
+          Recherche
+        </label>
+
+        <div class="search-input">
+
+          <span>
+            🔎
+          </span>
+
+          <input
+            type="text"
+            [(ngModel)]="search"
+            placeholder="N° dossier, adhérent, matricule..."
+          >
+
+        </div>
+
+      </div>
+
+
+      <!-- TYPE -->
+      <div class="filter-group">
+
+        <label>
+          Type de demande
+        </label>
+
+        <select [(ngModel)]="typeFilter">
+
+          <option value="">
+            Tous les types
+          </option>
+
+          <option value="Demande de prise en charge">
+            Demande de prise en charge
+          </option>
+
+          <option value="Demande ayant droit">
+            Demande ayant droit
+          </option>
+
+          <option value="Demande de pension">
+            Demande de pension
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <!-- STATUT -->
+      <div class="filter-group">
+
+        <label>
+          Statut
+        </label>
+
+        <select [(ngModel)]="statutFilter">
+
+          <option value="">
+            Tous les statuts
+          </option>
+
+          <option value="En cours">
+            En cours
+          </option>
+
+          <option value="À valider">
+            À valider
+          </option>
+
+          <option value="Validée">
+            Validée
+          </option>
+
+          <option value="Incomplète">
+            Incomplète
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <button
+        class="btn-reset"
+        type="button"
+        (click)="reinitialiserFiltres()">
+
+        Réinitialiser
+
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <!-- TABLE -->
+  <div class="table-card">
+
+    <div class="table-header">
+
+      <div>
+
+        <h2>Liste des demandes</h2>
+
+        <p>
+          {{ demandesFiltrees.length }} demande(s) trouvée(s)
+        </p>
+
+      </div>
+
+    </div>
+
+
+    <div class="table-container">
+
+      <table>
+
+        <thead>
+
+          <tr>
+
+            <th>N° demande</th>
+
+            <th>Adhérent</th>
+
+            <th>Matricule</th>
+
+            <th>Type</th>
+
+            <th>Date</th>
+
+            <th>Demandeur</th>
+
+            <th>Statut</th>
+
+            <th>Action</th>
+
+          </tr>
+
+        </thead>
+
+
+        <tbody>
+
+          @for (demande of demandesFiltrees; track demande.id) {
+
+            <tr>
+
+              <td>
+
+                <strong>
+                  {{ demande.numero }}
+                </strong>
+
+              </td>
+
+
+              <td>
+                {{ demande.adherent }}
+              </td>
+
+
+              <td>
+                {{ demande.matricule }}
+              </td>
+
+
+              <td>
+
+                <span class="type">
+                  {{ demande.type }}
+                </span>
+
+              </td>
+
+
+              <td>
+                {{ demande.dateDemande }}
+              </td>
+
+
+              <td>
+                {{ demande.demandeur }}
+              </td>
+
+
+              <td>
+
+                <span
+                  class="status"
+                  [class.status-progress]="demande.statut === 'En cours'"
+                  [class.status-warning]="demande.statut === 'À valider'"
+                  [class.status-success]="demande.statut === 'Validée'"
+                  [class.status-danger]="demande.statut === 'Incomplète'">
+
+                  {{ demande.statut }}
+
+                </span>
+
+              </td>
+
+
+              <td>
+
+                <button
+                  class="btn-view"
+                  type="button"
+                  (click)="voirDemande(demande)">
+
+                  Voir
+
+                </button>
+
+              </td>
+
+            </tr>
+
+          }
+
+
+          @if (demandesFiltrees.length === 0) {
+
+            <tr>
+
+              <td
+                colspan="8"
+                class="empty">
+
+                <div class="empty-icon">
+                  🔎
+                </div>
+
+                <strong>
+                  Aucune demande trouvée
+                </strong>
+
+                <span>
+                  Modifiez vos critères de recherche.
+                </span>
+
+              </td>
+
+            </tr>
+
+          }
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
+</div>

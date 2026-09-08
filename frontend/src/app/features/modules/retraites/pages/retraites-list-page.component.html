@@ -1,0 +1,79 @@
+<main class="page">
+  <header class="page-header">
+    <div class="page-icon">RE</div>
+    <div>
+      <p class="kicker">Section Retraités</p>
+      <h2>Dossiers des retraités</h2>
+      <p class="subtitle">Consultez la situation et le traitement de chaque dossier.</p>
+    </div>
+    <button class="btn primary ml-auto" (click)="newDossier()">+ Nouveau dossier</button>
+  </header>
+
+  <section class="ledger-row">
+    <div class="ledger-cell">
+      <span>Total dossiers</span>
+      <b>{{ dossiers.length }}</b>
+    </div>
+    <div class="ledger-cell accent">
+      <span>En cours</span>
+      <b>{{ count('En cours') }}</b>
+    </div>
+    <div class="ledger-cell ok">
+      <span>Validés et clôturés</span>
+      <b>{{ count('Validé') }}</b>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="toolbar">
+      <div class="search">
+        ⌕ <input [(ngModel)]="query" placeholder="Rechercher par nom, matricule ou référence">
+      </div>
+      <select [(ngModel)]="filter">
+        <option [ngValue]="''">Tous les statuts</option>
+        <option [ngValue]="'En cours'">En cours</option>
+        <option [ngValue]="'Validé'">Validé</option>
+      </select>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Référence</th>
+            <th>Retraité</th>
+            <th>Matricule</th>
+            <th>Traitement</th>
+            <th>Mise à jour</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let d of filtered">
+            <td class="ref">{{d.reference}}</td>
+            <td><b>{{d.nom}}</b></td>
+            <td>{{d.matricule}}</td>
+            <td><span class="tag" [class.ok]="isValidated(d)">{{statusOf(d)}}</span></td>
+            <td>{{lastUpdate(d)}}</td>
+            <td class="row-actions">
+              <button class="btn icon" (click)="open(d)" title="Ouvrir">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7Z"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
+              </button>
+              <button class="btn icon primary" *ngIf="!isValidated(d)" (click)="validate(d.id)" title="Valider">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+              </button>
+              <button class="btn sm export" *ngIf="store.isClosed(d)" (click)="export(d)">Exporter</button>
+            </td>
+          </tr>
+          <tr *ngIf="!filtered.length">
+            <td colspan="6" class="empty">Aucun dossier ne correspond à cette recherche.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</main>

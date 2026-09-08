@@ -1,0 +1,29 @@
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
+import { RetraiteDossier, RetraitesStoreService } from '../services/retraites-store.service';
+
+@Component({
+  selector: 'app-retraites-dashboard',
+  imports: [CommonModule, RouterLink],
+  templateUrl: './retraites-dashboard.component.html',
+  styleUrl: './retraites-dashboard.component.css'
+})
+export class RetraitesDashboardComponent {
+  dossiers: RetraiteDossier[] = [];
+  constructor(private readonly store: RetraitesStoreService) { this.store.list().subscribe({ next: rows => this.dossiers = rows }); }
+  count(status: RetraiteDossier['statut']) { return this.dossiers.filter(d => d.statut === status).length; }
+  lastUpdate(dossier: RetraiteDossier): string { return dossier.miseAJour || new Date().toLocaleDateString('fr-FR'); }
+
+  get recentDossiers() {
+    return [...this.dossiers]
+      .sort((a, b) => this.parseDate(b.miseAJour) - this.parseDate(a.miseAJour))
+      .slice(0, 5);
+  }
+
+  private parseDate(value: string): number {
+    const [day, month, year] = value.split('/').map(Number);
+    return new Date(year, (month || 1) - 1, day || 1).getTime();
+  }
+}
+  

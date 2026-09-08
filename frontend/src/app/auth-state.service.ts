@@ -10,12 +10,7 @@ export class AuthStateService {
   readonly auth$ = this.authSubject.asObservable();
 
   get auth(): AuthResponse | null {
-    const current = this.authSubject.value;
-    if (current?.token && this.isTokenExpired(current.token)) {
-      this.logout();
-      return null;
-    }
-    return current;
+    return this.authSubject.value;
   }
 
   get token(): string | null {
@@ -23,7 +18,7 @@ export class AuthStateService {
   }
 
   get isAuthenticated(): boolean {
-    return !!this.auth;
+    return !!this.auth?.token;
   }
 
   setAuth(auth: AuthResponse): void {
@@ -54,27 +49,10 @@ export class AuthStateService {
     }
 
     try {
-      const auth = JSON.parse(raw) as AuthResponse;
-      if (!auth?.token || this.isTokenExpired(auth.token)) {
-        localStorage.removeItem(AUTH_STORAGE_KEY);
-        return null;
-      }
-      return auth;
+      return JSON.parse(raw) as AuthResponse;
     } catch {
       localStorage.removeItem(AUTH_STORAGE_KEY);
       return null;
-    }
-  }
-
-  private isTokenExpired(token: string): boolean {
-    try {
-      const payload = JSON.parse(atob(token.split('.')[1] ?? '')) as { exp?: number };
-      if (!payload.exp) {
-        return false;
-      }
-      return payload.exp * 1000 <= Date.now();
-    } catch {
-      return true;
     }
   }
 }

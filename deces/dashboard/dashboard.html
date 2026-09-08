@@ -1,0 +1,408 @@
+<div class="deces-dashboard">
+
+  <!-- =========================================
+       HEADER
+  ========================================== -->
+
+  <div class="page-header">
+
+    <div>
+
+      <h1>Section Décès</h1>
+
+      <p>
+        Gestion et suivi des dossiers des adhérents décédés
+      </p>
+
+    </div>
+
+
+    <a
+      class="btn-primary"
+      routerLink="/deces/nouveau">
+
+      <span>+</span>
+      Nouveau dossier
+
+    </a>
+
+  </div>
+
+
+
+  <!-- =========================================
+       STATISTICS
+  ========================================== -->
+
+  <div class="stats-grid">
+
+
+    <!-- TOTAL -->
+
+    <a
+      class="stat-card clickable"
+      routerLink="/deces/dossiers">
+
+      <div class="stat-icon">
+        📁
+      </div>
+
+      <div class="stat-content">
+
+        <span>Total dossiers</span>
+
+        <strong>
+          {{ stats.total }}
+        </strong>
+
+        <small>
+          Tous les dossiers
+        </small>
+
+      </div>
+
+    </a>
+
+
+
+    <!-- EN COURS -->
+
+    <a
+      class="stat-card clickable"
+      routerLink="/deces/dossiers"
+      [queryParams]="{ statut: 'En cours' }">
+
+      <div class="stat-icon">
+        ⏳
+      </div>
+
+      <div class="stat-content">
+
+        <span>En cours</span>
+
+        <strong>
+          {{ stats.enCours }}
+        </strong>
+
+        <small>
+          Dossiers en traitement
+        </small>
+
+      </div>
+
+    </a>
+
+
+
+    <!-- INCOMPLETS -->
+
+    <a
+      class="stat-card clickable"
+      routerLink="/deces/dossiers"
+      [queryParams]="{ statut: 'Incomplet' }">
+
+      <div class="stat-icon">
+        ⚠️
+      </div>
+
+      <div class="stat-content">
+
+        <span>Incomplets</span>
+
+        <strong>
+          {{ stats.incomplets }}
+        </strong>
+
+        <small>
+          Pièces manquantes
+        </small>
+
+      </div>
+
+    </a>
+
+
+
+    <!-- A VALIDER -->
+
+    <a
+      class="stat-card clickable"
+      routerLink="/deces/dossiers"
+      [queryParams]="{ statut: 'À valider' }">
+
+      <div class="stat-icon">
+        🔍
+      </div>
+
+      <div class="stat-content">
+
+        <span>À valider</span>
+
+        <strong>
+          {{ stats.aValider }}
+        </strong>
+
+        <small>
+          En attente de validation
+        </small>
+
+      </div>
+
+    </a>
+
+
+
+    <!-- VALIDES -->
+
+    <a
+      class="stat-card clickable"
+      routerLink="/deces/dossiers"
+      [queryParams]="{ statut: 'Validé' }">
+
+      <div class="stat-icon">
+        ✓
+      </div>
+
+      <div class="stat-content">
+
+        <span>Validés</span>
+
+        <strong>
+          {{ stats.valides }}
+        </strong>
+
+        <small>
+          Dossiers validés
+        </small>
+
+      </div>
+
+    </a>
+
+
+
+    <!-- CLOTURES -->
+
+    <a
+      class="stat-card clickable"
+      routerLink="/deces/dossiers"
+      [queryParams]="{ statut: 'Clôturé' }">
+
+      <div class="stat-icon">
+        🔒
+      </div>
+
+      <div class="stat-content">
+
+        <span>Clôturés</span>
+
+        <strong>
+          {{ stats.clotures }}
+        </strong>
+
+        <small>
+          Dossiers terminés
+        </small>
+
+      </div>
+
+    </a>
+
+  </div>
+
+
+
+  <!-- =========================================
+       RECENT DOSSIERS
+  ========================================== -->
+
+  <div class="section-card">
+
+
+    <!-- CARD HEADER -->
+
+    <div class="section-title">
+
+      <div>
+
+        <h2>
+          Derniers dossiers
+        </h2>
+
+        <p>
+          Suivi des dossiers récemment enregistrés
+        </p>
+
+      </div>
+
+
+      <a
+        class="btn-secondary"
+        routerLink="/deces/dossiers">
+
+        Voir tous
+
+      </a>
+
+    </div>
+
+
+
+    <!-- TABLE -->
+
+    <div class="table-container">
+
+      <table>
+
+        <thead>
+
+          <tr>
+
+            <th>
+              N° dossier
+            </th>
+
+            <th>
+              Adhérent
+            </th>
+
+            <th>
+              Date de décès
+            </th>
+
+            <th>
+              Statut
+            </th>
+
+            <th>
+              Action
+            </th>
+
+          </tr>
+
+        </thead>
+
+
+        <tbody>
+
+          <tr
+            *ngFor="let dossier of dossiers">
+
+
+            <!-- NUMERO -->
+
+            <td>
+
+              <strong class="numero">
+                {{ dossier.numero }}
+              </strong>
+
+            </td>
+
+
+            <!-- ADHERENT -->
+
+            <td>
+
+              <div class="adherent">
+
+                <div class="avatar">
+
+                  {{ dossier.adherent.charAt(0) }}
+
+                </div>
+
+                <span>
+                  {{ dossier.adherent }}
+                </span>
+
+              </div>
+
+            </td>
+
+
+            <!-- DATE -->
+
+            <td>
+              {{ dossier.dateDeces }}
+            </td>
+
+
+            <!-- STATUS -->
+
+            <td>
+
+              <span
+                class="status"
+                [ngClass]="getStatusClass(dossier.statut)">
+
+                {{ dossier.statut }}
+
+              </span>
+
+            </td>
+
+
+            <!-- ACTION -->
+
+            <td>
+
+              <button
+                type="button"
+                class="btn-view"
+                (click)="voirDossier(dossier)">
+
+                👁
+                Voir
+
+              </button>
+
+            </td>
+
+
+          </tr>
+
+
+          <!-- EMPTY -->
+
+          <tr *ngIf="dossiers.length === 0">
+
+            <td
+              colspan="5"
+              class="empty">
+
+              <div class="empty-icon">
+                📂
+              </div>
+
+              <strong>
+                Aucun dossier
+              </strong>
+
+              <p>
+                Aucun dossier de décès enregistré.
+              </p>
+
+            </td>
+
+          </tr>
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
+
+
+  <!-- =========================================
+       QUICK ACTIONS
+  ========================================== -->
+
+
+
+  
+
+</div>

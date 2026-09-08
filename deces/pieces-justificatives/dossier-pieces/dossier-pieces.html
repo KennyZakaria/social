@@ -1,0 +1,313 @@
+<div class="page">
+
+  <!-- HEADER -->
+
+  <div class="breadcrumb">
+
+    <a routerLink="/deces/dashboard">
+      Décès
+    </a>
+
+    <span>/</span>
+
+    <a routerLink="/deces/pieces-justificatives">
+      Pièces justificatives
+    </a>
+
+    <span>/</span>
+
+    <span>
+      {{ dossier.numero }}
+    </span>
+
+  </div>
+
+
+  <div class="page-header">
+
+    <div>
+
+      <h1>
+        Pièces justificatives
+      </h1>
+
+      <p>
+        Gestion des pièces du dossier
+        {{ dossier.numero }}
+      </p>
+
+    </div>
+
+    <button
+      class="btn-add"
+      type="button"
+      (click)="ajouterPiece()">
+
+      + Ajouter une pièce
+
+    </button>
+
+  </div>
+
+
+  <!-- DOSSIER INFO -->
+
+  <div class="dossier-card">
+
+    <div class="dossier-title">
+
+      <div class="folder-icon">
+        📁
+      </div>
+
+      <div>
+
+        <span>
+          N° dossier
+        </span>
+
+        <strong>
+          {{ dossier.numero }}
+        </strong>
+
+      </div>
+
+    </div>
+
+
+    <div class="dossier-data">
+
+      <div>
+
+        <small>Adhérent</small>
+
+        <strong>
+          {{ dossier.adherent }}
+        </strong>
+
+      </div>
+
+      <div>
+
+        <small>CIN</small>
+
+        <strong>
+          {{ dossier.cin }}
+        </strong>
+
+      </div>
+
+      <div>
+
+        <small>Matricule</small>
+
+        <strong>
+          {{ dossier.matricule }}
+        </strong>
+
+      </div>
+
+      <div>
+
+        <small>Date décès</small>
+
+        <strong>
+          {{ dossier.dateDeces }}
+        </strong>
+
+      </div>
+
+      <div>
+
+        <small>Lieu</small>
+
+        <strong>
+          {{ dossier.lieuDeces }}
+        </strong>
+
+      </div>
+
+      <div>
+
+        <small>Statut</small>
+
+        <strong class="status">
+          {{ dossier.statut }}
+        </strong>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- PROGRESS -->
+
+  <div class="progress-card">
+
+    <div>
+
+      <strong>
+        État des pièces
+      </strong>
+
+      <p>
+        {{ piecesFournies }} pièce(s) fournie(s)
+        sur {{ pieces.length }}
+      </p>
+
+    </div>
+
+    <div class="progress-container">
+
+      <div class="progress">
+
+        <div
+          class="progress-bar"
+          [style.width.%]="(piecesFournies / pieces.length) * 100">
+        </div>
+
+      </div>
+
+      <strong>
+        {{ piecesFournies }}/{{ pieces.length }}
+      </strong>
+
+    </div>
+
+  </div>
+
+
+  <!-- PIECES -->
+
+  <div class="pieces-card">
+
+    <div class="card-header">
+
+      <div>
+
+        <h2>Liste des pièces</h2>
+
+        <p>
+          Documents nécessaires au traitement du dossier
+        </p>
+
+      </div>
+
+    </div>
+
+
+    <div class="pieces-list">
+
+      @for (piece of pieces; track piece.id) {
+
+        <div class="piece-row">
+
+          <div class="piece-icon">
+            📄
+          </div>
+
+
+          <div class="piece-name">
+
+            <strong>
+              {{ piece.nom }}
+            </strong>
+
+            @if (piece.obligatoire) {
+
+              <span class="required">
+                Obligatoire
+              </span>
+
+            }
+
+            @if (piece.fichier) {
+
+              <small>
+                {{ piece.fichier }}
+              </small>
+
+            }
+
+          </div>
+
+
+          <div>
+
+            @if (piece.statut === 'Fournie') {
+
+              <span class="status provided">
+                ✓ Fournie
+              </span>
+
+            }
+
+            @if (piece.statut === 'Validée') {
+
+              <span class="status validated">
+                ✓ Validée
+              </span>
+
+            }
+
+            @if (piece.statut === 'Manquante') {
+
+              <span class="status missing">
+                ! Manquante
+              </span>
+
+            }
+
+          </div>
+
+
+          <div class="piece-actions">
+
+            @if (piece.fichier) {
+
+              <button
+                type="button"
+                class="btn-view"
+                (click)="consulter(piece)">
+
+                Consulter
+
+              </button>
+
+              <button
+                type="button"
+                class="btn-delete"
+                (click)="supprimer(piece)">
+
+                Supprimer
+
+              </button>
+
+            }
+
+            @if (!piece.fichier) {
+
+              <button
+                type="button"
+                class="btn-upload"
+                (click)="ajouterPiece()">
+
+                Ajouter
+
+              </button>
+
+            }
+
+          </div>
+
+        </div>
+
+      }
+
+    </div>
+
+  </div>
+
+</div>

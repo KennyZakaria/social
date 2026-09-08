@@ -28,7 +28,7 @@ public class UserProfile {
     @Column(nullable = false, unique = true)
     private String username;
 
-    @Column(name = "    ", nullable = false, unique = true)
+    @Column(name = "email", nullable = false, unique = true)
     private String matricule;
 
     @Column(nullable = false)

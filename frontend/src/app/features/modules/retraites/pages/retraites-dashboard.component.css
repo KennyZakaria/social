@@ -1,0 +1,64 @@
+.page{display:flex;flex-direction:column;gap:1.5rem}
+
+.page-header{display:flex;align-items:center;gap:1rem}
+.page-icon{width:48px;height:48px;display:grid;place-items:center;border-radius:var(--r-lg);background:var(--primary-light);color:var(--primary);font-weight:800;box-shadow:var(--sh-xs)}
+.kicker{font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-3)}
+h2{font-size:1.4rem;margin-top:2px}
+.subtitle{font-size:.82rem;color:var(--text-2);margin-top:2px}
+.ml-auto{margin-left:auto}
+
+/* ===== Ledger stats (registre) ===== */
+.ledger-row{display:flex;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--sh-sm);overflow:hidden}
+.ledger-cell{flex:1;padding:1.1rem 1.4rem}
+.ledger-cell+.ledger-cell{border-left:1px solid var(--border)}
+.ledger-cell span{display:block;font-size:.78rem;color:var(--text-2);margin-bottom:.3rem}
+.ledger-cell b{font-size:1.75rem;font-weight:800;color:var(--text-1)}
+.ledger-cell.accent b{color:var(--warning,#b45309)}
+.ledger-cell.ok b{color:var(--success)}
+
+/* ===== Rail nav cards ===== */
+.rail{display:grid;grid-template-columns:repeat(3,1fr);gap:.875rem}
+.rail-card{display:flex;align-items:center;gap:.85rem;padding:1rem 1.15rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--sh-sm);color:var(--text-1);text-decoration:none;transition:border-color .18s ease,background .18s ease}
+.rail-card:hover{border-color:var(--primary);background:var(--primary-light)}
+.mark{width:38px;height:38px;flex:none;display:grid;place-items:center;border-radius:var(--r-md);background:var(--primary-light);color:var(--primary);font-weight:800}
+.rail-card b{display:block;font-size:.88rem;margin-bottom:2px}
+.rail-card span{font-size:.76rem;color:var(--text-2)}
+.arrow{margin-left:auto;color:var(--text-3);font-size:1rem;transition:transform .18s ease,color .18s ease}
+.rail-card:hover .arrow{transform:translateX(3px);color:var(--primary)}
+
+/* ===== Panel / table ===== */
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--sh-sm);overflow:hidden}
+.panel-head{display:flex;justify-content:space-between;align-items:center;padding:1rem 1.25rem;border-bottom:1px solid var(--border)}
+.panel-head h3{font-size:.95rem}
+.panel-head a{color:var(--primary);font-size:.8rem;font-weight:600;text-decoration:none}
+.panel-head a:hover{text-decoration:underline}
+
+.table-wrap{overflow:auto}
+table{border-collapse:collapse;width:100%;font-size:.84rem}
+th{padding:.7rem 1rem;background:var(--surface-2);text-align:left;color:var(--text-3);font-size:.72rem;text-transform:uppercase;letter-spacing:.04em}
+td{padding:.8rem 1rem;border-top:1px solid var(--border)}
+tbody tr:hover{background:var(--surface-2)}
+.ref{font:700 .78rem monospace;color:var(--primary)}
+
+.tag{padding:3px 9px;border-radius:99px;background:var(--warning-bg);color:#b45309;font-size:.72rem;font-weight:700}
+.tag.ok{background:var(--success-bg);color:var(--success)}
+.empty{text-align:center;color:var(--text-3);padding:2rem}
+
+.consult{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:var(--r-md);background:var(--primary-light);color:var(--primary);text-decoration:none;transition:background .18s ease,color .18s ease}
+.consult:hover{background:var(--primary);color:#fff}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;padding:.6rem 1.1rem;border-radius:var(--r-md);border:1px solid transparent;font-size:.84rem;font-weight:600;text-decoration:none;cursor:pointer}
+.btn.primary{background:var(--primary);color:#fff;box-shadow:var(--sh-xs)}
+.btn.ghost{background:transparent;color:var(--text-2)}
+.btn.ghost:hover{background:var(--surface-2);color:var(--text-1)}
+.btn.sm{padding:.4rem .8rem;font-size:.76rem}
+
+@media(max-width:800px){
+  .rail{grid-template-columns:1fr}
+  .ledger-row{flex-wrap:wrap}
+  .ledger-cell{min-width:50%}
+}
+@media(max-width:560px){
+  .page-header{flex-wrap:wrap}
+  .ml-auto{margin-left:0}
+}

@@ -1,0 +1,55 @@
+<main class="page">
+  <header class="page-header">
+    <div class="page-icon">RE</div>
+    <div><p class="kicker">Section Retraités</p><h2>Tableau de bord</h2><p class="subtitle">Vue d'ensemble des dossiers de retraités</p></div>
+    <a class="btn primary ml-auto" routerLink="/retraites/nouveau">+ Nouveau dossier</a>
+  </header>
+
+  <section class="ledger-row">
+    <div class="ledger-cell"><span>Total dossiers</span><b>{{ dossiers.length }}</b></div>
+    <div class="ledger-cell accent"><span>En cours</span><b>{{ count('En cours') }}</b></div>
+    <div class="ledger-cell ok"><span>Validés</span><b>{{ count('Validé') }}</b></div>
+  </section>
+
+  <section class="rail">
+    <a routerLink="/retraites/dossiers" class="rail-card">
+      <div class="mark">☰</div>
+      <div><b>Tous les dossiers</b><span>Consulter et suivre les dossier:</span></div>
+      <span class="arrow">→</span>
+    </a>
+    <a routerLink="/retraites/nouveau" class="rail-card">
+      <div class="mark">+</div>
+      <div><b>Nouveau dossier</b><span>Créer un dossier de retraité</span></div>
+      <span class="arrow">→</span>
+    </a>
+    <a routerLink="/retraites/validation" class="rail-card">
+      <div class="mark">✓</div>
+      <div><b>Validation</b><span>Gérer les dossiers en cours</span></div>
+      <span class="arrow">→</span>
+    </a>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head"><h3>Derniers dossiers</h3><a routerLink="/retraites/dossiers">Voir tous →</a></div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Référence</th><th>Retraité</th><th>Matricule</th><th>Traitement</th><th>Mise à jour</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr *ngFor="let dossier of recentDossiers">
+            <td class="ref">{{ dossier.reference }}</td>
+            <td>{{ dossier.nom }}</td>
+            <td>{{ dossier.matricule }}</td>
+            <td><span class="tag" [class.ok]="dossier.traite">{{ dossier.traite ? 'Validé' : dossier.statut }}</span></td>
+            <td>{{ lastUpdate(dossier) }}</td>
+            <td>
+              <a class="consult" [routerLink]="['/module/retraites/dossier', dossier.id]" title="Consulter le dossier" aria-label="Consulter le dossier">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z"/><circle cx="12" cy="12" r="3"/></svg>
+              </a>
+            </td>
+          </tr>
+          <tr *ngIf="!recentDossiers.length"><td colspan="6" class="empty">Aucun dossier pour le moment.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</main>

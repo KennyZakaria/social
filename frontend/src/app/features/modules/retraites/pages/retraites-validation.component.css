@@ -1,0 +1,33 @@
+    .page{display:flex;flex-direction:column;gap:1.25rem}
+
+    .page-header{display:flex;align-items:center;gap:1rem}
+    .back{width:38px;height:38px;flex:none;display:grid;place-items:center;border-radius:var(--r-md);border:1px solid var(--border);background:var(--surface);color:var(--text-2);text-decoration:none;transition:background .18s ease,border-color .18s ease,color .18s ease}
+    .back:hover{background:var(--surface-2);border-color:var(--primary);color:var(--primary)}
+    .page-icon{width:48px;height:48px;flex:none;display:grid;place-items:center;border-radius:var(--r-lg);background:var(--success-bg);color:var(--success);font-weight:800;box-shadow:var(--sh-xs)}
+    .kicker{font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-3)}
+    h2{font-size:1.35rem;margin-top:2px}
+    .subtitle{font-size:.82rem;color:var(--text-2);margin-top:2px}
+    .ml-auto{margin-left:auto}
+    .count{background:var(--primary);color:#fff;border-radius:99px;padding:6px 12px;font-size:.78rem;font-weight:700;white-space:nowrap}
+
+    nav{display:flex;gap:4px;padding:4px;border:1px solid var(--border);border-radius:var(--r-lg);background:var(--surface);width:fit-content}
+    nav button{border:0;background:transparent;border-radius:var(--r-md);padding:7px 14px;font:600 .83rem inherit;color:var(--text-2);cursor:pointer}
+    nav button.active{background:var(--primary);color:#fff}
+    nav span{font-size:.7rem;margin-left:4px}
+
+    .list{display:flex;flex-direction:column;gap:.75rem}
+    .list article{display:flex;align-items:center;gap:1rem;padding:1rem 1.25rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--sh-sm)}
+    .grow{flex:1}
+    .reference{color:var(--primary);font:700 .75rem monospace}
+    .list h3{font-size:1rem;margin:4px 0}
+    .meta{font-size:.78rem;color:var(--text-2)}
+    .badge{padding:3px 9px;border-radius:99px;background:var(--warning-bg);color:#b45309;font-size:.72rem;font-weight:700}
+    .badge.ok{background:var(--success-bg);color:var(--success)}
+    .empty{padding:3rem;text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);color:var(--text-3)}
+
+    @media(max-width:650px){
+      .list article{flex-wrap:wrap}
+      .page-header{flex-wrap:wrap}
+      .count{margin-left:0}
+    }
+  

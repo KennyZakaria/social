@@ -1,0 +1,401 @@
+/* =====================================================================
+   Section Décès — feuille de style
+   Direction : registre / archive papier numérisée — cartes-statistiques
+   en forme d'onglet de dossier suspendu, numéros de dossier en
+   caractères monospace façon tampon d'enregistrement, palette calme
+   et institutionnelle (bleu-pétrole + bronze en accent discret).
+
+   Police à ajouter dans index.html (ou via @font-face local) :
+   Fraunces (titres), IBM Plex Sans (texte courant), IBM Plex Mono
+   (numéros de dossier / chiffres clés).
+===================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap');
+
+.deces-dashboard {
+  /* ---- tokens ---- */
+  --bg: #F5F6F8;
+  --surface: #FFFFFF;
+  --surface-alt: #FAFBFC;
+
+  --ink: #1B2430;
+  --ink-muted: #5C6B78;
+  --ink-faint: #8D98A3;
+
+  --line: #E3E7EB;
+  --line-soft: #EDF0F2;
+
+  --primary: #2C5364;
+  --primary-dark: #1E3D4A;
+  --primary-soft: #E6EEF1;
+
+  --accent: #9C7A45;
+  --accent-soft: #F3ECDE;
+
+  --c-total: #2C5364;
+  --c-encours: #B8860B;      --c-encours-soft: #FBF1DC;
+  --c-incomplet: #B5533C;    --c-incomplet-soft: #F8E8E3;
+  --c-avalider: #3B6FA0;     --c-avalider-soft: #E4EDF6;
+  --c-valide: #3E7A56;       --c-valide-soft: #E3F0E8;
+  --c-cloture: #64707C;      --c-cloture-soft: #EBEDEF;
+
+  font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: var(--ink);
+  background: var(--bg);
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  -webkit-font-smoothing: antialiased;
+}
+
+.deces-dashboard * { box-sizing: border-box; }
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--line);
+}
+
+.page-header h1 {
+  font-family: 'Fraunces', serif;
+  font-weight: 600;
+  font-size: 28px;
+  letter-spacing: -0.01em;
+  margin: 0 0 4px;
+}
+
+.page-header p {
+  margin: 0;
+  font-size: 14px;
+  color: var(--ink-muted);
+}
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--primary);
+  color: #fff;
+  border: 1px solid var(--primary);
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background .15s ease, transform .15s ease;
+}
+.btn-primary span { font-size: 16px; line-height: 1; }
+.btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); }
+.btn-primary:focus-visible { outline: 2px solid var(--primary-dark); outline-offset: 2px; }
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  color: var(--primary-dark);
+  border: 1px solid var(--line);
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background .15s ease, border-color .15s ease;
+}
+.btn-secondary:hover { background: var(--primary-soft); border-color: var(--primary); }
+.btn-secondary:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+/* =========================================================
+   STATS — cartes façon onglet de dossier suspendu
+========================================================= */
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 16px;
+}
+
+.stat-card {
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 3px 10px 10px 10px;
+  padding: 22px 18px 18px;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  text-decoration: none;
+  color: inherit;
+  transition: box-shadow .15s ease, transform .15s ease, border-color .15s ease;
+}
+
+/* le petit onglet qui dépasse en haut de la carte */
+.stat-card::before {
+  content: "";
+  position: absolute;
+  top: -7px;
+  left: 18px;
+  width: 34px;
+  height: 7px;
+  border-radius: 4px 4px 0 0;
+  background: var(--tab, var(--primary));
+}
+
+.stat-card.clickable { cursor: pointer; }
+.stat-card.clickable:hover {
+  box-shadow: 0 8px 20px rgba(27, 36, 48, .08);
+  transform: translateY(-2px);
+  border-color: var(--tab, var(--primary));
+}
+.stat-card:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+/* couleur d'onglet par statut, dans l'ordre du template */
+.stats-grid > a:nth-child(1) { --tab: var(--c-total);     --tab-soft: var(--primary-soft); }
+.stats-grid > a:nth-child(2) { --tab: var(--c-encours);   --tab-soft: var(--c-encours-soft); }
+.stats-grid > a:nth-child(3) { --tab: var(--c-incomplet); --tab-soft: var(--c-incomplet-soft); }
+.stats-grid > a:nth-child(4) { --tab: var(--c-avalider);  --tab-soft: var(--c-avalider-soft); }
+.stats-grid > a:nth-child(5) { --tab: var(--c-valide);    --tab-soft: var(--c-valide-soft); }
+.stats-grid > a:nth-child(6) { --tab: var(--c-cloture);   --tab-soft: var(--c-cloture-soft); }
+
+.stat-icon {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  background: var(--tab-soft, var(--primary-soft));
+}
+
+.stat-content { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.stat-content span {
+  font-size: 11.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--ink-muted);
+}
+.stat-content strong {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 26px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.25;
+}
+.stat-content small { font-size: 12px; color: var(--ink-faint); }
+
+/* =========================================================
+   SECTION CARD (tableau des dossiers)
+========================================================= */
+
+.section-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.section-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.section-title h2 {
+  font-family: 'Fraunces', serif;
+  font-size: 19px;
+  font-weight: 600;
+  margin: 0 0 4px;
+}
+.section-title p { margin: 0; font-size: 13px; color: var(--ink-muted); }
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.table-container { overflow-x: auto; }
+
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+
+thead th {
+  text-align: left;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  font-weight: 600;
+  color: var(--ink-muted);
+  padding: 0 12px 10px;
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+}
+
+tbody td {
+  padding: 14px 12px;
+  border-bottom: 1px solid var(--line-soft);
+  vertical-align: middle;
+}
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:hover td { background: var(--surface-alt); }
+
+.numero {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12.5px;
+  letter-spacing: .02em;
+  color: var(--primary-dark);
+  background: var(--primary-soft);
+  padding: 3px 8px;
+  border-radius: 5px;
+  white-space: nowrap;
+}
+
+.adherent { display: flex; align-items: center; gap: 10px; }
+.avatar {
+  flex: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-family: 'IBM Plex Mono', monospace;
+  font-weight: 600;
+  font-size: 13px;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* statut — pastille avec point de couleur */
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 11px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.status::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+.status-en-cours  { background: var(--c-encours-soft);   color: var(--c-encours); }
+.status-incomplet { background: var(--c-incomplet-soft); color: var(--c-incomplet); }
+.status-a-valider { background: var(--c-avalider-soft);  color: var(--c-avalider); }
+.status-valide    { background: var(--c-valide-soft);    color: var(--c-valide); }
+.status-cloture   { background: var(--c-cloture-soft);   color: var(--c-cloture); }
+
+.btn-view {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: 1px solid var(--line);
+  padding: 6px 12px;
+  border-radius: 7px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--primary-dark);
+  cursor: pointer;
+  transition: background .15s ease, border-color .15s ease;
+}
+.btn-view:hover { background: var(--primary-soft); border-color: var(--primary); }
+.btn-view:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+/* état vide */
+.empty { text-align: center; padding: 48px 16px; }
+.empty-icon { display: block; font-size: 34px; opacity: .5; margin-bottom: 10px; }
+.empty strong { display: block; font-size: 14px; color: var(--ink); margin-bottom: 4px; }
+.empty p { margin: 0; font-size: 13px; color: var(--ink-muted); }
+
+/* =========================================================
+   QUICK ACTIONS
+========================================================= */
+
+.quick-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+/* le template imbrique un second .quick-actions : on le neutralise
+   pour que ses cartes rejoignent la même grille */
+.quick-actions .quick-actions { display: contents; }
+
+.quick-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--primary);
+  border-radius: 4px 10px 10px 4px;
+  padding: 18px 16px;
+  text-decoration: none;
+  color: inherit;
+  transition: box-shadow .15s ease, transform .15s ease;
+}
+.quick-card:hover { box-shadow: 0 8px 20px rgba(27, 36, 48, .08); transform: translateY(-2px); }
+.quick-card:hover .quick-arrow { transform: translateX(3px); }
+.quick-card:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+.quick-icon {
+  flex: none;
+  width: 38px;
+  height: 38px;
+  border-radius: 9px;
+  background: var(--primary-soft);
+  color: var(--primary-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 17px;
+}
+.validation-icon { background: var(--c-valide-soft); color: var(--c-valide); }
+.search-icon { background: var(--c-avalider-soft); color: var(--c-avalider); }
+.quick-card:has(.validation-icon) { border-left-color: var(--c-valide); }
+.quick-card:has(.search-icon) { border-left-color: var(--c-avalider); }
+
+.quick-content { flex: 1; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.quick-content strong { font-size: 14px; font-weight: 600; }
+.quick-content span { font-size: 12.5px; color: var(--ink-muted); }
+
+.quick-arrow { flex: none; font-size: 16px; color: var(--ink-faint); transition: transform .15s ease; }
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 640px) {
+  .deces-dashboard { padding: 20px 16px; gap: 20px; }
+  .page-header h1 { font-size: 22px; }
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+  .section-card { padding: 18px; }
+}
+
+@media (max-width: 420px) {
+  .stats-grid { grid-template-columns: 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .deces-dashboard * { transition: none !important; }
+}
