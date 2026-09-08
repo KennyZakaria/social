@@ -18,5 +18,12 @@ public class RetraiteMembreFamille {
     @Column(length = 120) private String activite;
     @Column(length = 120) private String niveauInstruction;
     @Column(length = 120) private String emploi;
+    private String lieu;
+    private String mutuelle;
+    private String lieuTravail;
+    private LocalDate mariage;
+    private LocalDate divorce;
+    private String situationFamiliale;
+    private String lien;
     private boolean personneACharge;
 }

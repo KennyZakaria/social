@@ -16,6 +16,51 @@ public class DossierRetraite {
     @JoinColumn(name = "dossier_id", nullable = false, unique = true)
     private Dossier dossier;
 
+    private String nomAr;
+    private String prenomAr;
+    private String lieuNaissance;
+    private String matriculeCorps;
+    private String categorie;
+    private String situationCategorie;
+    private Boolean pension;
+    private LocalDate dateEntreeService;
+    private String motifRadiationSanction;
+    private LocalDate dateDeces;
+    private String causeDeces;
+    private String natureDeces;
+    private String formationUnite;
+    private String derniereRegion;
+    private String telephoneGsm2;
+    private String email;
+    private String observation;
+    private String adresseEM;
+    private String code;
+    private String carteFondation;
+    private String numeroPmr;
+    private String montantPmr;
+    private String numeroPmi;
+    private String montantPmi;
+    private String professionActuelle;
+    private String colisRamadan;
+    private String regionResidence;
+    private String situationLogement;
+    private String hayRabat;
+    private String observationSociale;
+    private String cinSocial;
+    private String matriculeSocial;
+    private String motifEnquete;
+    private String numeroDossier;
+    private String cartePrelevementCmr;
+    private String situationFraternelle;
+    private String anneeAdhesion;
+    private String modeReglement;
+    private String numeroRecu;
+    private String datePaiement;
+    private String observationAdhesion;
+    private Boolean avecPhoto;
+    @ElementCollection
+    @CollectionTable(name="retraite_pieces", joinColumns=@JoinColumn(name="dossier_retraite_id"))
+    private java.util.List<RetraitePiece> pieces = new java.util.ArrayList<>();
     private Long adherentId;
     @Column(nullable = false, length = 100) private String nom;
     @Column(nullable = false, length = 100) private String prenom;
