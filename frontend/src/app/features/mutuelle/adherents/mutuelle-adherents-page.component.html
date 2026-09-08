@@ -1,0 +1,58 @@
+<div class="page">
+      <div class="alert alert--error" *ngIf="errorMsg" (click)="errorMsg=''">{{ errorMsg }}</div>
+
+      <div class="page-header">
+        <div class="page-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <div>
+          <p class="page-kicker">Section Mutuelle</p>
+          <h2 class="page-title">Liste des adhérents</h2>
+        </div>
+        <a class="btn-ghost ml-auto" routerLink="/module/mutuelle/historique">Historique courrier</a>
+      </div>
+
+      <div class="card">
+        <div class="search-wrap">
+          <input [(ngModel)]="searchTerm" placeholder="Rechercher par nom, matricule, matricule BR ou CIN..." class="search-input" />
+          <button class="btn-primary" type="button" (click)="loadAdherents(0)">Rechercher</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card__head">
+          <p class="card__title">Adhérents ({{ totalElements }})</p>
+          <div class="pager">
+            <button class="btn-ghost" type="button" (click)="loadAdherents(page - 1)" [disabled]="page === 0">Précédent</button>
+            <span>Page {{ page + 1 }} / {{ totalPages || 1 }}</span>
+            <button class="btn-ghost" type="button" (click)="loadAdherents(page + 1)" [disabled]="page + 1 >= totalPages">Suivant</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Adhérent</th><th>Grade</th><th>Matricule</th><th>CIN</th><th>Mle BR</th><th>Unité</th><th>Action</th></tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let adherent of adherents">
+                <td>
+                  <div class="name-cell">
+                    <div class="avatar">{{ adherent.nomAr.charAt(0) }}</div>
+                    <div><div class="name">{{ adherent.prenomAr }} {{ adherent.nomAr }}</div><div class="sub">{{ adherent.categorie }}</div></div>
+                  </div>
+                </td>
+                <td>{{ adherent.grade }}</td>
+                <td class="mono">{{ adherent.matricule }}</td>
+                <td class="mono">{{ adherent.cin }}</td>
+                <td class="mono">{{ adherent.matriculeBR }}</td>
+                <td>{{ adherent.dernierUnite }}</td>
+                <td>
+                  <a class="btn-primary btn-small" [routerLink]="['/module/mutuelle/dossier', adherent.id]">Ajouter dossier mutuelle</a>
+                </td>
+              </tr>
+              <tr *ngIf="adherents.length === 0"><td colspan="7" class="empty-row">Aucun adhérent trouvé.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>

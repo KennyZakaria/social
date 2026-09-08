@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { UserProfileResponse } from '../../../models';
+import { UserProfileResponse } from '../../../core/models/models';
 import { UsersService } from '../services/users.service';
 
 @Component({

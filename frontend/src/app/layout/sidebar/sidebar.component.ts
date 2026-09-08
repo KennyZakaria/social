@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-import { AuthStateService } from '../../auth-state.service';
+import { AuthStateService } from '../../core/auth/auth-state.service';
 
 export interface ModuleSubItem {
   label: string;

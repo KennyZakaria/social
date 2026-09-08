@@ -1,0 +1,61 @@
+<div class="page">
+      <div class="alert alert--success" *ngIf="successMsg" (click)="successMsg=''">{{ successMsg }}</div>
+      <div class="alert alert--error" *ngIf="errorMsg" (click)="errorMsg=''">{{ errorMsg }}</div>
+
+      <div class="page-header">
+        <a class="back-btn" routerLink="/module/mutuelle/adherents">Retour</a>
+        <div class="page-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M12 4h9"/><path d="M4 9h16"/><path d="M4 15h16"/></svg>
+        </div>
+        <div>
+          <p class="page-kicker">Section Mutuelle</p>
+          <h2 class="page-title">{{ mode === 'view' ? 'Voir dossier mutuelle' : mode === 'edit' ? 'Mettre à jour dossier mutuelle' : 'Ajouter dossier mutuelle' }}</h2>
+        </div>
+      </div>
+
+      <div class="card" *ngIf="adherent">
+        <div class="card__head"><p class="card__title">Adhérent sélectionné</p></div>
+        <div class="summary-grid">
+          <div><span class="label">Nom</span><strong>{{ adherent.prenomAr }} {{ adherent.nomAr }}</strong></div>
+          <div><span class="label">Grade</span><strong>{{ adherent.grade }}</strong></div>
+          <div><span class="label">Matricule</span><strong>{{ adherent.matricule }}</strong></div>
+          <div><span class="label">CIN</span><strong>{{ adherent.cin }}</strong></div>
+          <div><span class="label">Mle BR</span><strong>{{ adherent.matriculeBR }}</strong></div>
+          <div><span class="label">Unité</span><strong>{{ adherent.dernierUnite }}</strong></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card__head"><p class="card__title">Informations courrier mutuelle</p></div>
+        <form [formGroup]="form" (ngSubmit)="save()" class="form-body">
+          <div class="form-grid">
+            <div class="field">
+              <label>Type courrier</label>
+              <select formControlName="typeCourrier" [disabled]="mode === 'view'">
+                <option value="INTERNE">Interne</option>
+                <option value="EXTERNE">Externe</option>
+              </select>
+            </div>
+            <div class="field"><label>N° d'ordre</label><input formControlName="numeroOrdre" [readonly]="mode === 'view'" /></div>
+            <div class="field"><label>N° d'envoi</label><input formControlName="numeroEnvoi" [readonly]="mode === 'view'" /></div>
+            <div class="field"><label>Date d'envoi</label><input formControlName="dateEnvoi" type="date" [readonly]="mode === 'view'" /></div>
+            <div class="field"><label>Date de réception</label><input formControlName="dateReception" type="date" [readonly]="mode === 'view'" /></div>
+            <div class="field"><label>Type dossier</label>
+              <select formControlName="typeDossier" [disabled]="mode === 'view'">
+                <option value="ALD">ALD</option>
+                <option value="NORMAL">Normal</option>
+                <option value="DENTAIRE">Dentaire</option>
+              </select>
+            </div>
+            <div class="field field--wide"><label>Désignation</label><input formControlName="designation" [readonly]="mode === 'view'" /></div>
+            <div class="field"><label>Centre de soin</label><input formControlName="centreSoin" [readonly]="mode === 'view'" /></div>
+            <div class="field field--wide"><label>Observation</label><input formControlName="observation" [readonly]="mode === 'view'" /></div>
+          </div>
+          <div class="form-footer">
+            <button class="btn-ghost" type="button" (click)="goHistory()">Retour historique</button>
+            <button class="btn-primary" *ngIf="mode === 'view'" type="button" (click)="switchToEdit()">Mettre à jour</button>
+            <button class="btn-primary" *ngIf="mode !== 'view'" type="submit">{{ mode === 'edit' ? 'Enregistrer modifications' : 'Enregistrer' }}</button>
+          </div>
+        </form>
+      </div>
+    </div>
