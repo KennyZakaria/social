@@ -494,3 +494,10 @@ tbody tr:hover td {
     transition: none !important;
   }
 }
+.stat-badge.badge--en-cours { background:#e8f3ff; color:#2476c5; }
+.stat-badge.badge--incomplet { background:#fff1dc; color:#bc7111; }
+.stat-badge.badge--a-valider { background:#f0eaff; color:#7350bc; }
+.stat-badge.badge--valide { background:#e3f7ef; color:#16805e; }
+.stat-badge.badge--rejete { background:#ffebeb; color:#bf4a4a; }
+.stat-badge.badge--cloture { background:#edf1f5; color:#607080; }
+.stat-badge.badge--archive { background:#f0f2f4; color:#77818b; }

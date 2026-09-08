@@ -115,7 +115,7 @@ public class ValidationDecesService {
                 piecesOk ? "Pieces obligatoires presentes." : String.join(" ", piecesErrors)));
         erreurs.addAll(piecesErrors);
 
-        int okCount = (int) controles.values().stream().filter(Boolean::booleanValue).count();
+        int okCount = (int) controles.values().stream().filter(value -> Boolean.TRUE.equals(value)).count();
         int progression = controles.isEmpty() ? 0 : (int) Math.round(okCount * 100.0 / controles.size());
         return new ValidationResultResponse(erreurs.isEmpty(), progression, erreurs.isEmpty() ? "A_VALIDER" : "INCOMPLET", erreurs, avertissements, controles, details);
     }

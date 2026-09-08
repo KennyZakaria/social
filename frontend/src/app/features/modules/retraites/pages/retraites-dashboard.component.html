@@ -14,7 +14,7 @@
   <section class="rail">
     <a routerLink="/retraites/dossiers" class="rail-card">
       <div class="mark">☰</div>
-      <div><b>Tous les dossiers</b><span>Consulter et suivre les dossiers</span></div>
+      <div><b>Tous les dossiers</b><span>Consulter et suivre les dossier:</span></div>
       <span class="arrow">→</span>
     </a>
     <a routerLink="/retraites/nouveau" class="rail-card">
@@ -45,7 +45,6 @@
               <a class="consult" [routerLink]="['/module/retraites/dossier', dossier.id]" title="Consulter le dossier" aria-label="Consulter le dossier">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z"/><circle cx="12" cy="12" r="3"/></svg>
               </a>
-              <button class="btn sm ghost" *ngIf="isClosed(dossier)" type="button" (click)="export(dossier)" title="Exporter la fiche">Export</button>
             </td>
           </tr>
           <tr *ngIf="!recentDossiers.length"><td colspan="6" class="empty">Aucun dossier pour le moment.</td></tr>

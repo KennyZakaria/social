@@ -1,5 +1,22 @@
 package com.social.servicesocial.controller;
 
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.social.servicesocial.dto.AdherentPageResponse;
 import com.social.servicesocial.dto.AdherentResponse;
 import com.social.servicesocial.dto.DecesAdherentPageResponse;
@@ -9,23 +26,8 @@ import com.social.servicesocial.model.DossierDeces;
 import com.social.servicesocial.repository.AdherentRepository;
 import com.social.servicesocial.repository.DossierDecesRepository;
 import com.social.servicesocial.service.AdherentService;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.web.PageableDefault;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/deces/adherents")
@@ -47,13 +49,14 @@ public class DecesAdherentController {
     public DecesAdherentPageResponse listWithDossierStatus(
             @RequestParam(required = false) String search,
             @RequestParam(required = false) Boolean hasDossierDeces,
+            @RequestParam(required = false) String grade,
             @PageableDefault(size = 15, sort = "id") Pageable pageable) {
 
         if (hasDossierDeces == null) {
-            return toPageResponse(pageWithDossierStatus(adherentRepository.findAll(spec(search), pageable)));
+            return toPageResponse(pageWithDossierStatus(adherentRepository.findAll(spec(search, grade), pageable)));
         }
 
-        List<Adherent> filtered = adherentRepository.findAll(spec(search)).stream()
+        List<Adherent> filtered = adherentRepository.findAll(spec(search, grade)).stream()
                 .filter(adherent -> dossierDecesRepository.existsByAdherentId(adherent.getId()) == hasDossierDeces)
                 .toList();
 
@@ -69,10 +72,10 @@ public class DecesAdherentController {
     }
 
     private Page<DecesAdherentResponse> pageWithDossierStatus(Page<Adherent> page) {
-        List<Long> adherentIds = page.getContent().stream().map(Adherent::getId).toList();
+        List<Long> adherentIds = page.getContent().stream().map(adherent -> adherent.getId()).toList();
         Map<Long, DossierDeces> dossiersByAdherent = dossierDecesRepository.findByAdherentIdIn(adherentIds)
                 .stream()
-                .collect(Collectors.toMap(DossierDeces::getAdherentId, Function.identity(), (first, second) -> first));
+                .collect(Collectors.toMap(dossier -> dossier.getAdherentId(), dossier -> dossier, (first, second) -> first));
 
         List<DecesAdherentResponse> content = page.getContent().stream()
                 .map(adherent -> toDecesResponse(adherent, dossiersByAdherent.get(adherent.getId())))
@@ -94,7 +97,7 @@ public class DecesAdherentController {
         );
     }
 
-    private Specification<Adherent> spec(String search) {
+    private Specification<Adherent> spec(String search, String grade) {
         Specification<Adherent> spec = (root, query, cb) -> cb.conjunction();
 
         if (search != null && !search.isBlank()) {
@@ -106,6 +109,11 @@ public class DecesAdherentController {
                     cb.like(cb.lower(root.get("matriculeBR")), value),
                     cb.like(cb.lower(root.get("cin")), value)
             ));
+        }
+
+        if (grade != null && !grade.isBlank()) {
+            String gradeValue = grade.trim().toLowerCase(Locale.ROOT);
+            spec = spec.and((root, query, cb) -> cb.equal(cb.lower(root.get("grade")), gradeValue));
         }
 
         return spec;
@@ -122,6 +130,7 @@ public class DecesAdherentController {
                 adherent.getCategorie(),
                 adherent.getGrade(),
                 adherent.getSituationCategorie(),
+                adherent.isPension(),
                 dossier != null,
                 dossier == null ? null : dossier.getId(),
                 dossier == null ? null : dossier.getNumero(),

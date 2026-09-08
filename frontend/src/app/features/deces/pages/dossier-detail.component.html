@@ -9,8 +9,12 @@
       <p class="subtitle">Adhérent : {{ d.nomComplet }}</p>
     </div>
     <div class="hero-actions">
-      <span class="status-badge">{{ d.statut }}</span>
-      <a class="btn-secondary" routerLink="/deces/adherents">Retour à la liste</a>      <a class="btn-primary" [routerLink]="['/deces/dossiers', d.id, 'fiche-renseignements']">Fiche de renseignements</a>
+      <span class="status-badge" [ngClass]="statusClass(d.statut)">{{ d.statut }}</span>
+      <a class="btn-secondary" routerLink="/deces/adherents">Retour à la liste</a>
+      <button type="button" class="btn-primary" *ngIf="ficheRenseignementsLabel" (click)="ouvrirFicheRenseignements()">{{ ficheRenseignementsLabel }}</button>
+      <button type="button" class="btn-success" *ngIf="canCloturer" [disabled]="validating" (click)="cloturerDossier()">Clôturer le dossier</button>
+      <button type="button" class="btn-danger" *ngIf="canArchiver" [disabled]="validating" (click)="archiverDossier()">Archiver le dossier</button>
+      <span class="fiche-unavailable" *ngIf="adherent && !ficheRenseignementsLabel">Situation de service non renseignée</span>
     </div>
   </section>
 
@@ -50,7 +54,7 @@
         <div><span>Email</span><strong>{{ a.email || '—' }}</strong></div>
         <div class="wide"><span>Adresse</span><strong>{{ a.adresse || '—' }}</strong></div>
         <div><span>Situation catégorie</span><strong>{{ a.situationCategorie || '—' }}</strong></div>
-        <div><span>Pension</span><strong>{{ a.pension ? 'Oui' : 'Non' }}</strong></div>
+        <div><span>Situation de service</span><strong>{{ situationServiceLabel }}</strong></div><div><span>Pension</span><strong>{{ a.pension ? 'Oui' : 'Non' }}</strong></div>
         <div><span>Dernière unité</span><strong>{{ a.dernierUnite || '—' }}</strong></div>
         <div><span>Formation / région</span><strong>{{ a.formationUnite || '—' }}</strong></div>
         <div><span>Date de radiation</span><strong>{{ a.dateRadiation || '—' }}</strong></div>
@@ -107,10 +111,14 @@
   <option value="AUTRE">AUTRE</option>
 </select></label>
         <label><span>Date naissance</span><input type="date" formControlName="dateNaissance" /></label>
+        <label><span>Lieu de naissance</span><input formControlName="lieuNaissance" placeholder="Ville de naissance" /></label>
+        <label><span>Situation familiale</span><input formControlName="situationFamiliale" placeholder="Célibataire, marié(e)..." /></label>
+        <label><span>Niveau d’instruction</span><input formControlName="niveauInstruction" placeholder="Niveau d’études" /></label>
+        <label><span>Activité / emploi</span><input formControlName="activiteEmploi" placeholder="Profession ou activité" /></label>
         <label><span>Téléphone</span><input formControlName="telephone" /></label>
         <label class="wide"><span>Adresse</span><input formControlName="adresse" /></label>
-        <label><span>Répartition</span><select formControlName="typeRepartition"><option value="POURCENTAGE">Pourcentage</option><option value="CHARIA">Charia</option></select></label>
-        <label><span>Pourcentage</span><input type="number" min="0" max="100" formControlName="pourcentage" /></label>
+        <label><span>Répartition</span><select formControlName="typeRepartition" (change)="onRepartitionChange()"><option value="POURCENTAGE">Pourcentage</option><option value="CHARIA">Charia</option></select></label>
+        <label *ngIf="ayantForm.controls.typeRepartition.value === 'POURCENTAGE'"><span>Pourcentage *</span><input type="number" min="0" max="100" formControlName="pourcentage" /></label>
         <div class="form-actions wide">
           <button class="btn-primary" type="submit" [disabled]="ayantForm.invalid || savingAyant">{{ editingAyantId ? 'Modifier' : 'Ajouter' }}</button>
           <button class="btn-secondary" type="button" (click)="closeAyantForm()">Annuler</button>
@@ -190,5 +198,30 @@
         <button class="btn-success" type="button" *ngIf="d.statut === 'A_VALIDER'" [disabled]="!canValidate || validating" (click)="validateDossier()">Valider le dossier</button>
       </div>
     </section>
-  </ng-container>
+
+    <section class="panel" *ngIf="activeTab === 'historique'">
+      <div class="panel-head">
+        <div>
+          <p class="eyebrow">Traçabilité</p>
+          <h2>Historique du dossier</h2>
+        </div>
+        <button class="btn-secondary" type="button" (click)="refreshHistorique()">Rafraîchir</button>
+      </div>
+
+      <div class="history-timeline" *ngIf="historique.length; else noHistorique">
+        <article class="history-entry" *ngFor="let event of historique">
+          <span class="history-entry__dot"></span>
+          <div class="history-entry__content">
+            <strong>{{ historiqueLabel(event.action) }}</strong>
+            <p *ngIf="event.commentaire">{{ event.commentaire }}</p>
+            <div class="history-entry__meta">
+              <span *ngIf="event.ancienStatut || event.nouveauStatut">{{ event.ancienStatut || '—' }} → {{ event.nouveauStatut || '—' }}</span>
+              <span>{{ event.username || 'Système' }}</span>
+              <time>{{ event.dateAction | date:'dd/MM/yyyy HH:mm' }}</time>
+            </div>
+          </div>
+        </article>
+      </div>
+      <ng-template #noHistorique><div class="empty-state">Aucune action enregistrée pour ce dossier.</div></ng-template>
+    </section>  </ng-container>
 </div>

@@ -207,6 +207,7 @@ export interface DecesAdherentResponse {
   categorie: string;
   grade: string;
   situationCategorie: string;
+  pension: boolean;
   hasDossierDeces: boolean;
   dossierDecesId?: number | null;
   numeroDossierDeces?: string | null;

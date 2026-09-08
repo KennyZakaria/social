@@ -10,6 +10,7 @@ public record DecesAdherentResponse(
         String categorie,
         String grade,
         String situationCategorie,
+        boolean pension,
         boolean hasDossierDeces,
         Long dossierDecesId,
         String numeroDossierDeces,

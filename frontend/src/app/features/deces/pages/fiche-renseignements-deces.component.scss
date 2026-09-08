@@ -21,3 +21,66 @@
   .print-ident { display: grid; grid-template-columns: 1fr 1fr; gap: 0 12mm; margin-bottom: 2mm; }.print-ident p { min-height: 5mm; margin: 0; }.print-ident b { font-weight: 400; }.print-ident .span-two { grid-column: 1 / -1; }
   .print-table { width: 88%; margin: 0 auto; border-collapse: collapse; font-size: 10.5pt; }.print-table th,.print-table td { border: 1px solid #000; padding: 1.2mm 2mm; height: 6mm; color: #000; }.print-table th { background: #fff; text-align: center; font-size: 10pt; font-weight: 400; }.financial-table { width: 100%; }.print-balance { width: 55%; margin: 0 auto; border: 1px solid #000; text-align: center; font-weight: 700; padding: 1mm; }.print-observation { min-height: 38mm; margin: 0; border-bottom: 1px solid #000; white-space: pre-wrap; }
 }
+/* Dates de la fiche : affichage compact, sans lignes de remplissage. */
+.official-title span {
+  width: auto;
+  border-bottom: 0;
+  font-size: 11px;
+}
+
+@media print {
+  .print-head p {
+    width: auto;
+    border-bottom: 0;
+    font-size: 9pt;
+  }
+}
+/* Le titre et les dates sont volontairement plus bas que les en-têtes latéraux. */
+.official-title {
+  padding-top: 4mm;
+}
+
+@media print {
+  .print-head > div {
+    padding-top: 7mm;
+  }
+}
+/* À l'impression, le titre de la fiche commence après les en-têtes ROYAUME / SCF SOCIAL. */
+@media print {
+  .print-head > strong:first-child {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .print-head > strong:last-child {
+    grid-column: 3;
+    grid-row: 1;
+  }
+
+  .print-head > div {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    padding-top: 4mm;
+  }
+}
+/* La fiche officielle doit toujours tenir sur exactement deux pages A4. */
+@media print {
+  .print-fiche {
+    box-sizing: border-box;
+    height: 280mm;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .print-page-one {
+    break-after: page;
+    page-break-after: always;
+  }
+
+  .print-page-two {
+    break-before: avoid-page;
+    page-break-before: avoid;
+    break-after: avoid-page;
+    page-break-after: avoid;
+  }
+}

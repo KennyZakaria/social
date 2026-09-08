@@ -1,3 +1,4 @@
+import { SimpleDatePipe } from './simple-date.pipe';
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -8,13 +9,13 @@ import { AdherentResponse } from '../../../../models';
 
 type Tab = 'fiche' | 'famille' | 'dossier' | 'historique';
 interface Person { id: number; type: 'Conjoint' | 'Enfant' | 'Membre de famille'; nom: string; prenom: string; naissance: string; cin: string; lien: string; charge: boolean; lieu?: string; fonction?: string; mutuelle?: string; mariage?: string; divorce?: string; niveauInstruction?: string; emploi?: string; }
-interface SocialEntry { id: number; identification: string; diagnostic: string; duree: string; }
-interface AssistanceEntry { id: number; nature: string; organisme: string; date: string; observation: string; }
+interface SocialEntry { id: number; identification: string; diagnostic: string; duree: string; confirmed: boolean; }
+interface AssistanceEntry { id: number; nature: string; organisme: string; date: string; observation: string; confirmed: boolean; }
 interface BudgetEntry { designation: string; montant: string; }
 
 @Component({
   selector: 'app-retraites-page',
-  imports: [CommonModule, FormsModule],
+  imports: [SimpleDatePipe, CommonModule, FormsModule],
   templateUrl: './retraites-page.component.html',
   styleUrl: './retraites-page.component.css',
   styles: ['.actions > button:first-child { display: none; }.budget-input{width:100%;border-collapse:collapse}.budget-input th,.budget-input td{padding:.7rem;border-bottom:1px solid var(--border);text-align:left;font-size:.78rem}.budget-input th{background:var(--surface-2);color:var(--text-2);font-weight:700}.budget-input input{width:100%;box-sizing:border-box;border:1px solid var(--border);border-radius:6px;padding:.45rem;background:var(--surface)}']
@@ -30,7 +31,7 @@ export class RetraitesPageComponent implements OnInit {
   searchError = '';
   private draftSnapshot = '';
   private searchTimer?: ReturnType<typeof setTimeout>;
-  profile = {dossier:'RET-2026-0142',prenom:'Ahmed',nom:'El Mansouri',prenomAr:'',nomAr:'',naissance:'',lieu:'',cin:'',situation:'Marié(e)',matricule:'MAT-45871',corps:'',grade:'Sous-officier',categorie:'Retraité',entree:'',radiation:'',motif:'Limite d’âge',pension:true,unite:'',formation:'',region:'Rabat-Salé-Kénitra',tel:'',tel2:'',telephoneFixe:'',email:'',adresse:'',dateEnquete:'',habitation:'',proprietaire:false,locataire:false,habitationPrecision:'',observation:''};
+  profile: any = {dossier:'RET-2026-0142',prenom:'Ahmed',nom:'El Mansouri',prenomAr:'',nomAr:'',naissance:'',lieu:'',cin:'',situation:'Marié(e)',matricule:'MAT-45871',corps:'',grade:'Sous-officier',categorie:'Retraité',entree:'',radiation:'',motif:'Limite d’âge',pension:true,unite:'',formation:'',region:'Rabat-Salé-Kénitra',tel:'',tel2:'',telephoneFixe:'',email:'',adresse:'',dateEnquete:'',habitation:'',proprietaire:false,locataire:false,habitationPrecision:'',observation:''};
   socialData: SocialEntry[] = [];
   assistances: AssistanceEntry[] = [];
   resources: BudgetEntry[] = [{ designation: 'Pension de retraite', montant: '' }, { designation: 'Pension de réforme', montant: '' }, { designation: 'Autres ressources', montant: '' }];
@@ -49,8 +50,7 @@ export class RetraitesPageComponent implements OnInit {
     const id = Number(this.route.snapshot.paramMap.get('id'));
     if (id) {
       this.dossierId = id;
-      const dossier = this.store.get(id);
-      if (dossier) {
+      this.store.get(id).subscribe({ next: dossier => {
         this.readOnly = this.readOnly || dossier.traite || this.store.isClosed(dossier);
         const names = dossier.nom.trim().split(/\s+/);
         this.profile = { ...this.profile, dossier: dossier.reference, prenom: names.shift() || '', nom: names.join(' '), matricule: dossier.matricule, situation: dossier.situation };
@@ -68,17 +68,32 @@ export class RetraitesPageComponent implements OnInit {
           this.charges = extra.charges || this.charges;
         }
         this.loadPhoto();
-      }
+      }, error: () => this.note('Impossible de charger ce dossier depuis le serveur.') });
+    } else {
+      this.store.list().subscribe();
     }
     this.route.paramMap.subscribe(p=>{const f=p.get('feature');this.tab=({demandes:'dossier',pieces:'dossier',historique:'historique',dossiers:'fiche'} as Record<string,Tab>)[f||'']||'fiche';});
   }
   get completion(){return Math.round([this.profile.prenom,this.profile.nom,this.profile.cin,this.profile.matricule,this.profile.tel,this.profile.adresse].filter(Boolean).length/6*100);}
   get isSingle(){return String(this.profile.situation).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase() === 'celibataire';}
   onSituationChange(){if(this.isSingle) this.familyAction='';}
+  setHabitation(choice: 'proprietaire' | 'locataire', checked: boolean) {
+    this.profile[choice] = checked;
+    if (checked) this.profile[choice === 'proprietaire' ? 'locataire' : 'proprietaire'] = false;
+    this.note(checked ? `Habitation mise à jour : ${choice === 'proprietaire' ? 'propriétaire' : 'locataire'}` : 'Habitation mise à jour');
+  }
+  toggleAffiliation(card: 'carteSpeciale' | 'carteFraternelleAdherent' | 'amc', checked: boolean) {
+    this.membership[card] = checked;
+    if (checked) { this.note('Affiliation activée'); return; }
+    if (card === 'carteSpeciale') { this.membership.carteSpecialeNumero = ''; this.membership.carteSpecialeObservation = ''; }
+    if (card === 'carteFraternelleAdherent') { this.membership.carteFraternelle = ''; this.membership.carteFraternelleObservation = ''; }
+    if (card === 'amc') { this.membership.amcNumero = ''; this.membership.amcObservation = ''; }
+    this.note('Affiliation retirée');
+  }
   openFamilyForm(){if(this.familyAction){this.addPerson(this.familyAction);this.familyAction='';}}
   addPerson(type:Person['type']){if(this.isSingle && type !== 'Membre de famille'){this.note('Pour une situation célibataire, l’ajout d’un conjoint ou d’un enfant est indisponible.');return;}this.editing={id:Date.now(),type,nom:'',prenom:'',naissance:'',cin:'',lien:type==='Conjoint'?'Conjoint':type==='Enfant'?'Enfant':'',charge:false};this.editingNewMember=true;this.memberError='';this.memberSubmitted=false;}
-  editPerson(person:Person){this.editing={...person};this.editingNewMember=false;this.memberError='';this.memberSubmitted=false;}
-  remove(id:number){this.family=this.family.filter(p=>p.id!==id);this.addHistory('Membre de famille supprimé');}
+  editPerson(person:Person){this.editing={...person};this.editingNewMember=false;this.memberError='';this.memberSubmitted=false;this.note('Membre de famille ouvert en modification');}
+  remove(id:number){this.family=this.family.filter(p=>p.id!==id);this.addHistory('Membre de famille supprimé');this.note('Membre de famille supprimé');}
   cancelMember(){this.editing=null;this.memberError='';this.memberSubmitted=false;}
   saveMember(){
     if(!this.editing) return;
@@ -92,25 +107,28 @@ export class RetraitesPageComponent implements OnInit {
     if (this.readOnly) return;
     const missing = [this.profile.prenom, this.profile.nom, this.profile.cin, this.profile.matricule, this.profile.tel].some(value => !String(value).trim());
     if (missing) { this.note('Veuillez renseigner tous les champs obligatoires marqués d’un astérisque.'); return; }
-    let created = false;
     if (this.isNewDossier && !this.dossierId) {
-      const dossier = this.store.create({ nom: `${this.profile.prenom} ${this.profile.nom}`.trim(), matricule: this.profile.matricule, situation: this.profile.categorie || this.profile.situation });
-      this.dossierId = dossier.id;
-      this.profile.dossier = dossier.reference;
-      this.isNewDossier = false;
-      created = true;
+      this.store.create(this.dossierDetails()).subscribe({ next: dossier => {
+        this.dossierId = dossier.id; this.profile.dossier = dossier.reference; this.isNewDossier = false;
+        this.note('Dossier enregistré dans la base de données'); this.router.navigate(['/retraites/dashboard']);
+      }, error: () => this.note('Impossible d’enregistrer le dossier. Vérifiez le backend.') });
+      return;
     }
     this.addHistory('Fiche administrative mise à jour');
-    if (this.dossierId) this.store.saveDetails(this.dossierId, this.dossierDetails());
-    this.note('Modifications enregistrées');
-    if (created) this.router.navigate(['/retraites/dashboard']);
+    if (this.dossierId) this.store.saveDetails(this.dossierId, this.dossierDetails()).subscribe({ next: () => this.note('Modifications enregistrées dans la base de données'), error: () => this.note('Impossible d’enregistrer les modifications.') });
   }
   validateAndClose(){
-    if (!this.dossierId || this.readOnly) return;
-    this.store.saveDetails(this.dossierId, this.dossierDetails());
-    this.store.close(this.dossierId);
-    this.router.navigate(['/retraites/validation']);
+    if (this.readOnly) return;
+    if (!this.dossierId) {
+      this.store.create(this.dossierDetails()).subscribe({
+        next: dossier => { this.dossierId = dossier.id; this.profile.dossier = dossier.reference; this.closeDossier(dossier.id); },
+        error: () => this.note('Impossible de créer le dossier. Vérifiez le backend.')
+      });
+      return;
+    }
+    this.store.saveDetails(this.dossierId, this.dossierDetails()).subscribe({ next: () => this.closeDossier(this.dossierId!), error: () => this.note('Impossible d’enregistrer avant la clôture.') });
   }
+  private closeDossier(id: number) { this.store.close(id).subscribe({ next: () => this.router.navigate(['/retraites/validation']), error: () => this.note('Impossible de clôturer le dossier.') }); }
   cancelValidation(){ this.router.navigate(['/retraites/validation']); }
   closeConsultation(){ this.router.navigate(['/retraites/dashboard']); }
   cancelNewDossier(){
@@ -136,7 +154,7 @@ export class RetraitesPageComponent implements OnInit {
       return;
     }
     this.selectedAdherent=adherent;
-    this.profile={...this.profile,dossier:`RET-${new Date().getFullYear()}-NOUVEAU`,prenom:adherent.prenomAr,nom:adherent.nomAr,prenomAr:adherent.prenomAr,nomAr:adherent.nomAr,naissance:adherent.dateNaissance || '',lieu:adherent.lieuNaissance || '',cin:adherent.cin || '',situation:adherent.situationCategorie || '',matricule:adherent.matriculeBR || '',corps:adherent.matricule || '',grade:adherent.grade || '',categorie:adherent.categorie || '',radiation:adherent.dateRadiation || '',motif:adherent.motifRadiation || '',pension:adherent.pension,unite:adherent.dernierUnite || '',formation:adherent.formationUnite || '',tel:adherent.telephone1 || '',tel2:adherent.telephone2 || '',email:adherent.email || '',adresse:adherent.adresse || '',observation:''};
+    this.profile={...this.profile,dossier:`RET-${new Date().getFullYear()}-NOUVEAU`,adherentId:adherent.id,prenom:adherent.prenomAr,nom:adherent.nomAr,prenomAr:adherent.prenomAr,nomAr:adherent.nomAr,naissance:adherent.dateNaissance || '',lieu:adherent.lieuNaissance || '',cin:adherent.cin || '',situation:adherent.situationCategorie || '',matricule:adherent.matriculeBR || '',corps:adherent.matricule || '',grade:adherent.grade || '',categorie:adherent.categorie || '',radiation:adherent.dateRadiation || '',motif:adherent.motifRadiation || '',pension:adherent.pension,unite:adherent.dernierUnite || '',formation:adherent.formationUnite || '',tel:adherent.telephone1 || '',tel2:adherent.telephone2 || '',email:adherent.email || '',adresse:adherent.adresse || '',observation:''};
     this.adherentResults=[];
     this.loadPhoto();
     this.draftSnapshot = this.currentDraftSnapshot();
@@ -166,10 +184,14 @@ export class RetraitesPageComponent implements OnInit {
   addRequest(){this.requests.unshift({title:'Nouvelle demande administrative',date:new Date().toLocaleDateString('fr-FR'),pieces:0,status:'En cours'});this.addHistory('Nouvelle demande créée');}
   validate(r:{title:string;status:string}){r.status='Validée';this.addHistory('Demande validée : '+r.title);}
   addHistory(title:string){this.history.unshift({title,detail:`Dossier ${this.profile.dossier}`,date:new Date().toLocaleDateString('fr-FR')});}
-  addSocialData(){ this.socialData.push({ id: Date.now(), identification: '', diagnostic: '', duree: '' }); }
-  removeSocialData(id:number){ this.socialData=this.socialData.filter(item=>item.id!==id); }
-  addAssistance(){ this.assistances.push({ id: Date.now(), nature: '', organisme: '', date: '', observation: '' }); }
-  removeAssistance(id:number){ this.assistances=this.assistances.filter(item=>item.id!==id); }
+  addSocialData(){ if (this.socialData.some(item => !item.confirmed)) { this.note('Validez ou supprimez la donnée médico-sociale en cours avant d’en ajouter une autre.'); return; } this.socialData.push({ id: Date.now(), identification: '', diagnostic: '', duree: '', confirmed: false }); this.note('Nouvelle donnée médico-sociale ajoutée'); }
+  removeSocialData(id:number){ this.socialData=this.socialData.filter(item=>item.id!==id); this.note('Donnée médico-sociale supprimée'); }
+  validateSocialData(item: SocialEntry){ if (!item.identification.trim() || !item.diagnostic.trim()) { this.note('Complétez l’identification et le diagnostic avant de valider.'); return; } item.confirmed = true; this.note('Donnée médico-sociale validée'); }
+  editSocialData(item: SocialEntry){ item.confirmed = false; this.note('Donnée médico-sociale ouverte en modification'); }
+  addAssistance(){ if (this.assistances.some(item => !item.confirmed)) { this.note('Validez ou supprimez l’assistance en cours avant d’en ajouter une autre.'); return; } this.assistances.push({ id: Date.now(), nature: '', organisme: '', date: '', observation: '', confirmed: false }); this.note('Nouvelle assistance ajoutée'); }
+  removeAssistance(id:number){ this.assistances=this.assistances.filter(item=>item.id!==id); this.note('Assistance supprimée'); }
+  validateAssistance(item: AssistanceEntry){ if (!item.nature.trim() || !item.organisme.trim() || !item.date) { this.note('Complétez la nature, l’organisme et la date avant de valider.'); return; } item.confirmed = true; this.note('Assistance validée'); }
+  editAssistance(item: AssistanceEntry){ item.confirmed = false; this.note('Assistance ouverte en modification'); }
   total(rows: BudgetEntry[]){ return rows.reduce((sum,row)=>sum+(Number(String(row.montant).replace(',','.'))||0),0); }
   exportForm(){
     const printable = document.getElementById('social-survey-form')?.cloneNode(true) as HTMLElement | undefined;

@@ -4,11 +4,13 @@ import { NavigationEnd, RouterOutlet, Router } from '@angular/router';
 import { filter } from 'rxjs';
 import { AuthStateService } from './auth-state.service';
 import { MODULE_MAP } from './module-map';
-import { SidebarComponent, SidebarModule } from './features/sidebar/sidebar.component';
+import { SidebarComponent, SidebarModule } from './layout/sidebar/sidebar.component';
+import { NavbarComponent } from './layout/navbar/navbar.component';
+import { FooterComponent } from './layout/footer/footer.component';
 
 @Component({
     selector: 'app-root',
-    imports: [CommonModule, RouterOutlet, SidebarComponent],
+    imports: [CommonModule, RouterOutlet, SidebarComponent, NavbarComponent, FooterComponent],
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.scss']
 })

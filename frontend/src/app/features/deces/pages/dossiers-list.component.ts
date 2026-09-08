@@ -49,8 +49,17 @@ export class DossiersListComponent implements OnInit {
   onSearchChange(): void { this.currentPage = 1; }
   goToPage(page: number): void { if (page >= 1 && page <= this.totalPages) this.currentPage = page; }
 
+  statusClass(statut: string): string {
+    const classes: Record<string, string> = {
+      EN_COURS: 'status--en-cours', INCOMPLET: 'status--incomplet', A_VALIDER: 'status--a-valider',
+      VALIDE: 'status--valide', REJETE: 'status--rejete', CLOTURE: 'status--cloture', ARCHIVE: 'status--archive'
+    };
+    return classes[statut] ?? 'status--archive';
+  }
   openDetail(dossier: DossierDecesResponse): void { this.router.navigate(['/deces/dossiers', dossier.id]); }
-  openAyants(dossier: DossierDecesResponse): void { this.router.navigate(['/deces/ayants-droit'], { queryParams: { adherentId: dossier.adherentId } }); }
+  openAyants(dossier: DossierDecesResponse): void {
+    this.router.navigate(['/deces/dossiers', dossier.id], { queryParams: { tab: 'ayantsDroit' } });
+  }
 
   archiver(dossier: DossierDecesResponse): void {
     if (!confirm('Archiver definitivement le dossier ' + dossier.numero + ' ?')) return;

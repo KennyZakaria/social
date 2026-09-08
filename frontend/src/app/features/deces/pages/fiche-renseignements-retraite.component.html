@@ -1,0 +1,59 @@
+<div class="retirement-fiche">
+  <div class="page-actions" *ngIf="!loading && !error">
+    <a class="btn btn--secondary" [routerLink]="['/deces/dossiers', dossierId]">Retour au dossier</a>
+    <button type="button" class="btn btn--primary" (click)="print()">Imprimer la fiche</button>
+  </div>
+
+  <section class="state-card" *ngIf="loading">Chargement de la fiche retraité…</section>
+  <section class="state-card state-card--error" *ngIf="error">{{ error }}</section>
+
+  <article class="fiche-paper" *ngIf="!loading && !error && adherent as a">
+    <header class="fiche-header">
+      <div><strong>ROYAUME DU MAROC</strong><small>Service Social</small></div>
+      <div class="fiche-title"><p>GENDARMERIE ROYALE</p><h1>FICHE DE RENSEIGNEMENTS</h1><h2>ADHÉRENT RETRAITÉ</h2><span>Dossier décès : {{ dossier?.numero }}</span></div>
+      <div><strong>SCF SOCIAL</strong><small>Section Décès</small></div>
+    </header>
+
+    <section class="fiche-section">
+      <h3>1. IDENTIFICATION DE L’ADHÉRENT</h3>
+      <div class="info-grid">
+        <p><span>Nom</span><b>{{ a.nomAr }}</b></p><p><span>Prénom</span><b>{{ a.prenomAr }}</b></p>
+        <p><span>Matricule</span><b>{{ a.matricule }}</b></p><p><span>CIN</span><b>{{ a.cin }}</b></p>
+        <p><span>Grade</span><b>{{ a.grade }}</b></p><p><span>Date de naissance</span><b>{{ formatDate(a.dateNaissance) }}</b></p>
+        <p><span>Dernière unité d’affectation</span><b>{{ a.dernierUnite || '—' }}</b></p><p><span>Situation familiale</span><b>{{ a.situationCategorie || '—' }}</b></p>
+      </div>
+    </section>
+
+    <section class="fiche-section fiche-section--retirement">
+      <h3>2. INFORMATIONS DE RETRAITE</h3>
+      <div class="info-grid">
+        <p><span>Situation de service</span><b class="retirement-value">RETRAITÉ</b></p><p><span>Pension</span><b class="retirement-value">{{ a.pension ? 'Oui' : 'Non' }}</b></p>
+        <p><span>Date de radiation / départ</span><b>{{ formatDate(a.dateRadiation) }}</b></p><p><span>Motif de radiation</span><b>{{ a.motifRadiation || '—' }}</b></p>
+        <p class="wide"><span>Formation / région</span><b>{{ a.formationUnite || '—' }}</b></p>
+      </div>
+    </section>
+
+    <section class="fiche-section">
+      <h3>3. INFORMATIONS DÉCÈS</h3>
+      <div class="info-grid">
+        <p><span>Date de décès</span><b>{{ formatDate(dossier?.dateDeces) }}</b></p><p><span>Lieu de décès</span><b>{{ dossier?.lieuDeces || '—' }}</b></p>
+        <p><span>Cause du décès</span><b>{{ dossier?.causeDeces || '—' }}</b></p><p><span>DPR</span><b>{{ dossier?.dpr || '—' }}</b></p>
+      </div>
+    </section>
+
+    <section class="fiche-section">
+      <h3>4. AYANTS DROIT</h3>
+      <table>
+        <thead><tr><th>Nom et prénom</th><th>Lien de parenté</th><th>Date de naissance</th><th>CIN</th></tr></thead>
+        <tbody>
+          <tr *ngFor="let ayant of fiche?.orphelins || []"><td>{{ ayant.nom }} {{ ayant.prenom }}</td><td>{{ ayant.lienParente }}</td><td>{{ formatDate(ayant.dateNaissance) }}</td><td>{{ ayant.cin || '—' }}</td></tr>
+          <tr *ngIf="fiche?.veufVeuve as conjoint"><td>{{ conjoint.nom }} {{ conjoint.prenom }}</td><td>{{ conjoint.lienParente }}</td><td>{{ formatDate(conjoint.dateNaissance) }}</td><td>{{ conjoint.cin || '—' }}</td></tr>
+          <tr *ngFor="let ayant of fiche?.ascendants || []"><td>{{ ayant.nom }} {{ ayant.prenom }}</td><td>{{ ayant.lienParente }}</td><td>{{ formatDate(ayant.dateNaissance) }}</td><td>{{ ayant.cin || '—' }}</td></tr>
+          <tr *ngIf="!(fiche?.orphelins?.length || fiche?.ascendants?.length || fiche?.veufVeuve)"><td colspan="4" class="empty">Aucun ayant droit renseigné.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <footer class="fiche-footer"><span>Fiche générée le {{ formatDate(dossier?.dateCreation) }}</span><span>Signature et cachet</span></footer>
+  </article>
+</div>

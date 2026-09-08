@@ -20,6 +20,8 @@ export class AdherentsDecesComponent implements OnInit {
   errorMsg = '';
   search = '';
   dossierFilter: DossierFilter = 'ALL';
+  gradeFilter = '';
+  readonly grades = ['M/G', 'M/C', 'Adj', 'A/C', 'Sous-lieutenant', 'Lieutenant', 'Capitaine', 'Commandant', 'Lieutenant-colonel', 'Colonel', 'Colonel-major', 'Général de brigade', 'Général de division'];
   page = 0;
   readonly pageSize = 15;
   totalElements = 0;
@@ -54,7 +56,7 @@ export class AdherentsDecesComponent implements OnInit {
     this.loading = true;
     this.errorMsg = '';
 
-    this.decesService.getAdherentsAvecDossier(this.search, this.page, this.pageSize, this.activeBackendFilter)
+    this.decesService.getAdherentsAvecDossier(this.search, this.page, this.pageSize, this.activeBackendFilter, this.gradeFilter)
       .pipe(finalize(() => this.loading = false))
       .subscribe({
         next: page => {
@@ -80,6 +82,11 @@ export class AdherentsDecesComponent implements OnInit {
   }
 
   onDossierFilterChange(): void {
+    this.page = 0;
+    this.load();
+  }
+
+  onGradeFilterChange(): void {
     this.page = 0;
     this.load();
   }
@@ -119,18 +126,40 @@ export class AdherentsDecesComponent implements OnInit {
   }
 
   ajouterAyantDroit(adherent: DecesAdherentResponse): void {
-    this.router.navigate(['/deces/ayants-droit'], { queryParams: { adherentId: adherent.id } });
+    if (!adherent.dossierDecesId) return;
+    this.router.navigate(['/deces/dossiers', adherent.dossierDecesId], { queryParams: { tab: 'ayantsDroit' } });
   }
 
   piecesJustificatives(adherent: DecesAdherentResponse): void {
     if (!adherent.dossierDecesId) return;
-    this.router.navigate(['/deces/pieces-justificatives'], { queryParams: { dossierId: adherent.dossierDecesId } });
+    this.router.navigate(['/deces/dossiers', adherent.dossierDecesId], { queryParams: { tab: 'pieces' } });
   }
 
   initials(adherent: DecesAdherentResponse): string {
     return `${adherent.prenomAr?.charAt(0) ?? ''}${adherent.nomAr?.charAt(0) ?? ''}`.toUpperCase() || 'AD';
   }
 
+  categorieLabel(categorie?: string | null): string {
+    const labels: Record<string, string> = {
+      SOUS_OFFICIERS: 'Sous-officiers',
+      OFFICIERS: 'Officiers',
+      OFFICIERS_SUPERIEURS: 'Officiers supérieurs',
+      OFFICIERS_GENERAUX: 'Officiers généraux'
+    };
+    return categorie ? labels[categorie] ?? categorie : '—';
+  }
+  statutClass(statut?: string | null): string {
+    const classes: Record<string, string> = {
+      EN_COURS: 'dossier-status--en-cours',
+      INCOMPLET: 'dossier-status--incomplet',
+      A_VALIDER: 'dossier-status--a-valider',
+      VALIDE: 'dossier-status--valide',
+      REJETE: 'dossier-status--rejete',
+      CLOTURE: 'dossier-status--cloture',
+      ARCHIVE: 'dossier-status--archive'
+    };
+    return statut ? classes[statut] ?? 'dossier-status--archive' : 'dossier-status--sans-dossier';
+  }
   statutLabel(statut?: string | null): string {
     const labels: Record<string, string> = {
       EN_COURS: 'En cours',

@@ -1,4 +1,4 @@
-﻿import { Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { DecesService } from '../services/deces.service';
@@ -45,7 +45,7 @@ export class DecesDashboardComponent implements OnInit {
 
   getStatutLabel(s: string): string { return STATUT_LABELS[s] ?? s; }
   getStatutClass(s: string): string {
-    const map: Record<string, string> = { EN_COURS: 'badge--en-cours', INCOMPLET: 'badge--incomplet', A_VALIDER: 'badge--a-valider', VALIDE: 'badge--valide', CLOTURE: 'badge--cloture' };
+    const map: Record<string, string> = { EN_COURS: 'badge--en-cours', INCOMPLET: 'badge--incomplet', A_VALIDER: 'badge--a-valider', VALIDE: 'badge--valide', REJETE: 'badge--rejete', CLOTURE: 'badge--cloture', ARCHIVE: 'badge--archive' };
     return map[s] ?? '';
   }
 }

@@ -100,7 +100,7 @@ public class AuthService {
         response.setUsername(user.getUsername());
         response.setFullName(user.getFullName());
         response.setRole(user.getRole().name());
-        response.setAllowedModules(user.getAllowedModules().stream().map(Enum::name).collect(Collectors.toSet()));
+        response.setAllowedModules(user.getAllowedModules().stream().map(module -> module.name()).collect(Collectors.toSet()));
         return response;
     }
 }
