@@ -13,7 +13,12 @@ export class RetraitesDashboardComponent {
   dossiers: RetraiteDossier[] = [];
   constructor(private readonly store: RetraitesStoreService) { this.store.list().subscribe({ next: rows => this.dossiers = rows }); }
   count(status: RetraiteDossier['statut']) { return this.dossiers.filter(d => d.statut === status).length; }
-  lastUpdate(dossier: RetraiteDossier): string { return dossier.miseAJour || new Date().toLocaleDateString('fr-FR'); }
+  lastUpdate(dossier: RetraiteDossier): string {
+    const value = dossier.miseAJour;
+    if (!value) return new Date().toLocaleDateString('fr-FR');
+    const isoDate = /^(\d{4})-(\d{2})-(\d{2})/.exec(value);
+    return isoDate ? `${isoDate[3]}/${isoDate[2]}/${isoDate[1]}` : value;
+  }
 
   get recentDossiers() {
     return [...this.dossiers]
@@ -22,6 +27,7 @@ export class RetraitesDashboardComponent {
   }
 
   private parseDate(value: string): number {
+    if (/^\d{4}-\d{2}-\d{2}/.test(value)) return Date.parse(value) || 0;
     const [day, month, year] = value.split('/').map(Number);
     return new Date(year, (month || 1) - 1, day || 1).getTime();
   }

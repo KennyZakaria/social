@@ -1,9 +1,10 @@
+import { SimpleDatePipe } from './simple-date.pipe';
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RetraitesStoreService } from '../services/retraites-store.service';
 
 @Component({
-  selector: 'app-retraites-global-history-page', imports: [CommonModule],
+  selector: 'app-retraites-global-history-page', imports: [SimpleDatePipe, CommonModule],
   templateUrl: './retraites-global-history-page.component.html',
   styleUrl: './retraites-global-history-page.component.css'
 })
