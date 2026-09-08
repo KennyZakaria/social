@@ -23,3 +23,7 @@
   background: var(--surface-2);
 }
 .read-only button:disabled { opacity: .5; cursor: not-allowed; }
+
+.attachment{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1rem 0;border-top:1px solid var(--border);overflow-wrap:anywhere}.attachment-actions{display:flex;align-items:center;flex-wrap:wrap;gap:.7rem}.attachment input{max-width:100%}.attachment p{color:var(--text-2);font-size:.8rem}@media(max-width:750px){.attachment{align-items:stretch;flex-direction:column}}
+
+.attachment.piece-line{flex-direction:row;justify-content:flex-start;align-items:center;gap:.75rem}.piece-line .piece-quantity{width:3.5rem;flex:0 0 3.5rem;text-align:center;font:700 .95rem inherit;padding:.5rem;border:1px solid var(--border);border-radius:var(--r-md);background:var(--surface-2);color:var(--primary)}

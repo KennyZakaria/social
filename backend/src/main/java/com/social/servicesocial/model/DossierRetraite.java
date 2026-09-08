@@ -58,6 +58,9 @@ public class DossierRetraite {
     private String datePaiement;
     private String observationAdhesion;
     private Boolean avecPhoto;
+    @ElementCollection
+    @CollectionTable(name="retraite_pieces", joinColumns=@JoinColumn(name="dossier_retraite_id"))
+    private java.util.List<RetraitePiece> pieces = new java.util.ArrayList<>();
     private Long adherentId;
     @Column(nullable = false, length = 100) private String nom;
     @Column(nullable = false, length = 100) private String prenom;

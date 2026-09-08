@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { RetraiteDossier, RetraitesStoreService } from '../services/retraites-store.service';
+import { RetraitePiece, RetraiteDossier, RetraitesStoreService } from '../services/retraites-store.service';
 import { AdherentsService } from '../../adherents/services/adherents.service';
 import { AdherentResponse } from '../../../core/models/models';
 
@@ -21,6 +21,14 @@ interface BudgetEntry { designation: string; montant: string; }
   styles: ['.actions > button:first-child { display: none; }.budget-input{width:100%;border-collapse:collapse}.budget-input th,.budget-input td{padding:.7rem;border-bottom:1px solid var(--border);text-align:left;font-size:.78rem}.budget-input th{background:var(--surface-2);color:var(--text-2);font-weight:700}.budget-input input{width:100%;box-sizing:border-box;border:1px solid var(--border);border-radius:6px;padding:.45rem;background:var(--surface)}']
 })
 export class RetraitesPageComponent implements OnInit {
+  pieces: RetraitePiece[] = [];
+  readonly pieceTypes = ['Copie carte mutuelle', 'Copie certificat de propriété', 'Copie CIN', 'Attestation de pension', 'Acte de mariage', 'Acte de décès', 'Certificat médical', 'Autre document'];
+  hasPiece(type: string) { return this.pieces.some(p => p.type === type); }
+  togglePiece(type: string, checked: boolean) {
+    if (this.readOnly) return;
+    if (checked && !this.hasPiece(type)) this.pieces.push({type, quantite:1, nom:'', mime:'', contenu:''});
+    if (!checked) this.pieces = this.pieces.filter(p => p.type !== type);
+  }
   tab: Tab = 'fiche'; message = ''; editing: Person | null = null; memberError = ''; memberSubmitted = false; private editingNewMember = false; isNewDossier = false; readOnly = false; validationMode = false;
   private dossierId?: number;
   selectedAdherent: AdherentResponse | null = null;
@@ -56,6 +64,7 @@ export class RetraitesPageComponent implements OnInit {
         this.profile = { ...this.profile, dossier: dossier.reference, prenom: names.shift() || '', nom: names.join(' '), matricule: dossier.matricule, situation: dossier.situation };
         if (dossier.details) {
           this.profile = { ...this.profile, ...dossier.details.profile, dossier: dossier.reference } as typeof this.profile;
+          this.pieces = dossier.details.pieces ?? [];
           this.family = dossier.details.family as Person[];
           this.benefits = dossier.details.benefits as typeof this.benefits;
           this.requests = dossier.details.requests as typeof this.requests;
@@ -79,6 +88,10 @@ export class RetraitesPageComponent implements OnInit {
       this.store.list().subscribe();
     }
     this.route.paramMap.subscribe(p=>{const f=p.get('feature');this.tab=({demandes:'dossier',pieces:'dossier',historique:'historique',dossiers:'fiche'} as Record<string,Tab>)[f||'']||'fiche';});
+  }
+  readonly manualOptions: Record<string, string[]> = {"natureDeces": ["Naturel", "Accidentel", "Autre"], "region": ["Rabat", "Casablanca", "F\u00e8s", "Marrakech", "Tanger", "Agadir", "Oujda", "Autre"], "colisRamadan": ["Oui", "Non"], "regionResidence": ["Tanger-T\u00e9touan-Al Hoce\u00efma", "Oriental", "F\u00e8s-Mekn\u00e8s", "Rabat-Sal\u00e9-K\u00e9nitra", "B\u00e9ni Mellal-Kh\u00e9nifra", "Casablanca-Settat", "Marrakech-Safi", "Dr\u00e2a-Tafilalet", "Souss-Massa", "Guelmim-Oued Noun", "La\u00e2youne-Sakia El Hamra", "Dakhla-Oued Ed-Dahab", "Autre"], "situationLogement": ["Propri\u00e9taire", "Locataire", "H\u00e9berg\u00e9", "Logement de fonction", "Autre"], "hayRabat": ["Agdal", "Hassan", "Hay Riad", "Yacoub El Mansour", "Youssoufia", "Oc\u00e9an", "Autre"], "situationFraternelle": ["Adh\u00e9rent", "Non adh\u00e9rent", "Autre"], "modeReglement": ["Pr\u00e9l\u00e8vement", "Virement", "Ch\u00e8que", "Esp\u00e8ces", "Autre"], "niveauInstruction": ["Sans instruction", "Primaire", "Coll\u00e8ge", "Lyc\u00e9e", "Sup\u00e9rieur", "Formation professionnelle", "Autre"], "lien": ["Conjoint", "Enfant", "P\u00e8re", "M\u00e8re", "Fr\u00e8re", "S\u0153ur", "Autre"]};
+  manualChoices(field: string, value: string | undefined): string[] {
+    return [...new Set([...(this.manualOptions[field] || []), ...(value ? [value] : [])])];
   }
   get completion(){return Math.round([this.profile.prenom,this.profile.nom,this.profile.cin,this.profile.matricule,this.profile.tel,this.profile.adresse].filter(Boolean).length/6*100);}
   get isSingle(){return String(this.profile.situation).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase() === 'celibataire';}
@@ -110,6 +123,7 @@ export class RetraitesPageComponent implements OnInit {
     this.cancelMember();this.addHistory('Informations familiales mises à jour');this.note('Informations familiales enregistrées');
   }
   save(){
+    if (this.pieces.some(p => !Number.isInteger(p.quantite) || p.quantite < 1)) { this.note("La quantité doit être un entier supérieur ou égal à 1."); return; }
     if (this.readOnly) return;
     const missing = [this.profile.prenom, this.profile.nom, this.profile.cin, this.profile.matricule, this.profile.tel].some(value => !String(value).trim());
     if (missing) { this.note('Veuillez renseigner tous les champs obligatoires marqués d’un astérisque.'); return; }
@@ -124,6 +138,7 @@ export class RetraitesPageComponent implements OnInit {
     if (this.dossierId) this.store.saveDetails(this.dossierId, this.dossierDetails()).subscribe({ next: () => this.router.navigate(['/retraites/dossiers']), error: () => this.note('Impossible d’enregistrer les modifications.') });
   }
   validateAndClose(){
+    if (this.pieces.some(p => !Number.isInteger(p.quantite) || p.quantite < 1)) { this.note("La quantité doit être un entier supérieur ou égal à 1."); return; }
     if (this.readOnly) return;
     if (!this.dossierId) {
       this.store.create(this.dossierDetails()).subscribe({
@@ -189,6 +204,7 @@ export class RetraitesPageComponent implements OnInit {
       return;
     }
     this.selectedAdherent=adherent;
+    this.pieces = [];
     this.profile = {...this.profile, dossier:`RET-${new Date().getFullYear()}-NOUVEAU`, situation:'', region:'', natureDeces:'', motifRadiationSanction:'', adresseEM:'', code:'', entree:'', dateEnquete:'', observation:''};
     this.prefillAdherent(adherent);
     this.adherentResults=[];
@@ -196,7 +212,7 @@ export class RetraitesPageComponent implements OnInit {
     this.draftSnapshot = this.currentDraftSnapshot();
     this.note('Données de l’adhérent chargées. Complétez uniquement les champs manquants.');
   }
-  private currentDraftSnapshot(): string { return JSON.stringify({ profile: this.profile, family: this.family, benefits: this.benefits, requests: this.requests }); }
+  private currentDraftSnapshot(): string { return JSON.stringify({ pieces: this.pieces, profile: this.profile, family: this.family, benefits: this.benefits, requests: this.requests }); }
   private hasDraftChanges(): boolean { return this.draftSnapshot !== this.currentDraftSnapshot(); }
   existingDossier(adherent: AdherentResponse): RetraiteDossier | undefined {
     const matricule = adherent.matriculeBR || adherent.matricule;
@@ -215,7 +231,7 @@ export class RetraitesPageComponent implements OnInit {
   }
   private loadPhoto(){ this.photoUrl = localStorage.getItem(this.photoStorageKey()) || ''; }
   private photoStorageKey(){ return `service-social-adherent-photo-${this.profile.matricule || this.dossierId || 'nouveau'}`; }
-  private dossierDetails(){ return { profile: { ...this.profile }, family: this.family, benefits: this.benefits, requests: this.requests, history: this.history, membership: this.membership, socialData: this.socialData, assistances: this.assistances, resources: this.resources, charges: this.charges }; }
+  private dossierDetails(){ return { pieces: this.pieces, profile: { ...this.profile }, family: this.family, benefits: this.benefits, requests: this.requests, history: this.history, membership: this.membership, socialData: this.socialData, assistances: this.assistances, resources: this.resources, charges: this.charges }; }
   newProfile(reference = `RET-${new Date().getFullYear()}-NOUVEAU`){this.isNewDossier=true;this.profile={...this.profile,dossier:reference,prenom:'',nom:'',cin:'',matricule:'',tel:'',adresse:''};this.tab='fiche';this.note('Nouvelle fiche prête à être renseignée');}
   addRequest(){this.requests.unshift({title:'Nouvelle demande administrative',date:new Date().toLocaleDateString('fr-FR'),pieces:0,status:'En cours'});this.addHistory('Nouvelle demande créée');}
   validate(r:{title:string;status:string}){r.status='Validée';this.addHistory('Demande validée : '+r.title);}

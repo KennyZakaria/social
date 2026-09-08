@@ -128,6 +128,11 @@ public class RetraiteDossierService {
         target.setDatePaiement(r.datePaiement());
         target.setObservationAdhesion(r.observationAdhesion());
         target.setAvecPhoto(r.avecPhoto());
+        if (r.pieces() != null) {
+            var pieces = r.pieces().stream().map(p -> new RetraitePiece(p.quantite() == null ? 1 : p.quantite(), p.type(), p.nom(), p.mime(), p.contenu())).toList();
+            if (target.getPieces() == null) target.setPieces(new java.util.ArrayList<>());
+            target.getPieces().clear(); target.getPieces().addAll(pieces);
+        }
         target.setAdherentId(r.adherentId()); target.setNom(r.nom()); target.setPrenom(r.prenom());
         target.setCin(r.cin()); target.setMatriculeBr(r.matriculeBr()); target.setGrade(r.grade());
         target.setDateNaissance(r.dateNaissance()); target.setDateRadiation(r.dateRadiation());
@@ -140,7 +145,7 @@ public class RetraiteDossierService {
     }
 
     private RetraiteDossierResponse toResponse(DossierRetraite d) {
-        return new RetraiteDossierResponse(d.getNomAr(), d.getPrenomAr(), d.getLieuNaissance(), d.getMatriculeCorps(), d.getCategorie(), d.getSituationCategorie(), d.getPension(), d.getDateEntreeService(), d.getMotifRadiationSanction(), d.getDateDeces(), d.getCauseDeces(), d.getNatureDeces(), d.getFormationUnite(), d.getDerniereRegion(), d.getTelephoneGsm2(), d.getEmail(), d.getObservation(), d.getAdresseEM(), d.getCode(), d.getCarteFondation(), d.getNumeroPmr(), d.getMontantPmr(), d.getNumeroPmi(), d.getMontantPmi(), d.getProfessionActuelle(), d.getColisRamadan(), d.getRegionResidence(), d.getSituationLogement(), d.getHayRabat(), d.getObservationSociale(), d.getCinSocial(), d.getMatriculeSocial(), d.getMotifEnquete(), d.getNumeroDossier(), d.getCartePrelevementCmr(), d.getSituationFraternelle(), d.getAnneeAdhesion(), d.getModeReglement(), d.getNumeroRecu(), d.getDatePaiement(), d.getObservationAdhesion(), d.getAvecPhoto(), d.getId(), d.getDossier().getNumero(), d.getAdherentId(),
+        return new RetraiteDossierResponse(d.getNomAr(), d.getPrenomAr(), d.getLieuNaissance(), d.getMatriculeCorps(), d.getCategorie(), d.getSituationCategorie(), d.getPension(), d.getDateEntreeService(), d.getMotifRadiationSanction(), d.getDateDeces(), d.getCauseDeces(), d.getNatureDeces(), d.getFormationUnite(), d.getDerniereRegion(), d.getTelephoneGsm2(), d.getEmail(), d.getObservation(), d.getAdresseEM(), d.getCode(), d.getCarteFondation(), d.getNumeroPmr(), d.getMontantPmr(), d.getNumeroPmi(), d.getMontantPmi(), d.getProfessionActuelle(), d.getColisRamadan(), d.getRegionResidence(), d.getSituationLogement(), d.getHayRabat(), d.getObservationSociale(), d.getCinSocial(), d.getMatriculeSocial(), d.getMotifEnquete(), d.getNumeroDossier(), d.getCartePrelevementCmr(), d.getSituationFraternelle(), d.getAnneeAdhesion(), d.getModeReglement(), d.getNumeroRecu(), d.getDatePaiement(), d.getObservationAdhesion(), d.getAvecPhoto(), (d.getPieces() == null ? List.<RetraitePieceDto>of() : d.getPieces().stream().map(p -> new RetraitePieceDto(p.getQuantite() == null ? 1 : p.getQuantite(), p.getType(), p.getNom(), p.getMime(), p.getContenu())).toList()), d.getId(), d.getDossier().getNumero(), d.getAdherentId(),
                 d.getNom(), d.getPrenom(), d.getDossier().getMatricule(), d.getCin(), d.getMatriculeBr(), d.getGrade(),
                 d.getDateNaissance(), d.getDateRadiation(), d.getMotif(), d.getTelephoneGsm(), d.getTelephoneFixe(),
                 d.getAffectation(), d.getAdresse(), d.getSituationFamiliale(), d.getHabitation(), d.isProprietaire(),

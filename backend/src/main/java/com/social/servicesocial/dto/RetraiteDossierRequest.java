@@ -50,6 +50,7 @@ public record RetraiteDossierRequest(
         String datePaiement,
         String observationAdhesion,
         Boolean avecPhoto,
+        @jakarta.validation.Valid @jakarta.validation.constraints.Size(max=8) List<RetraitePieceDto> pieces,
         Long adherentId,
         @NotBlank String nom,
         @NotBlank String prenom,
