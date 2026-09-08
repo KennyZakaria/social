@@ -1,0 +1,152 @@
+.page { display: flex; flex-direction: column; gap: 1.25rem; }
+
+    .page-header { display: flex; align-items: center; gap: 1rem; }
+
+    .page-icon {
+      width: 48px; height: 48px;
+      border-radius: var(--r-lg);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      svg { width: 22px; height: 22px; }
+    }
+
+    .page-icon--indigo { background: var(--primary-light); color: var(--primary); }
+
+    .page-kicker {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-3);
+    }
+
+    .page-title {
+      font-size: 1.35rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text-1);
+      margin-top: 2px;
+    }
+
+    /* Card */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      overflow: hidden;
+      box-shadow: var(--sh-sm);
+    }
+
+    .card__head {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .card__title { font-size: 0.95rem; font-weight: 700; color: var(--text-1); }
+
+    /* Form */
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.875rem;
+      padding: 1.25rem;
+      align-items: end;
+    }
+
+    .field { display: flex; flex-direction: column; gap: 5px; }
+    .field label { font-size: 0.78rem; font-weight: 600; color: var(--text-2); }
+
+    .field--notes { grid-column: span 2; }
+    .field--action { justify-content: flex-end; }
+
+    /* Button */
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: var(--r-md);
+      padding: 0.6rem 1rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.15s, transform 0.12s;
+
+      &:hover:not(:disabled) { background: var(--primary-dark); transform: translateY(-1px); }
+      &:disabled { opacity: 0.5; cursor: not-allowed; }
+    }
+
+    /* Table */
+    .table-wrap { overflow-x: auto; }
+
+    table { width: 100%; border-collapse: collapse; font-size: 0.84rem; }
+
+    thead { background: var(--surface-2); }
+
+    th {
+      text-align: left;
+      padding: 0.7rem 1rem;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-3);
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 0.8rem 1rem;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-1);
+      vertical-align: middle;
+    }
+
+    tbody tr {
+      transition: background 0.1s;
+      &:hover { background: var(--surface-2); }
+      &:last-child td { border-bottom: none; }
+    }
+
+    .ref-code {
+      font-size: 0.78rem;
+      background: var(--primary-light);
+      color: var(--primary-dark);
+      padding: 2px 7px;
+      border-radius: 5px;
+    }
+
+    .td-title { max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .td-date { font-size: 0.8rem; color: var(--text-2); }
+
+    .priority-pill {
+      display: inline-block;
+      padding: 2px 9px;
+      border-radius: 99px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      background: var(--surface-2);
+      color: var(--text-2);
+      border: 1px solid var(--border);
+    }
+
+    .priority--haute, .priority--high { background: var(--danger-bg); color: var(--danger); border-color: transparent; }
+    .priority--moyenne, .priority--medium { background: var(--warning-bg); color: #92400e; border-color: transparent; }
+    .priority--basse, .priority--low { background: var(--success-bg); color: #065f46; border-color: transparent; }
+
+    .empty-row { text-align: center; color: var(--text-3); padding: 2rem; }
+
+    @media (max-width: 900px) {
+      .form-grid { grid-template-columns: repeat(2, 1fr); }
+      .field--notes { grid-column: span 1; }
+    }
+
+    @media (max-width: 600px) {
+      .form-grid { grid-template-columns: 1fr; }
+    }

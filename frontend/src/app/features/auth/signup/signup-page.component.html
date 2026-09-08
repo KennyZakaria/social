@@ -1,0 +1,76 @@
+<div class="signup-wrap">
+      <div class="signup-card">
+        <div class="card-header">
+          <div class="header-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>
+            </svg>
+          </div>
+          <div>
+            <h3>Créer un compte</h3>
+            <p class="card-sub">Renseignez le profil, le rôle et les modules autorisés</p>
+          </div>
+        </div>
+
+        <form [formGroup]="form" (ngSubmit)="submit()" class="signup-form">
+
+          <div class="form-section">
+            <p class="section-label">Informations personnelles</p>
+            <div class="grid-2">
+              <div class="field">
+                <label>Nom complet</label>
+                <input formControlName="fullName" placeholder="ex: Jean Dupont" />
+              </div>
+              <div class="field">
+                <label>Email</label>
+                <input formControlName="email" type="email" placeholder="jean@example.com" />
+              </div>
+              <div class="field">
+                <label>Nom d'utilisateur</label>
+                <input formControlName="username" placeholder="jean.dupont" />
+              </div>
+              <div class="field">
+                <label>Mot de passe</label>
+                <input formControlName="password" type="password" placeholder="Min. 6 caractères" />
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <p class="section-label">Rôle</p>
+            <div class="role-grid">
+              <label class="role-option" *ngFor="let r of roles" [class.role-option--selected]="form.value.role === r.value">
+                <input type="radio" formControlName="role" [value]="r.value" style="display:none" />
+                <span class="role-dot" [style.background]="r.color"></span>
+                <span class="role-name">{{ r.label }}</span>
+                <span class="role-desc">{{ r.desc }}</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <p class="section-label">Modules autorisés</p>
+            <div class="module-grid">
+              <label class="module-check" *ngFor="let m of modules" [class.module-check--on]="isSelected(m.value)">
+                <input type="checkbox" [checked]="isSelected(m.value)" (change)="toggleModule(m.value, $event)" style="display:none" />
+                <span class="check-box">
+                  <svg *ngIf="isSelected(m.value)" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"/>
+                  </svg>
+                </span>
+                {{ m.label }}
+              </label>
+            </div>
+          </div>
+
+          <div class="error-msg" *ngIf="error">{{ error }}</div>
+
+          <button class="btn-submit" type="submit" [disabled]="form.invalid || loading">
+            <span *ngIf="!loading">Créer le compte</span>
+            <span *ngIf="loading" class="spinner"></span>
+          </button>
+        </form>
+
+        <p class="auth-link">Déjà un compte ? <a routerLink="/login">Se connecter</a></p>
+      </div>
+    </div>

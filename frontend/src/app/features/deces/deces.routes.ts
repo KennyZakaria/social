@@ -1,13 +1,13 @@
 import { Routes } from '@angular/router';
-import { authGuard, moduleGuard } from '../../guards';
-import { DecesDashboardComponent } from './pages/deces-dashboard.component';
-import { DossiersListComponent } from './pages/dossiers-list.component';
-import { NouveauDossierDecesComponent } from './pages/nouveau-dossier.component';
-import { DemandesDecesComponent } from './pages/demandes-deces.component';
-import { AdherentsDecesComponent } from './pages/adherents-deces.component';
-import { DossierDetailComponent } from './pages/dossier-detail.component';
-import { FicheRenseignementsDecesComponent } from './pages/fiche-renseignements-deces.component';
-import { FicheRenseignementsRetraiteComponent } from './pages/fiche-renseignements-retraite.component';
+import { authGuard, moduleGuard } from '../../core/auth/guards';
+import { DecesDashboardComponent } from './dashboard/deces-dashboard.component';
+import { DossiersListComponent } from './dossiers-list/dossiers-list.component';
+import { NouveauDossierDecesComponent } from './nouveau-dossier/nouveau-dossier.component';
+import { DemandesDecesComponent } from './demandes/demandes-deces.component';
+import { AdherentsDecesComponent } from './adherents/adherents-deces.component';
+import { DossierDetailComponent } from './dossier-detail/dossier-detail.component';
+import { FicheRenseignementsDecesComponent } from './fiche-renseignements-deces/fiche-renseignements-deces.component';
+import { FicheRenseignementsRetraiteComponent } from './fiche-renseignements-retraite/fiche-renseignements-retraite.component';
 
 export const DECES_ROUTES: Routes = [
   { path: 'deces', redirectTo: 'deces/dashboard', pathMatch: 'full' },

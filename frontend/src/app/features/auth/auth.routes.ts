@@ -1,6 +1,8 @@
 import { Routes } from '@angular/router';
-import { LoginPageComponent } from './pages/login-page.component';
+import { LoginPageComponent } from './login/login-page.component';
+import { SignupPageComponent } from './signup/signup-page.component';
 
 export const AUTH_ROUTES: Routes = [
-  { path: 'login', component: LoginPageComponent }
+  { path: 'login', component: LoginPageComponent },
+  { path: 'signup', component: SignupPageComponent }
 ];

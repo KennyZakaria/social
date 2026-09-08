@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { PieceJustificativeRequest, PieceJustificativeResponse } from '../../../models';
+import { PieceJustificativeRequest, PieceJustificativeResponse } from '../../../core/models/models';
 @Injectable({providedIn:'root'})
 export class PiecesJustificativesService {
  constructor(private readonly http:HttpClient){}

@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MODULE_MAP } from '../../../module-map';
-import { AppRole, UserProfileRequest, UserProfileResponse } from '../../../models';
+import { MODULE_MAP } from '../../../core/config/module-map';
+import { AppRole, UserProfileRequest, UserProfileResponse } from '../../../core/models/models';
 import { UsersService } from '../services/users.service';
 
 const DEMO_USERS = [
@@ -29,6 +29,7 @@ export class UserCreatePageComponent implements OnInit {
   selectedModules = new Set<string>();
   successMsg = '';
   errorMsg = '';
+  private readonly fb = inject(FormBuilder);
 
   readonly demoUsers = DEMO_USERS;
 
@@ -51,7 +52,6 @@ export class UserCreatePageComponent implements OnInit {
   });
 
   constructor(
-    private readonly fb: FormBuilder,
     private readonly usersService: UsersService,
     private readonly route: ActivatedRoute,
     private readonly router: Router

@@ -1,0 +1,304 @@
+<div class="page">
+
+      <!-- Alerts -->
+      <div class="alert alert--success" *ngIf="successMsg" (click)="successMsg=''">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+        </svg>
+        {{ successMsg }}
+      </div>
+      <div class="alert alert--error" *ngIf="errorMsg" (click)="errorMsg=''">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>
+        </svg>
+        {{ errorMsg }}
+      </div>
+
+      <!-- Page header -->
+      <div class="page-header">
+        <div class="page-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>
+          </svg>
+        </div>
+        <div>
+          <p class="page-kicker">Mutuelle</p>
+          <h2 class="page-title">Gestion des Adhérents</h2>
+        </div>
+        <button class="btn-primary ml-auto" (click)="openCreate()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+          Nouvel adhérent
+        </button>
+      </div>
+
+      <!-- Search bar -->
+      <div class="card">
+        <div class="search-bar">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          <input class="search-input" [(ngModel)]="searchQuery" [ngModelOptions]="{standalone: true}"
+                 placeholder="Rechercher par nom, matricule, CIN…"
+                 (input)="onSearch()" />
+          <span class="search-count" *ngIf="totalElements > 0">{{ totalElements }} adhérent(s)</span>
+        </div>
+      </div>
+
+      <!-- Form panel (create / edit) -->
+      <div class="card form-card" *ngIf="formOpen">
+        <div class="card__head">
+          <p class="card__title">{{ editingId ? 'Modifier l\'adhérent' : 'Nouvel adhérent' }}</p>
+          <button class="btn-ghost" (click)="closeForm()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+            Annuler
+          </button>
+        </div>
+        <form [formGroup]="form" (ngSubmit)="saveAdherent()" class="form-body">
+
+          <div class="form-section">
+            <p class="section-label">Identité</p>
+            <div class="form-grid">
+              <div class="field">
+                <label>Prénom (AR)</label>
+                <input formControlName="prenomAr" placeholder="محمد" dir="rtl"/>
+              </div>
+              <div class="field">
+                <label>Nom (AR)</label>
+                <input formControlName="nomAr" placeholder="بوعلي" dir="rtl"/>
+              </div>
+              <div class="field">
+                <label>Date de naissance</label>
+                <input formControlName="dateNaissance" type="date"/>
+              </div>
+              <div class="field">
+                <label>Lieu de naissance</label>
+                <input formControlName="lieuNaissance" placeholder="Maroc"/>
+              </div>
+              <div class="field">
+                <label>CIN</label>
+                <input formControlName="cin" placeholder="123456789"/>
+              </div>
+              <div class="field">
+                <label>Email</label>
+                <input formControlName="email" type="email" placeholder="exemple@mail.com"/>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <p class="section-label">Service</p>
+            <div class="form-grid">
+              <div class="field">
+                <label>Catégorie</label>
+                <select formControlName="categorie" (change)="onCategorieChange()">
+                  <option value="" disabled>Sélectionner une catégorie</option>
+                  <option value="SOUS_OFFICIERS">Sous-officiers</option>
+                  <option value="OFFICIERS">Officiers</option>
+                  <option value="OFFICIERS_SUPERIEURS">Officiers supérieurs</option>
+                  <option value="OFFICIERS_GENERAUX">Officiers généraux</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Grade</label>
+                <select formControlName="grade" [disabled]="!form.controls.categorie.value">
+                  <option value="" disabled>Sélectionner un grade</option>
+                  <optgroup *ngIf="form.controls.categorie.value === 'SOUS_OFFICIERS'" label="Sous-officiers">
+                    <option value="M/G">M/G</option>
+                    <option value="M/C">M/C</option>
+                    <option value="Adj">Adj</option>
+                    <option value="A/C">A/C</option>
+                  </optgroup>
+                  <optgroup *ngIf="form.controls.categorie.value === 'OFFICIERS'" label="Officiers">
+                    <option value="Sous-lieutenant">Sous-lieutenant</option>
+                    <option value="Lieutenant">Lieutenant</option>
+                    <option value="Capitaine">Capitaine</option>
+                  </optgroup>
+                  <optgroup *ngIf="form.controls.categorie.value === 'OFFICIERS_SUPERIEURS'" label="Officiers supérieurs">
+                    <option value="Commandant">Commandant</option>
+                    <option value="Lieutenant-colonel">Lieutenant-colonel</option>
+                    <option value="Colonel">Colonel</option>
+                    <option value="Colonel-major">Colonel-major</option>
+                  </optgroup>
+                  <optgroup *ngIf="form.controls.categorie.value === 'OFFICIERS_GENERAUX'" label="Officiers généraux">
+                    <option value="Général de brigade">Général de brigade</option>
+                    <option value="Général de division">Général de division</option>
+                  </optgroup>
+                </select>
+              </div>
+              <div class="field">
+                <label>Matricule BR</label>
+                <input formControlName="matriculeBR" placeholder="BR-001"/>
+              </div>
+              <div class="field">
+                <label>Matricule</label>
+                <input formControlName="matricule" placeholder="M-001"/>
+              </div>
+              <div class="field">
+                <label>Dernier Unité</label>
+                <input formControlName="dernierUnite" placeholder="1ère Région"/>
+              </div>
+              <div class="field">
+                <label>Formation / Unité</label>
+                <input formControlName="formationUnite" placeholder="Bataillon X"/>
+              </div>
+              <div class="field">
+                <label>Situation catégorie</label>
+                <select formControlName="situationCategorie">
+                  <option value="EN_ACTIVITE">En activité</option>
+                  <option value="RETRAITE">Retraité</option>
+                </select>
+              </div>
+          </div>
+          </div>
+
+          <div class="form-section">
+            <p class="section-label">Contact</p>
+            <div class="form-grid">
+              <div class="field field--wide">
+                <label>Adresse</label>
+                <input formControlName="adresse" placeholder="Rue, Wilaya"/>
+              </div>
+              <div class="field">
+                <label>Téléphone 1</label>
+                <input formControlName="telephone1" placeholder="0555 000 000"/>
+              </div>
+              <div class="field">
+                <label>Téléphone 2 <span class="hint">optionnel</span></label>
+                <input formControlName="telephone2" placeholder="0660 000 000"/>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+            <p class="section-label">Radiation / Décès <span class="hint">optionnel</span></p>
+            <div class="form-grid">
+              <div class="field">
+                <label>Date de radiation</label>
+                <input formControlName="dateRadiation" type="date"/>
+              </div>
+              <div class="field">
+                <label>Motif de radiation</label>
+                <input formControlName="motifRadiation" placeholder="Retraite"/>
+              </div>
+              <div class="field">
+                <label>Date de décès</label>
+                <input formControlName="dateDeces" type="date"/>
+              </div>
+              <div class="field">
+                <label>Cause de décès</label>
+                <input formControlName="causeDeces" placeholder="Maladie"/>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-footer">
+            <button class="btn-primary" type="submit" [disabled]="form.invalid">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v14a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/>
+              </svg>
+              {{ editingId ? 'Enregistrer' : 'Créer' }}
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Table -->
+      <div class="card">
+        <div class="card__head">
+          <p class="card__title">Adhérents ({{ totalElements }})</p>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Nom &amp; Prénom</th>
+                <th>Matricule</th>
+                <th>Catégorie / Grade</th>
+                <th>CIN</th>
+                <th>Téléphone</th>
+                <th>Situation</th>
+                <th>Pension</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let a of adherents" [class.row--editing]="editingId === a.id">
+                <td>
+                  <div class="name-cell">
+                    <div class="avatar">{{ a.nomAr.charAt(0) }}</div>
+                    <div>
+                      <div class="name-ar">{{ a.prenomAr }} {{ a.nomAr }}</div>
+                      <div class="name-sub">{{ a.email }}</div>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <div class="mat-cell">
+                    <span class="mat-tag">{{ a.matricule }}</span>
+                    <span class="mat-sub">BR: {{ a.matriculeBR }}</span>
+                  </div>
+                </td>
+                <td>
+                  <div>
+                    <span class="cat-badge">{{ categorieLabel(a.categorie) }}</span>
+                    <div class="grade-sub">{{ a.grade }}</div>
+                  </div>
+                </td>
+                <td class="td-mono">{{ a.cin }}</td>
+                <td class="td-phone">{{ a.telephone1 }}</td>
+                <td>
+                  <span class="sit-badge" [class]="getSitClass(a.situationCategorie)">{{ a.situationCategorie }}</span>
+                </td>
+                <td>
+                  <span class="pension-dot" [class]="a.pension ? 'pension-dot--on' : 'pension-dot--off'">
+                    {{ a.pension ? 'Oui' : 'Non' }}
+                  </span>
+                </td>
+                <td>
+                  <div class="actions-cell">
+                    <button class="action-btn action-btn--edit" title="Modifier" (click)="startEdit(a)">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
+                        <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                      </svg>
+                    </button>
+                    <ng-container *ngIf="confirmDeleteId === a.id; else delBtn">
+                      <button class="action-btn action-btn--danger-confirm" (click)="doDelete(a.id)">Confirmer</button>
+                      <button class="action-btn action-btn--cancel" (click)="confirmDeleteId = null">Annuler</button>
+                    </ng-container>
+                    <ng-template #delBtn>
+                      <button class="action-btn action-btn--danger" title="Supprimer" (click)="confirmDeleteId = a.id">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                          <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/>
+                          <path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/>
+                        </svg>
+                      </button>
+                    </ng-template>
+                  </div>
+                </td>
+              </tr>
+              <tr *ngIf="adherents.length === 0 && !loading">
+                <td colspan="8" class="empty-row">Aucun adhérent trouvé.</td>
+              </tr>
+              <tr *ngIf="loading">
+                <td colspan="8" class="empty-row">Chargement…</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination" *ngIf="totalPages > 1">
+          <button class="page-btn" [disabled]="currentPage === 0" (click)="goPage(0)">«</button>
+          <button class="page-btn" [disabled]="currentPage === 0" (click)="goPage(currentPage - 1)">‹</button>
+          <span class="page-info">Page {{ currentPage + 1 }} / {{ totalPages }}</span>
+          <button class="page-btn" [disabled]="currentPage === totalPages - 1" (click)="goPage(currentPage + 1)">›</button>
+          <button class="page-btn" [disabled]="currentPage === totalPages - 1" (click)="goPage(totalPages - 1)">»</button>
+        </div>
+      </div>
+    </div>

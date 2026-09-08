@@ -1,0 +1,62 @@
+<div class="page">
+      <div class="alert alert--error" *ngIf="errorMsg" (click)="errorMsg=''">{{ errorMsg }}</div>
+
+      <div class="page-header">
+        <div class="page-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 17H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-2"/><rect x="7" y="13" width="10" height="8" rx="2"/><path d="M9 7h6"/></svg>
+        </div>
+        <div>
+          <p class="page-kicker">Section Mutuelle</p>
+          <h2 class="page-title">Historique courrier</h2>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="filters-row">
+          <input [(ngModel)]="searchTerm" class="filter-input" placeholder="N°, ordre, envoi, nom, matricule, CIN..." />
+          <select [(ngModel)]="typeCourrierFilter">
+            <option value="">Type courrier</option>
+            <option value="INTERNE">Interne</option>
+            <option value="EXTERNE">Externe</option>
+          </select>
+          <select [(ngModel)]="typeDossierFilter">
+            <option value="">Type dossier</option>
+            <option value="ALD">ALD</option>
+            <option value="NORMAL">Normal</option>
+            <option value="DENTAIRE">Dentaire</option>
+          </select>
+          <input type="date" [(ngModel)]="dateFrom" />
+          <input type="date" [(ngModel)]="dateTo" />
+          <button class="btn-ghost" type="button" (click)="clearFilters()">Réinitialiser</button>
+          <button class="btn-primary" type="button" (click)="loadRecords()">Filtrer</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card__head"><p class="card__title">Historique ({{ records.length }})</p></div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>N° Dossier</th><th>Adhérent</th><th>Type courrier</th><th>N° ordre</th><th>N° envoi</th><th>Date envoi</th><th>Date réception</th><th>Type dossier</th><th>Désignation</th><th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let record of records">
+                <td>{{ record.numeroDossier }}</td>
+                <td>{{ record.nomComplet }}<div class="sub mono">{{ record.matricule || '—' }} · {{ record.cin || '—' }}</div></td>
+                <td>{{ record.typeCourrier === 'INTERNE' ? 'Interne' : 'Externe' }}</td>
+                <td>{{ record.numeroOrdre }}</td>
+                <td>{{ record.numeroEnvoi || '—' }}</td>
+                <td>{{ record.dateEnvoi ? (record.dateEnvoi | date:'dd/MM/yyyy') : '—' }}</td>
+                <td>{{ record.dateReception ? (record.dateReception | date:'dd/MM/yyyy') : '—' }}</td>
+                <td>{{ typeDossierLabel(record.typeDossier) }}</td>
+                <td>{{ record.designation }}</td>
+                <td><button class="btn-row" type="button" (click)="openRecord(record)">Voir dossier</button></td>
+              </tr>
+              <tr *ngIf="records.length === 0"><td colspan="10" class="empty-row">Aucun dossier mutuelle.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>

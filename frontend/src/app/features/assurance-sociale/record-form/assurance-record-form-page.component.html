@@ -1,0 +1,56 @@
+<div class="page">
+      <div class="alert alert--success" *ngIf="successMsg" (click)="successMsg=''">{{ successMsg }}</div>
+      <div class="alert alert--error" *ngIf="errorMsg" (click)="errorMsg=''">{{ errorMsg }}</div>
+
+      <div class="page-header">
+        <a class="back-btn" routerLink="/module/assurance-sociale/adherents">Retour</a>
+        <div class="page-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M12 4h9"/><path d="M4 9h16"/><path d="M4 15h16"/></svg>
+        </div>
+        <div>
+          <p class="page-kicker">Assurance Sociale</p>
+          <h2 class="page-title">{{ pageTitle }}</h2>
+        </div>
+        <span class="mode-badge" [class.mode-badge--view]="mode === 'view'">{{ modeLabel }}</span>
+      </div>
+
+      <div class="card" *ngIf="adherent">
+        <div class="card__head"><p class="card__title">Adhérent sélectionné</p></div>
+        <div class="summary-grid">
+          <div><span class="label">Nom</span><strong>{{ adherent.prenomAr }} {{ adherent.nomAr }}</strong></div>
+          <div><span class="label">Grade</span><strong>{{ adherent.grade }}</strong></div>
+          <div><span class="label">Matricule</span><strong>{{ adherent.matricule }}</strong></div>
+          <div><span class="label">CIN</span><strong>{{ adherent.cin }}</strong></div>
+          <div><span class="label">Mle BR</span><strong>{{ adherent.matriculeBR }}</strong></div>
+          <div><span class="label">Unité</span><strong>{{ adherent.dernierUnite }}</strong></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card__head"><p class="card__title">Formulaire {{ recordType === 'INVALIDITE' ? 'invalidité' : 'décès' }}</p></div>
+        <form [formGroup]="form" (ngSubmit)="saveRecord()" class="form-body">
+          <div class="form-grid" *ngIf="recordType === 'INVALIDITE'; else decesFields">
+            <div class="field"><label>Désignation</label><input formControlName="designation" placeholder="Désignation / texte" [readonly]="mode === 'view'" /></div>
+            <div class="field field--wide"><label>Maladie</label><input formControlName="maladie" placeholder="Détails de la maladie" [readonly]="mode === 'view'" /></div>
+            <div class="field"><label>Code maladie</label><input formControlName="codeMaladie" placeholder="Code maladie" [readonly]="mode === 'view'" /></div>
+            <div class="field"><label>Date commission</label><input formControlName="dateCommission" type="date" [readonly]="mode === 'view'" /></div>
+            <div class="field"><label>Taux d'invalidité</label><input formControlName="tauxInvalidite" type="number" min="0" max="100" step="0.01" [readonly]="mode === 'view'" /></div>
+            <div class="field"><label>Imputabilité</label><select formControlName="imputable" [disabled]="mode === 'view'"><option [ngValue]="null">Choisir</option><option [ngValue]="true">Oui</option><option [ngValue]="false">Non</option></select></div>
+          </div>
+          <ng-template #decesFields>
+            <div class="form-grid">
+              <div class="field"><label>Date décès</label><input formControlName="dateDeces" type="date" [readonly]="mode === 'view'" /></div>
+              <div class="field field--wide"><label>Cause</label><input formControlName="causeDeces" placeholder="Cause du décès" [readonly]="mode === 'view'" /></div>
+              <div class="field"><label>Réf. d'envoi</label><select formControlName="referenceEnvoi" [disabled]="mode === 'view'"><option value="">Choisir</option><option *ngFor="let option of referenceOptions" [value]="option">{{ option }}</option></select></div>
+              <div class="field"><label>Pécule (montant)</label><input formControlName="peculeMontant" type="number" min="0" step="0.01" [readonly]="mode === 'view'" /></div>
+              <div class="field"><label>Décès (montant)</label><input formControlName="decesMontant" type="number" min="0" step="0.01" [readonly]="mode === 'view'" /></div>
+            </div>
+          </ng-template>
+          <div class="form-footer">
+            <button class="btn-ghost" type="button" (click)="goBack()">{{ mode === 'view' ? 'Retour historique' : 'Annuler' }}</button>
+            <button class="btn-primary" *ngIf="mode === 'view'" type="button" (click)="switchToEdit()">Mettre à jour</button>
+            <button class="btn-primary" *ngIf="mode !== 'view'" type="submit">{{ mode === 'edit' ? 'Enregistrer modifications' : 'Enregistrer' }}</button>
+          </div>
+        </form>
+      </div>
+    </div>
