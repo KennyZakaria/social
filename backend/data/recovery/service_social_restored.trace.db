@@ -1,0 +1,361 @@
+2026-09-09 11:24:20.107216+01:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLDataException: Valeur non permise pour la colonne "('CHARIA', 'POURCENTAGE')": "2"
+Value not permitted for column "('CHARIA', 'POURCENTAGE')": "2"; SQL statement:
+
+INSERT INTO "PUBLIC"."AYANT_DROIT" SELECT * FROM O_ [22030-240]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:518)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:489)
+	at org.h2.message.DbException.get(DbException.java:223)
+	at org.h2.value.ExtTypeInfoEnum.getValue(ExtTypeInfoEnum.java:175)
+	at org.h2.value.Value.convertToEnum(Value.java:2325)
+	at org.h2.value.Value.convertTo(Value.java:1205)
+	at org.h2.value.Value.convertForAssignTo(Value.java:1123)
+	at org.h2.table.Column.validateConvertUpdateSequence(Column.java:410)
+	at org.h2.table.Table.convertInsertRow(Table.java:948)
+	at org.h2.command.dml.Insert.addRow(Insert.java:229)
+	at org.h2.command.dml.Insert.insertRows(Insert.java:203)
+	at org.h2.command.dml.Insert.update(Insert.java:135)
+	at org.h2.command.dml.DataChangeStatement.update(DataChangeStatement.java:77)
+	at org.h2.command.CommandContainer.update(CommandContainer.java:139)
+	at org.h2.command.Command.executeUpdate(Command.java:306)
+	at org.h2.command.Command.executeUpdate(Command.java:250)
+	at org.h2.jdbc.JdbcStatement.executeInternal(JdbcStatement.java:262)
+	at org.h2.jdbc.JdbcStatement.execute(JdbcStatement.java:231)
+	at org.h2.tools.RunScript.process(RunScript.java:255)
+	at org.h2.tools.RunScript.process(RunScript.java:186)
+	at org.h2.tools.RunScript.process(RunScript.java:313)
+	at org.h2.tools.RunScript.runTool(RunScript.java:139)
+	at org.h2.tools.RunScript.main(RunScript.java:66)
+2026-09-09 11:24:50.265872+01:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLDataException: Valeur non permise pour la colonne "('CHARIA', 'POURCENTAGE')": "2"
+Value not permitted for column "('CHARIA', 'POURCENTAGE')": "2"; SQL statement:
+
+INSERT INTO "PUBLIC"."AYANT_DROIT" SELECT * FROM O_ [22030-240]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:518)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:489)
+	at org.h2.message.DbException.get(DbException.java:223)
+	at org.h2.value.ExtTypeInfoEnum.getValue(ExtTypeInfoEnum.java:175)
+	at org.h2.value.Value.convertToEnum(Value.java:2325)
+	at org.h2.value.Value.convertTo(Value.java:1205)
+	at org.h2.value.Value.convertForAssignTo(Value.java:1123)
+	at org.h2.table.Column.validateConvertUpdateSequence(Column.java:410)
+	at org.h2.table.Table.convertInsertRow(Table.java:948)
+	at org.h2.command.dml.Insert.addRow(Insert.java:229)
+	at org.h2.command.dml.Insert.insertRows(Insert.java:203)
+	at org.h2.command.dml.Insert.update(Insert.java:135)
+	at org.h2.command.dml.DataChangeStatement.update(DataChangeStatement.java:77)
+	at org.h2.command.CommandContainer.update(CommandContainer.java:139)
+	at org.h2.command.Command.executeUpdate(Command.java:306)
+	at org.h2.command.Command.executeUpdate(Command.java:250)
+	at org.h2.jdbc.JdbcStatement.executeInternal(JdbcStatement.java:262)
+	at org.h2.jdbc.JdbcStatement.execute(JdbcStatement.java:231)
+	at org.h2.tools.RunScript.process(RunScript.java:255)
+	at org.h2.tools.RunScript.process(RunScript.java:186)
+	at org.h2.tools.RunScript.process(RunScript.java:313)
+	at org.h2.tools.RunScript.runTool(RunScript.java:139)
+	at org.h2.tools.RunScript.main(RunScript.java:66)
+2026-09-09 11:24:50.274845+01:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLDataException: Valeur non permise pour la colonne "('ASSISTANCE_SOCIALE', 'ASSURANCE_SOCIALE', 'BUREAU_ORDRE', 'CULTURE_LOISIRS', 'DECES', 'MUTUELLE', 'RETRAITES')": "6"
+Value not permitted for column "('ASSISTANCE_SOCIALE', 'ASSURANCE_SOCIALE', 'BUREAU_ORDRE', 'CULTURE_LOISIRS', 'DECES', 'MUTUELLE', 'RETRAITES')": "6"; SQL statement:
+
+INSERT INTO "PUBLIC"."CASE_RECORDS" SELECT * FROM O_ [22030-240]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:518)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:489)
+	at org.h2.message.DbException.get(DbException.java:223)
+	at org.h2.value.ExtTypeInfoEnum.getValue(ExtTypeInfoEnum.java:175)
+	at org.h2.value.Value.convertToEnum(Value.java:2325)
+	at org.h2.value.Value.convertTo(Value.java:1205)
+	at org.h2.value.Value.convertForAssignTo(Value.java:1123)
+	at org.h2.table.Column.validateConvertUpdateSequence(Column.java:410)
+	at org.h2.table.Table.convertInsertRow(Table.java:948)
+	at org.h2.command.dml.Insert.addRow(Insert.java:229)
+	at org.h2.command.dml.Insert.insertRows(Insert.java:203)
+	at org.h2.command.dml.Insert.update(Insert.java:135)
+	at org.h2.command.dml.DataChangeStatement.update(DataChangeStatement.java:77)
+	at org.h2.command.CommandContainer.update(CommandContainer.java:139)
+	at org.h2.command.Command.executeUpdate(Command.java:306)
+	at org.h2.command.Command.executeUpdate(Command.java:250)
+	at org.h2.jdbc.JdbcStatement.executeInternal(JdbcStatement.java:262)
+	at org.h2.jdbc.JdbcStatement.execute(JdbcStatement.java:231)
+	at org.h2.tools.RunScript.process(RunScript.java:255)
+	at org.h2.tools.RunScript.process(RunScript.java:186)
+	at org.h2.tools.RunScript.process(RunScript.java:313)
+	at org.h2.tools.RunScript.runTool(RunScript.java:139)
+	at org.h2.tools.RunScript.main(RunScript.java:66)
+2026-09-09 11:24:50.277843+01:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLDataException: Valeur non permise pour la colonne "('ACCEPTEE', 'CLOTUREE', 'EN_ATTENTE', 'EN_COURS', 'REFUSEE')": "4"
+Value not permitted for column "('ACCEPTEE', 'CLOTUREE', 'EN_ATTENTE', 'EN_COURS', 'REFUSEE')": "4"; SQL statement:
+
+INSERT INTO "PUBLIC"."DEMANDE_DECES" SELECT * FROM O_ [22030-240]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:518)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:489)
+	at org.h2.message.DbException.get(DbException.java:223)
+	at org.h2.value.ExtTypeInfoEnum.getValue(ExtTypeInfoEnum.java:175)
+	at org.h2.value.Value.convertToEnum(Value.java:2325)
+	at org.h2.value.Value.convertTo(Value.java:1205)
+	at org.h2.value.Value.convertForAssignTo(Value.java:1123)
+	at org.h2.table.Column.validateConvertUpdateSequence(Column.java:410)
+	at org.h2.table.Table.convertInsertRow(Table.java:948)
+	at org.h2.command.dml.Insert.addRow(Insert.java:229)
+	at org.h2.command.dml.Insert.insertRows(Insert.java:203)
+	at org.h2.command.dml.Insert.update(Insert.java:135)
+	at org.h2.command.dml.DataChangeStatement.update(DataChangeStatement.java:77)
+	at org.h2.command.CommandContainer.update(CommandContainer.java:139)
+	at org.h2.command.Command.executeUpdate(Command.java:306)
+	at org.h2.command.Command.executeUpdate(Command.java:250)
+	at org.h2.jdbc.JdbcStatement.executeInternal(JdbcStatement.java:262)
+	at org.h2.jdbc.JdbcStatement.execute(JdbcStatement.java:231)
+	at org.h2.tools.RunScript.process(RunScript.java:255)
+	at org.h2.tools.RunScript.process(RunScript.java:186)
+	at org.h2.tools.RunScript.process(RunScript.java:313)
+	at org.h2.tools.RunScript.runTool(RunScript.java:139)
+	at org.h2.tools.RunScript.main(RunScript.java:66)
+2026-09-09 11:24:50.286846+01:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLDataException: Valeur non permise pour la colonne "('ADHERENTS', 'ASSISTANCE', 'ASSURANCE', 'BUREAU_ORDRE', 'CULTURE', 'DECES', 'MUTUELLE', 'RETRAITES', 'SUPER_ADMIN')": "8"
+Value not permitted for column "('ADHERENTS', 'ASSISTANCE', 'ASSURANCE', 'BUREAU_ORDRE', 'CULTURE', 'DECES', 'MUTUELLE', 'RETRAITES', 'SUPER_ADMIN')": "8"; SQL statement:
+
+INSERT INTO "PUBLIC"."DOSSIERS" SELECT * FROM O_ [22030-240]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:518)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:489)
+	at org.h2.message.DbException.get(DbException.java:223)
+	at org.h2.value.ExtTypeInfoEnum.getValue(ExtTypeInfoEnum.java:175)
+	at org.h2.value.Value.convertToEnum(Value.java:2325)
+	at org.h2.value.Value.convertTo(Value.java:1205)
+	at org.h2.value.Value.convertForAssignTo(Value.java:1123)
+	at org.h2.table.Column.validateConvertUpdateSequence(Column.java:410)
+	at org.h2.table.Table.convertInsertRow(Table.java:948)
+	at org.h2.command.dml.Insert.addRow(Insert.java:229)
+	at org.h2.command.dml.Insert.insertRows(Insert.java:203)
+	at org.h2.command.dml.Insert.update(Insert.java:135)
+	at org.h2.command.dml.DataChangeStatement.update(DataChangeStatement.java:77)
+	at org.h2.command.CommandContainer.update(CommandContainer.java:139)
+	at org.h2.command.Command.executeUpdate(Command.java:306)
+	at org.h2.command.Command.executeUpdate(Command.java:250)
+	at org.h2.jdbc.JdbcStatement.executeInternal(JdbcStatement.java:262)
+	at org.h2.jdbc.JdbcStatement.execute(JdbcStatement.java:231)
+	at org.h2.tools.RunScript.process(RunScript.java:255)
+	at org.h2.tools.RunScript.process(RunScript.java:186)
+	at org.h2.tools.RunScript.process(RunScript.java:313)
+	at org.h2.tools.RunScript.runTool(RunScript.java:139)
+	at org.h2.tools.RunScript.main(RunScript.java:66)
+2026-09-09 11:24:50.295845+01:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLDataException: Valeur non permise pour la colonne "('INCOMING', 'OUTGOING')": "1"
+Value not permitted for column "('INCOMING', 'OUTGOING')": "1"; SQL statement:
+
+INSERT INTO "PUBLIC"."MAIL_RECORDS" SELECT * FROM O_ [22030-240]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:518)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:489)
+	at org.h2.message.DbException.get(DbException.java:223)
+	at org.h2.value.ExtTypeInfoEnum.getValue(ExtTypeInfoEnum.java:175)
+	at org.h2.value.Value.convertToEnum(Value.java:2325)
+	at org.h2.value.Value.convertTo(Value.java:1205)
+	at org.h2.value.Value.convertForAssignTo(Value.java:1123)
+	at org.h2.table.Column.validateConvertUpdateSequence(Column.java:410)
+	at org.h2.table.Table.convertInsertRow(Table.java:948)
+	at org.h2.command.dml.Insert.addRow(Insert.java:229)
+	at org.h2.command.dml.Insert.insertRows(Insert.java:203)
+	at org.h2.command.dml.Insert.update(Insert.java:135)
+	at org.h2.command.dml.DataChangeStatement.update(DataChangeStatement.java:77)
+	at org.h2.command.CommandContainer.update(CommandContainer.java:139)
+	at org.h2.command.Command.executeUpdate(Command.java:306)
+	at org.h2.command.Command.executeUpdate(Command.java:250)
+	at org.h2.jdbc.JdbcStatement.executeInternal(JdbcStatement.java:262)
+	at org.h2.jdbc.JdbcStatement.execute(JdbcStatement.java:231)
+	at org.h2.tools.RunScript.process(RunScript.java:255)
+	at org.h2.tools.RunScript.process(RunScript.java:186)
+	at org.h2.tools.RunScript.process(RunScript.java:313)
+	at org.h2.tools.RunScript.runTool(RunScript.java:139)
+	at org.h2.tools.RunScript.main(RunScript.java:66)
+2026-09-09 11:24:50.299847+01:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLDataException: Valeur non permise pour la colonne "('ASSISTANCE_SOCIALE', 'ASSURANCE_SOCIALE', 'BUREAU_ORDRE', 'CULTURE_LOISIRS', 'DECES', 'MUTUELLE', 'RETRAITES')": "6"
+Value not permitted for column "('ASSISTANCE_SOCIALE', 'ASSURANCE_SOCIALE', 'BUREAU_ORDRE', 'CULTURE_LOISIRS', 'DECES', 'MUTUELLE', 'RETRAITES')": "6"; SQL statement:
+
+INSERT INTO "PUBLIC"."USER_ALLOWED_MODULES" SELECT * FROM O_ [22030-240]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:518)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:489)
+	at org.h2.message.DbException.get(DbException.java:223)
+	at org.h2.value.ExtTypeInfoEnum.getValue(ExtTypeInfoEnum.java:175)
+	at org.h2.value.Value.convertToEnum(Value.java:2325)
+	at org.h2.value.Value.convertTo(Value.java:1205)
+	at org.h2.value.Value.convertForAssignTo(Value.java:1123)
+	at org.h2.table.Column.validateConvertUpdateSequence(Column.java:410)
+	at org.h2.table.Table.convertInsertRow(Table.java:948)
+	at org.h2.command.dml.Insert.addRow(Insert.java:229)
+	at org.h2.command.dml.Insert.insertRows(Insert.java:203)
+	at org.h2.command.dml.Insert.update(Insert.java:135)
+	at org.h2.command.dml.DataChangeStatement.update(DataChangeStatement.java:77)
+	at org.h2.command.CommandContainer.update(CommandContainer.java:139)
+	at org.h2.command.Command.executeUpdate(Command.java:306)
+	at org.h2.command.Command.executeUpdate(Command.java:250)
+	at org.h2.jdbc.JdbcStatement.executeInternal(JdbcStatement.java:262)
+	at org.h2.jdbc.JdbcStatement.execute(JdbcStatement.java:231)
+	at org.h2.tools.RunScript.process(RunScript.java:255)
+	at org.h2.tools.RunScript.process(RunScript.java:186)
+	at org.h2.tools.RunScript.process(RunScript.java:313)
+	at org.h2.tools.RunScript.runTool(RunScript.java:139)
+	at org.h2.tools.RunScript.main(RunScript.java:66)
+2026-09-09 11:24:50.306846+01:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLDataException: Valeur non permise pour la colonne "('ADMIN', 'AGENT', 'MANAGER')": "1"
+Value not permitted for column "('ADMIN', 'AGENT', 'MANAGER')": "1"; SQL statement:
+
+INSERT INTO "PUBLIC"."USER_PROFILES" SELECT * FROM O_ [22030-240]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:518)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:489)
+	at org.h2.message.DbException.get(DbException.java:223)
+	at org.h2.value.ExtTypeInfoEnum.getValue(ExtTypeInfoEnum.java:175)
+	at org.h2.value.Value.convertToEnum(Value.java:2325)
+	at org.h2.value.Value.convertTo(Value.java:1205)
+	at org.h2.value.Value.convertForAssignTo(Value.java:1123)
+	at org.h2.table.Column.validateConvertUpdateSequence(Column.java:410)
+	at org.h2.table.Table.convertInsertRow(Table.java:948)
+	at org.h2.command.dml.Insert.addRow(Insert.java:229)
+	at org.h2.command.dml.Insert.insertRows(Insert.java:203)
+	at org.h2.command.dml.Insert.update(Insert.java:135)
+	at org.h2.command.dml.DataChangeStatement.update(DataChangeStatement.java:77)
+	at org.h2.command.CommandContainer.update(CommandContainer.java:139)
+	at org.h2.command.Command.executeUpdate(Command.java:306)
+	at org.h2.command.Command.executeUpdate(Command.java:250)
+	at org.h2.jdbc.JdbcStatement.executeInternal(JdbcStatement.java:262)
+	at org.h2.jdbc.JdbcStatement.execute(JdbcStatement.java:231)
+	at org.h2.tools.RunScript.process(RunScript.java:255)
+	at org.h2.tools.RunScript.process(RunScript.java:186)
+	at org.h2.tools.RunScript.process(RunScript.java:313)
+	at org.h2.tools.RunScript.runTool(RunScript.java:139)
+	at org.h2.tools.RunScript.main(RunScript.java:66)
+2026-09-09 11:24:50.310847+01:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLDataException: Valeur non permise pour la colonne "('A_VALIDER', 'CLOTURE', 'EN_COURS', 'INCOMPLET', 'VALIDE')": "2"
+Value not permitted for column "('A_VALIDER', 'CLOTURE', 'EN_COURS', 'INCOMPLET', 'VALIDE')": "2"; SQL statement:
+
+INSERT INTO "PUBLIC"."DOSSIERS_RETRAITES" SELECT * FROM O_1 [22030-240]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:518)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:489)
+	at org.h2.message.DbException.get(DbException.java:223)
+	at org.h2.value.ExtTypeInfoEnum.getValue(ExtTypeInfoEnum.java:175)
+	at org.h2.value.Value.convertToEnum(Value.java:2325)
+	at org.h2.value.Value.convertTo(Value.java:1205)
+	at org.h2.value.Value.convertForAssignTo(Value.java:1123)
+	at org.h2.table.Column.validateConvertUpdateSequence(Column.java:410)
+	at org.h2.table.Table.convertInsertRow(Table.java:948)
+	at org.h2.command.dml.Insert.addRow(Insert.java:229)
+	at org.h2.command.dml.Insert.insertRows(Insert.java:203)
+	at org.h2.command.dml.Insert.update(Insert.java:135)
+	at org.h2.command.dml.DataChangeStatement.update(DataChangeStatement.java:77)
+	at org.h2.command.CommandContainer.update(CommandContainer.java:139)
+	at org.h2.command.Command.executeUpdate(Command.java:306)
+	at org.h2.command.Command.executeUpdate(Command.java:250)
+	at org.h2.jdbc.JdbcStatement.executeInternal(JdbcStatement.java:262)
+	at org.h2.jdbc.JdbcStatement.execute(JdbcStatement.java:231)
+	at org.h2.tools.RunScript.process(RunScript.java:255)
+	at org.h2.tools.RunScript.process(RunScript.java:186)
+	at org.h2.tools.RunScript.process(RunScript.java:313)
+	at org.h2.tools.RunScript.runTool(RunScript.java:139)
+	at org.h2.tools.RunScript.main(RunScript.java:66)
+2026-09-09 11:25:15.055581+01:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLDataException: Valeur non permise pour la colonne "('CHARIA', 'POURCENTAGE')": "2"
+Value not permitted for column "('CHARIA', 'POURCENTAGE')": "2"; SQL statement:
+
+INSERT INTO "PUBLIC"."AYANT_DROIT" SELECT * FROM O_ [22030-224]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:518)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:489)
+	at org.h2.message.DbException.get(DbException.java:223)
+	at org.h2.value.ExtTypeInfoEnum.getValue(ExtTypeInfoEnum.java:175)
+	at org.h2.value.Value.convertToEnum(Value.java:2315)
+	at org.h2.value.Value.convertTo(Value.java:1195)
+	at org.h2.value.Value.convertForAssignTo(Value.java:1113)
+	at org.h2.table.Column.validateConvertUpdateSequence(Column.java:369)
+	at org.h2.table.Table.convertInsertRow(Table.java:936)
+	at org.h2.command.dml.Insert.addRow(Insert.java:229)
+	at org.h2.command.dml.Insert.insertRows(Insert.java:203)
+	at org.h2.command.dml.Insert.update(Insert.java:135)
+	at org.h2.command.dml.DataChangeStatement.update(DataChangeStatement.java:74)
+	at org.h2.command.CommandContainer.update(CommandContainer.java:169)
+	at org.h2.command.Command.executeUpdate(Command.java:256)
+	at org.h2.jdbc.JdbcStatement.executeInternal(JdbcStatement.java:262)
+	at org.h2.jdbc.JdbcStatement.execute(JdbcStatement.java:231)
+	at org.h2.tools.RunScript.process(RunScript.java:255)
+	at org.h2.tools.RunScript.process(RunScript.java:186)
+	at org.h2.tools.RunScript.process(RunScript.java:313)
+	at org.h2.tools.RunScript.runTool(RunScript.java:139)
+	at org.h2.tools.RunScript.main(RunScript.java:66)
+2026-09-09 11:25:36 database: flush
+org.h2.message.DbException: Erreur générale: "java.lang.IllegalStateException: The write format 3 is larger than the supported format 1, and the file was not opened in read-only mode [1.4.200/5]"
+General error: "java.lang.IllegalStateException: The write format 3 is larger than the supported format 1, and the file was not opened in read-only mode [1.4.200/5]" [50000-200]
+	at org.h2.message.DbException.get(DbException.java:194)
+	at org.h2.message.DbException.convert(DbException.java:347)
+	at org.h2.mvstore.db.MVTableEngine$1.uncaughtException(MVTableEngine.java:93)
+	at org.h2.mvstore.MVStore.handleException(MVStore.java:2877)
+	at org.h2.mvstore.MVStore.panic(MVStore.java:481)
+	at org.h2.mvstore.MVStore.<init>(MVStore.java:402)
+	at org.h2.mvstore.MVStore$Builder.open(MVStore.java:3579)
+	at org.h2.mvstore.db.MVTableEngine$Store.open(MVTableEngine.java:170)
+	at org.h2.mvstore.db.MVTableEngine.init(MVTableEngine.java:103)
+	at org.h2.engine.Database.getPageStore(Database.java:2659)
+	at org.h2.engine.Database.open(Database.java:675)
+	at org.h2.engine.Database.openDatabase(Database.java:307)
+	at org.h2.engine.Database.<init>(Database.java:301)
+	at org.h2.engine.Engine.openSession(Engine.java:74)
+	at org.h2.engine.Engine.openSession(Engine.java:192)
+	at org.h2.engine.Engine.createSessionAndValidate(Engine.java:171)
+	at org.h2.engine.Engine.createSession(Engine.java:166)
+	at org.h2.engine.Engine.createSession(Engine.java:29)
+	at org.h2.engine.SessionRemote.connectEmbeddedOrServer(SessionRemote.java:340)
+	at org.h2.jdbc.JdbcConnection.<init>(JdbcConnection.java:173)
+	at org.h2.jdbc.JdbcConnection.<init>(JdbcConnection.java:152)
+	at org.h2.Driver.connect(Driver.java:69)
+	at java.sql/java.sql.DriverManager.getConnection(DriverManager.java:683)
+	at java.sql/java.sql.DriverManager.getConnection(DriverManager.java:230)
+	at org.h2.tools.RunScript.process(RunScript.java:327)
+	at org.h2.tools.RunScript.runTool(RunScript.java:143)
+	at org.h2.tools.RunScript.main(RunScript.java:70)
+Caused by: org.h2.jdbc.JdbcSQLNonTransientException: Erreur générale: "java.lang.IllegalStateException: The write format 3 is larger than the supported format 1, and the file was not opened in read-only mode [1.4.200/5]"
+General error: "java.lang.IllegalStateException: The write format 3 is larger than the supported format 1, and the file was not opened in read-only mode [1.4.200/5]" [50000-200]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:505)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:429)
+	... 27 more
+Caused by: java.lang.IllegalStateException: The write format 3 is larger than the supported format 1, and the file was not opened in read-only mode [1.4.200/5]
+	at org.h2.mvstore.DataUtils.newIllegalStateException(DataUtils.java:950)
+	at org.h2.mvstore.MVStore.readStoreHeader(MVStore.java:741)
+	at org.h2.mvstore.MVStore.<init>(MVStore.java:396)
+	... 21 more
+2026-09-09 11:25:36 database: opening C:/Users/USER/Documents/social/backend/data/recovery/service_social_restored
+org.h2.message.DbException: Fichier corrompu lors de la lecture de l'enregistrement: null. Solution possible: utiliser l'outil de récupération
+File corrupted while reading record: null. Possible solution: use the recovery tool [90030-200]
+	at org.h2.message.DbException.get(DbException.java:194)
+	at org.h2.mvstore.db.MVTableEngine$Store.convertIllegalStateException(MVTableEngine.java:222)
+	at org.h2.mvstore.db.MVTableEngine$Store.open(MVTableEngine.java:182)
+	at org.h2.mvstore.db.MVTableEngine.init(MVTableEngine.java:103)
+	at org.h2.engine.Database.getPageStore(Database.java:2659)
+	at org.h2.engine.Database.open(Database.java:675)
+	at org.h2.engine.Database.openDatabase(Database.java:307)
+	at org.h2.engine.Database.<init>(Database.java:301)
+	at org.h2.engine.Engine.openSession(Engine.java:74)
+	at org.h2.engine.Engine.openSession(Engine.java:192)
+	at org.h2.engine.Engine.createSessionAndValidate(Engine.java:171)
+	at org.h2.engine.Engine.createSession(Engine.java:166)
+	at org.h2.engine.Engine.createSession(Engine.java:29)
+	at org.h2.engine.SessionRemote.connectEmbeddedOrServer(SessionRemote.java:340)
+	at org.h2.jdbc.JdbcConnection.<init>(JdbcConnection.java:173)
+	at org.h2.jdbc.JdbcConnection.<init>(JdbcConnection.java:152)
+	at org.h2.Driver.connect(Driver.java:69)
+	at java.sql/java.sql.DriverManager.getConnection(DriverManager.java:683)
+	at java.sql/java.sql.DriverManager.getConnection(DriverManager.java:230)
+	at org.h2.tools.RunScript.process(RunScript.java:327)
+	at org.h2.tools.RunScript.runTool(RunScript.java:143)
+	at org.h2.tools.RunScript.main(RunScript.java:70)
+Caused by: org.h2.jdbc.JdbcSQLNonTransientConnectionException: Fichier corrompu lors de la lecture de l'enregistrement: null. Solution possible: utiliser l'outil de récupération
+File corrupted while reading record: null. Possible solution: use the recovery tool [90030-200]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:622)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:429)
+	... 22 more
+Caused by: java.lang.IllegalStateException: The write format 3 is larger than the supported format 1, and the file was not opened in read-only mode [1.4.200/5]
+	at org.h2.mvstore.DataUtils.newIllegalStateException(DataUtils.java:950)
+	at org.h2.mvstore.MVStore.readStoreHeader(MVStore.java:741)
+	at org.h2.mvstore.MVStore.<init>(MVStore.java:396)
+	at org.h2.mvstore.MVStore$Builder.open(MVStore.java:3579)
+	at org.h2.mvstore.db.MVTableEngine$Store.open(MVTableEngine.java:170)
+	... 19 more
+2026-09-09 11:26:11.346352+01:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Erreur de syntaxe dans l'instruction SQL "[*]\feff-- MVStore\000d\000aCREATE ALIAS IF NOT EXISTS READ_BLOB_MAP FOR 'org.h2.tools.Recover.readBlobMap'"
+Syntax error in SQL statement "[*]\feff-- MVStore\000d\000aCREATE ALIAS IF NOT EXISTS READ_BLOB_MAP FOR 'org.h2.tools.Recover.readBlobMap'"; SQL statement:
+﻿-- MVStore
+CREATE ALIAS IF NOT EXISTS READ_BLOB_MAP FOR 'org.h2.tools.Recover.readBlobMap' [42000-240]

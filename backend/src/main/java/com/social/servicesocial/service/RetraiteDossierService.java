@@ -22,6 +22,8 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class RetraiteDossierService {
+    private final jakarta.persistence.EntityManager entityManager;
+    private final jakarta.validation.Validator validator;
     private final DossierRetraiteRepository retraiteRepository;
     private final DossierRepository dossierRepository;
     private final RetraiteAffiliationRepository affiliationRepository;
@@ -42,7 +44,14 @@ public class RetraiteDossierService {
 
     @Transactional
     public RetraiteDossierResponse create(RetraiteDossierRequest request) {
-        String reference = "RET-" + LocalDate.now().getYear() + "-" + System.currentTimeMillis();
+        validateRequest(request);
+        if (request.adherentId() == null) throw new IllegalArgumentException("Selectionnez un adherent avant de creer le dossier.");
+        // Lock the adherent so concurrent creations cannot produce duplicate dossiers.
+        var adherent = entityManager.find(Adherent.class, request.adherentId(), jakarta.persistence.LockModeType.PESSIMISTIC_WRITE);
+        if (adherent == null) throw new NotFoundException("Adherent introuvable");
+        if (retraiteRepository.existsByAdherentId(request.adherentId()) || retraiteRepository.existsByDossierMatriculeIgnoreCase(request.matricule().trim()))
+            throw new com.social.servicesocial.exception.ConflictException("Un dossier retraite existe deja pour cet adherent.");
+        String reference = "RET-" + LocalDate.now().getYear() + "-" + java.util.UUID.randomUUID();
         Dossier dossier = Dossier.builder()
                 .section(SocialModule.RETRAITES).numero(reference)
                 .adherentNom(fullName(request)).matricule(value(request.matricule()))
@@ -56,10 +65,13 @@ public class RetraiteDossierService {
 
     @Transactional
     public RetraiteDossierResponse update(Long id, RetraiteDossierRequest request) {
-        DossierRetraite retraite = required(id);
+        DossierRetraite retraite = requiredForUpdate(id);
         if (retraite.getStatut() == DossierStatut.CLOTURE) {
-            throw new IllegalStateException("Un dossier clôturé ne peut pas être modifié");
+            throw new com.social.servicesocial.exception.ConflictException("Un dossier clôturé ne peut pas être modifié");
         }
+        validateRequest(request);
+        if (!java.util.Objects.equals(retraite.getAdherentId(), request.adherentId()))
+            throw new com.social.servicesocial.exception.ConflictException("L'adherent du dossier ne peut pas etre remplace.");
         apply(retraite, request);
         Dossier dossier = retraite.getDossier();
         dossier.setAdherentNom(fullName(request));
@@ -72,7 +84,14 @@ public class RetraiteDossierService {
 
     @Transactional
     public RetraiteDossierResponse close(Long id) {
-        DossierRetraite retraite = required(id);
+        DossierRetraite retraite = requiredForUpdate(id);
+        if (retraite.getStatut() == DossierStatut.CLOTURE) return toResponse(retraite);
+        var data = toResponse(retraite);
+        validateIdentity(data.nom(), data.prenom(), data.cin(), data.matricule(), data.telephoneGsm());
+        if (data.proprietaire() && data.locataire()) throw new IllegalArgumentException("Choisissez proprietaire ou locataire.");
+        validateRows(data.famille()); validateRows(data.donneesMedicoSociales());
+        validateRows(data.assistances()); validateRows(data.ressources()); validateRows(data.charges()); validateRows(data.pieces()); validateRows(data.affiliations());
+        retraite.setDateMaj(java.time.LocalDateTime.now());
         retraite.setStatut(DossierStatut.CLOTURE);
         retraite.getDossier().setStatut(DossierStatut.CLOTURE);
         retraite = retraiteRepository.save(retraite);
@@ -85,7 +104,37 @@ public class RetraiteDossierService {
                 .orElseThrow(() -> new NotFoundException("Dossier retraite introuvable : " + id));
     }
 
+    private DossierRetraite requiredForUpdate(Long id) {
+        var dossier = entityManager.find(DossierRetraite.class, id, jakarta.persistence.LockModeType.PESSIMISTIC_WRITE);
+        if (dossier == null) throw new NotFoundException("Dossier retraite introuvable : " + id);
+        return dossier;
+    }
+
+    private void validateIdentity(String... fields) {
+        for (String field : fields) if (field == null || field.isBlank())
+            throw new IllegalArgumentException("Nom, prenom, CIN, matricule et telephone sont obligatoires avant enregistrement ou cloture.");
+    }
+
+    private void validateRows(List<?> rows) {
+        if (rows != null) rows.forEach(this::validateBean);
+    }
+
+    private void validateBean(Object value) {
+        if (value == null) throw new IllegalArgumentException("Une rubrique contient une ligne vide.");
+        var errors = validator.validate(value);
+        if (!errors.isEmpty()) throw new IllegalArgumentException(errors.stream()
+                .map(e -> e.getPropertyPath() + ": " + e.getMessage()).sorted().collect(java.util.stream.Collectors.joining(", ")));
+    }
+
+    private void validateRequest(RetraiteDossierRequest r) {
+        validateBean(r);
+        if (r.statut() != null && r.statut() != DossierStatut.EN_COURS)
+            throw new IllegalArgumentException("Utilisez la validation et cloture pour terminer le dossier.");
+        if (r.proprietaire() && r.locataire()) throw new IllegalArgumentException("Choisissez proprietaire ou locataire.");
+    }
+
     private void apply(DossierRetraite target, RetraiteDossierRequest r) {
+        if (r.photo() != null) target.setPhoto(r.photo());
         target.setNomAr(r.nomAr());
         target.setPrenomAr(r.prenomAr());
         target.setLieuNaissance(r.lieuNaissance());
@@ -113,11 +162,8 @@ public class RetraiteDossierService {
         target.setProfessionActuelle(r.professionActuelle());
         target.setColisRamadan(r.colisRamadan());
         target.setRegionResidence(r.regionResidence());
-        target.setSituationLogement(r.situationLogement());
         target.setHayRabat(r.hayRabat());
         target.setObservationSociale(r.observationSociale());
-        target.setCinSocial(r.cinSocial());
-        target.setMatriculeSocial(r.matriculeSocial());
         target.setMotifEnquete(r.motifEnquete());
         target.setNumeroDossier(r.numeroDossier());
         target.setCartePrelevementCmr(r.cartePrelevementCmr());
@@ -141,11 +187,12 @@ public class RetraiteDossierService {
         target.setSituationFamiliale(r.situationFamiliale()); target.setHabitation(r.habitation());
         target.setProprietaire(r.proprietaire()); target.setLocataire(r.locataire());
         target.setHabitationPrecision(r.habitationPrecision()); target.setDateEnquete(r.dateEnquete());
-        target.setStatut(r.statut() == null ? DossierStatut.EN_COURS : r.statut());
+        target.setStatut(DossierStatut.EN_COURS);
+        target.setDateMaj(java.time.LocalDateTime.now());
     }
 
     private RetraiteDossierResponse toResponse(DossierRetraite d) {
-        return new RetraiteDossierResponse(d.getNomAr(), d.getPrenomAr(), d.getLieuNaissance(), d.getMatriculeCorps(), d.getCategorie(), d.getSituationCategorie(), d.getPension(), d.getDateEntreeService(), d.getMotifRadiationSanction(), d.getDateDeces(), d.getCauseDeces(), d.getNatureDeces(), d.getFormationUnite(), d.getDerniereRegion(), d.getTelephoneGsm2(), d.getEmail(), d.getObservation(), d.getAdresseEM(), d.getCode(), d.getCarteFondation(), d.getNumeroPmr(), d.getMontantPmr(), d.getNumeroPmi(), d.getMontantPmi(), d.getProfessionActuelle(), d.getColisRamadan(), d.getRegionResidence(), d.getSituationLogement(), d.getHayRabat(), d.getObservationSociale(), d.getCinSocial(), d.getMatriculeSocial(), d.getMotifEnquete(), d.getNumeroDossier(), d.getCartePrelevementCmr(), d.getSituationFraternelle(), d.getAnneeAdhesion(), d.getModeReglement(), d.getNumeroRecu(), d.getDatePaiement(), d.getObservationAdhesion(), d.getAvecPhoto(), (d.getPieces() == null ? List.<RetraitePieceDto>of() : d.getPieces().stream().map(p -> new RetraitePieceDto(p.getQuantite() == null ? 1 : p.getQuantite(), p.getType(), p.getNom(), p.getMime(), p.getContenu())).toList()), d.getId(), d.getDossier().getNumero(), d.getAdherentId(),
+        return new RetraiteDossierResponse(d.getNomAr(), d.getPrenomAr(), d.getLieuNaissance(), d.getMatriculeCorps(), d.getCategorie(), d.getSituationCategorie(), d.getPension(), d.getDateEntreeService(), d.getMotifRadiationSanction(), d.getDateDeces(), d.getCauseDeces(), d.getNatureDeces(), d.getFormationUnite(), d.getDerniereRegion(), d.getTelephoneGsm2(), d.getEmail(), d.getObservation(), d.getAdresseEM(), d.getCode(), d.getCarteFondation(), d.getNumeroPmr(), d.getMontantPmr(), d.getNumeroPmi(), d.getMontantPmi(), d.getProfessionActuelle(), d.getColisRamadan(), d.getRegionResidence(), d.getHayRabat(), d.getObservationSociale(), d.getMotifEnquete(), d.getNumeroDossier(), d.getCartePrelevementCmr(), d.getSituationFraternelle(), d.getAnneeAdhesion(), d.getModeReglement(), d.getNumeroRecu(), d.getDatePaiement(), d.getObservationAdhesion(), d.getAvecPhoto(), (d.getPieces() == null ? List.<RetraitePieceDto>of() : d.getPieces().stream().map(p -> new RetraitePieceDto(p.getQuantite() == null ? 1 : p.getQuantite(), p.getType(), p.getNom(), p.getMime(), p.getContenu())).toList()), d.getPhoto(), d.getId(), d.getDossier().getNumero(), d.getAdherentId(),
                 d.getNom(), d.getPrenom(), d.getDossier().getMatricule(), d.getCin(), d.getMatriculeBr(), d.getGrade(),
                 d.getDateNaissance(), d.getDateRadiation(), d.getMotif(), d.getTelephoneGsm(), d.getTelephoneFixe(),
                 d.getAffectation(), d.getAdresse(), d.getSituationFamiliale(), d.getHabitation(), d.isProprietaire(),

@@ -1,3 +1,4 @@
+    :host{--primary:#2f6f5e;--primary-dark:#24564a;--primary-light:#e6f1ee}
     .page{display:flex;flex-direction:column;gap:1.25rem}
 
     .page-header{display:flex;align-items:center;gap:1rem}

@@ -6,5 +6,6 @@ import java.util.Optional;
 
 public interface DossierRetraiteRepository extends JpaRepository<DossierRetraite, Long> {
     Optional<DossierRetraite> findByDossierId(Long dossierId);
+    boolean existsByDossierMatriculeIgnoreCase(String matricule);
     boolean existsByAdherentId(Long adherentId);
 }

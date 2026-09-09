@@ -43,11 +43,8 @@ public class DossierRetraite {
     private String professionActuelle;
     private String colisRamadan;
     private String regionResidence;
-    private String situationLogement;
     private String hayRabat;
     private String observationSociale;
-    private String cinSocial;
-    private String matriculeSocial;
     private String motifEnquete;
     private String numeroDossier;
     private String cartePrelevementCmr;
@@ -61,6 +58,8 @@ public class DossierRetraite {
     @ElementCollection
     @CollectionTable(name="retraite_pieces", joinColumns=@JoinColumn(name="dossier_retraite_id"))
     private java.util.List<RetraitePiece> pieces = new java.util.ArrayList<>();
+    @Lob
+    private String photo;
     private Long adherentId;
     @Column(nullable = false, length = 100) private String nom;
     @Column(nullable = false, length = 100) private String prenom;
