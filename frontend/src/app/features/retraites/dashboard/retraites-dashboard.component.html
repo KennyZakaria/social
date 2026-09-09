@@ -1,55 +1,32 @@
 <main class="page">
   <header class="page-header">
-    <div class="page-icon">RE</div>
-    <div><p class="kicker">Section Retraités</p><h2>Tableau de bord</h2><p class="subtitle">Vue d'ensemble des dossiers de retraités</p></div>
-    <a class="btn primary ml-auto" routerLink="/retraites/nouveau">+ Nouveau dossier</a>
+    <div class="page-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2h9l3 3v17H6z"/><path d="M9 10h6M9 14h6M9 18h4"/></svg></div>
+    <div><p class="page-kicker">Section Retraités</p><h2 class="page-title">Tableau de bord</h2><p class="subtitle">Suivi des dossiers de retraite</p></div>
+    <a class="btn-primary ml-auto" routerLink="/retraites/nouveau">+ Nouveau dossier</a>
   </header>
-
-  <section class="ledger-row">
-    <div class="ledger-cell"><span>Total dossiers</span><b>{{ dossiers.length }}</b></div>
-    <div class="ledger-cell accent"><span>En cours</span><b>{{ count('En cours') }}</b></div>
-    <div class="ledger-cell ok"><span>Validés</span><b>{{ count('Validé') }}</b></div>
+  <section class="stats-grid" aria-label="Statistiques des dossiers">
+    <article class="stat-card"><div class="stat-icon stat-icon--blue">▣</div><div><p>Total dossiers</p><b>{{ dossiers.length }}</b></div></article>
+    <article class="stat-card"><div class="stat-icon stat-icon--amber">◷</div><div><p>En cours</p><b>{{ count('En cours') }}</b></div></article>
+    <article class="stat-card"><div class="stat-icon stat-icon--green">✓</div><div><p>Validés</p><b>{{ count('Validé') }}</b></div></article>
   </section>
-
-  <section class="rail">
-    <a routerLink="/retraites/dossiers" class="rail-card">
-      <div class="mark">☰</div>
-      <div><b>Tous les dossiers</b><span>Consulter et suivre les dossier:</span></div>
-      <span class="arrow">→</span>
-    </a>
-    <a routerLink="/retraites/nouveau" class="rail-card">
-      <div class="mark">+</div>
-      <div><b>Nouveau dossier</b><span>Créer un dossier de retraité</span></div>
-      <span class="arrow">→</span>
-    </a>
-    <a routerLink="/retraites/validation" class="rail-card">
-      <div class="mark">✓</div>
-      <div><b>Validation</b><span>Gérer les dossiers en cours</span></div>
-      <span class="arrow">→</span>
-    </a>
+  <section class="nav-grid" aria-label="Navigation Retraités">
+    <a routerLink="/retraites/dossiers" class="nav-card"><span class="nav-card__icon">☰</span><span>Tous les dossiers</span><span class="arrow">→</span></a>
+    <a routerLink="/retraites/nouveau" class="nav-card"><span class="nav-card__icon">+</span><span>Nouveau dossier</span><span class="arrow">→</span></a>
+    <a routerLink="/retraites/validation" class="nav-card"><span class="nav-card__icon">✓</span><span>Validation des dossiers</span><span class="arrow">→</span></a>
   </section>
-
-  <section class="panel">
-    <div class="panel-head"><h3>Derniers dossiers</h3><a routerLink="/retraites/dossiers">Voir tous →</a></div>
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>Référence</th><th>Retraité</th><th>Matricule</th><th>Traitement</th><th>Mise à jour</th><th>Action</th></tr></thead>
-        <tbody>
-          <tr *ngFor="let dossier of recentDossiers">
-            <td class="ref">{{ dossier.reference }}</td>
-            <td>{{ dossier.nom }}</td>
-            <td>{{ dossier.matricule }}</td>
-            <td><span class="tag" [class.ok]="dossier.traite">{{ dossier.traite ? 'Validé' : dossier.statut }}</span></td>
-            <td>{{ lastUpdate(dossier) }}</td>
-            <td>
-              <a class="consult" [routerLink]="['/module/retraites/dossier', dossier.id]" title="Consulter le dossier" aria-label="Consulter le dossier">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z"/><circle cx="12" cy="12" r="3"/></svg>
-              </a>
-            </td>
-          </tr>
-          <tr *ngIf="!recentDossiers.length"><td colspan="6" class="empty">Aucun dossier pour le moment.</td></tr>
-        </tbody>
-      </table>
-    </div>
+  <section class="card">
+    <div class="card__head"><h3>Derniers dossiers</h3><a class="btn-ghost" routerLink="/retraites/dossiers">Voir tous</a></div>
+    <div class="table-wrap"><table><thead><tr><th>Référence</th><th>Retraité</th><th>Matricule</th><th>Statut</th><th>Mise à jour</th><th>Action</th></tr></thead><tbody>
+      <tr *ngFor="let dossier of pagedDossiers"><td class="td-mono">{{ dossier.reference }}</td><td><div class="name-cell"><span class="avatar">{{ dossier.nom.charAt(0) }}</span><span>{{ dossier.nom }}</span></div></td><td>{{ dossier.matricule }}</td><td><span class="stat-badge" [class.valide]="dossier.traite">{{ dossier.traite ? 'Validé' : dossier.statut }}</span></td><td>{{ lastUpdate(dossier) }}</td><td><a class="action-btn" [routerLink]="['/module/retraites/dossier', dossier.id]">Voir</a></td></tr>
+      <tr *ngIf="!recentDossiers.length"><td colspan="6" class="empty-row">Aucun dossier pour le moment.</td></tr>
+    </tbody></table></div>
+    <footer class="pagination" *ngIf="recentDossiers.length">
+      <span>{{ firstShown }}–{{ lastShown }} sur {{ recentDossiers.length }} dossiers</span>
+      <div class="pagination-actions">
+        <button class="pagination-arrow" type="button" (click)="previousPage()" [disabled]="page === 1" aria-label="Page précédente">‹</button>
+        <div class="pagination-pages" aria-label="Pagination"><button type="button" *ngFor="let number of pageNumbers" [class.active]="page === number" (click)="goToPage(number)" [attr.aria-current]="page === number ? 'page' : null">{{ number }}</button></div>
+        <button class="pagination-arrow" type="button" (click)="nextPage()" [disabled]="page === pageCount" aria-label="Page suivante">›</button>
+      </div>
+    </footer>
   </section>
 </main>

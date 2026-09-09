@@ -1,5 +1,5 @@
 import { SimpleDatePipe } from './simple-date.pipe';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -20,7 +20,16 @@ interface BudgetEntry { designation: string; montant: string; }
   styleUrl: './retraites-page.component.css',
   styles: ['.actions > button:first-child { display: none; }.budget-input{width:100%;border-collapse:collapse}.budget-input th,.budget-input td{padding:.7rem;border-bottom:1px solid var(--border);text-align:left;font-size:.78rem}.budget-input th{background:var(--surface-2);color:var(--text-2);font-weight:700}.budget-input input{width:100%;box-sizing:border-box;border:1px solid var(--border);border-radius:6px;padding:.45rem;background:var(--surface)}']
 })
-export class RetraitesPageComponent implements OnInit {
+export class RetraitesPageComponent implements OnInit, OnDestroy {
+  leaveDraftDialogOpen = false;
+  leaveDraftMessage = '';
+  private leaveDraftResolver?: (leave: boolean) => void;
+  successDialogOpen = false;
+  successDialogTitle = '';
+  successDialogMessage = '';
+  private successRedirect: string[] = [];
+  private allowSuccessNavigation = false;
+  private successTimer?: ReturnType<typeof setTimeout>;
   pieces: RetraitePiece[] = [];
   readonly pieceTypes = ['Copie carte mutuelle', 'Copie certificat de propriété', 'Copie CIN', 'Attestation de pension', 'Acte de mariage', 'Acte de décès', 'Certificat médical', 'Autre document'];
   hasPiece(type: string) { return this.pieces.some(p => p.type === type); }
@@ -43,7 +52,7 @@ export class RetraitesPageComponent implements OnInit {
   socialData: SocialEntry[] = [];
   assistances: AssistanceEntry[] = [];
   resources: BudgetEntry[] = [{ designation: 'Pension de retraite', montant: '' }, { designation: 'Pension de réforme', montant: '' }, { designation: 'Autres ressources', montant: '' }];
-  charges: BudgetEntry[] = [{ designation: 'Crédit logement', montant: '' }, { designation: 'Eau / électricité', montant: '' }, { designation: 'Frais médicaux', montant: '' }, { designation: 'Autres (loyer, crédit, consommation)', montant: '' }];
+  charges: BudgetEntry[] = [{ designation: 'Crédit logement', montant: '' }, { designation: 'Eau / électricité', montant: '' }, { designation: 'Frais médicaux', montant: '' }, { designation: 'Frais de scolarité', montant: '' }, { designation: 'Autres (loyer, crédit, consommation)', montant: '' }];
   familyAction: Person['type'] | '' = '';
   family: Person[] = [];
   membership = { carteFraternelle:'', numeroDossier:'', cartePrelevementCmr:'', situationFraternelle:'', anneeAdhesion:'', modeReglement:'', numeroRecu:'', datePaiement:'', avecPhoto:false, observation:'', carteSpeciale:false, carteSpecialeNumero:'', carteSpecialeObservation:'', carteFraternelleAdherent:false, carteFraternelleObservation:'', amc:false, amcNumero:'', amcObservation:'' };
@@ -75,13 +84,14 @@ export class RetraitesPageComponent implements OnInit {
           this.assistances = extra.assistances || [];
           this.resources = extra.resources || this.resources;
           this.charges = extra.charges?.length ? extra.charges : this.charges;
+          this.ensureSchoolCharge();
         }
         if (this.profile.adherentId && !this.readOnly) {
           this.adherentsService.get(this.profile.adherentId).subscribe({
-            next: adherent => { this.prefillAdherent(adherent); this.loadPhoto(); },
-            error: () => this.note('Impossible de rafraîchir les informations adhérent. Les données du dossier sont affichées.')
+            next: adherent => { this.prefillAdherent(adherent); this.loadDeathDetails(adherent.id); this.loadPhoto(); this.captureNavigationSnapshot(); },
+            error: () => { this.captureNavigationSnapshot(); this.note('Impossible de rafraîchir les informations adhérent. Les données du dossier sont affichées.'); }
           });
-        }
+        } else this.captureNavigationSnapshot();
         this.loadPhoto();
       }, error: () => this.note('Impossible de charger ce dossier depuis le serveur.') });
     } else {
@@ -89,12 +99,18 @@ export class RetraitesPageComponent implements OnInit {
     }
     this.route.paramMap.subscribe(p=>{const f=p.get('feature');this.tab=({demandes:'dossier',pieces:'dossier',historique:'historique',dossiers:'fiche'} as Record<string,Tab>)[f||'']||'fiche';});
   }
-  readonly manualOptions: Record<string, string[]> = {"natureDeces": ["Naturel", "Accidentel", "Autre"], "region": ["Rabat", "Casablanca", "F\u00e8s", "Marrakech", "Tanger", "Agadir", "Oujda", "Autre"], "colisRamadan": ["Oui", "Non"], "regionResidence": ["Tanger-T\u00e9touan-Al Hoce\u00efma", "Oriental", "F\u00e8s-Mekn\u00e8s", "Rabat-Sal\u00e9-K\u00e9nitra", "B\u00e9ni Mellal-Kh\u00e9nifra", "Casablanca-Settat", "Marrakech-Safi", "Dr\u00e2a-Tafilalet", "Souss-Massa", "Guelmim-Oued Noun", "La\u00e2youne-Sakia El Hamra", "Dakhla-Oued Ed-Dahab", "Autre"], "situationLogement": ["Propri\u00e9taire", "Locataire", "H\u00e9berg\u00e9", "Logement de fonction", "Autre"], "hayRabat": ["Agdal", "Hassan", "Hay Riad", "Yacoub El Mansour", "Youssoufia", "Oc\u00e9an", "Autre"], "situationFraternelle": ["Adh\u00e9rent", "Non adh\u00e9rent", "Autre"], "modeReglement": ["Pr\u00e9l\u00e8vement", "Virement", "Ch\u00e8que", "Esp\u00e8ces", "Autre"], "niveauInstruction": ["Sans instruction", "Primaire", "Coll\u00e8ge", "Lyc\u00e9e", "Sup\u00e9rieur", "Formation professionnelle", "Autre"], "lien": ["Conjoint", "Enfant", "P\u00e8re", "M\u00e8re", "Fr\u00e8re", "S\u0153ur", "Autre"]};
+  readonly manualOptions: Record<string, string[]> = {"natureDeces": ["Naturel", "Accidentel", "Autre"], "region": ["Rabat", "Casablanca", "F\u00e8s", "Marrakech", "Tanger", "Agadir", "Oujda", "Autre"], "colisRamadan": ["Oui", "Non"], "regionResidence": ["Tanger-T\u00e9touan-Al Hoce\u00efma", "Oriental", "F\u00e8s-Mekn\u00e8s", "Rabat-Sal\u00e9-K\u00e9nitra", "B\u00e9ni Mellal-Kh\u00e9nifra", "Casablanca-Settat", "Marrakech-Safi", "Dr\u00e2a-Tafilalet", "Souss-Massa", "Guelmim-Oued Noun", "La\u00e2youne-Sakia El Hamra", "Dakhla-Oued Ed-Dahab", "Autre"], "hayRabat": ["Agdal", "Hassan", "Hay Riad", "Yacoub El Mansour", "Youssoufia", "Oc\u00e9an", "Autre"], "situationFraternelle": ["Adh\u00e9rent", "Non adh\u00e9rent", "Autre"], "modeReglement": ["Pr\u00e9l\u00e8vement", "Virement", "Ch\u00e8que", "Esp\u00e8ces", "Autre"], "niveauInstruction": ["Sans instruction", "Primaire", "Coll\u00e8ge", "Lyc\u00e9e", "Sup\u00e9rieur", "Formation professionnelle", "Autre"], "lien": ["Conjoint", "Enfant", "P\u00e8re", "M\u00e8re", "Fr\u00e8re", "S\u0153ur", "Autre"]};
   manualChoices(field: string, value: string | undefined): string[] {
     return [...new Set([...(this.manualOptions[field] || []), ...(value ? [value] : [])])];
   }
   get completion(){return Math.round([this.profile.prenom,this.profile.nom,this.profile.cin,this.profile.matricule,this.profile.tel,this.profile.adresse].filter(Boolean).length/6*100);}
   get isSingle(){return String(this.profile.situation).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase() === 'celibataire';}
+  get isDeathDossier(){return !!this.profile.dateDeces;}
+  private ensureSchoolCharge(){
+    if (this.charges.some(item => item.designation === 'Frais de scolarité')) return;
+    const otherIndex = this.charges.findIndex(item => item.designation === 'Autres (loyer, crédit, consommation)');
+    this.charges.splice(otherIndex < 0 ? this.charges.length : otherIndex, 0, { designation: 'Frais de scolarité', montant: '' });
+  }
   onSituationChange(){if(this.isSingle) this.familyAction='';}
   setHabitation(choice: 'proprietaire' | 'locataire', checked: boolean) {
     this.profile[choice] = checked;
@@ -130,12 +146,16 @@ export class RetraitesPageComponent implements OnInit {
     if (this.isNewDossier && !this.dossierId) {
       this.store.create(this.dossierDetails()).subscribe({ next: dossier => {
         this.dossierId = dossier.id; this.profile.dossier = dossier.reference; this.isNewDossier = false;
-        this.router.navigate(['/retraites/dossiers']);
+        this.captureNavigationSnapshot();
+        this.showSuccessDialog('Dossier enregistré', 'Le nouveau dossier a été enregistré avec succès.', ['/retraites/dossiers']);
       }, error: () => this.note('Impossible d’enregistrer le dossier. Vérifiez le backend.') });
       return;
     }
     this.addHistory('Fiche administrative mise à jour');
-    if (this.dossierId) this.store.saveDetails(this.dossierId, this.dossierDetails()).subscribe({ next: () => this.router.navigate(['/retraites/dossiers']), error: () => this.note('Impossible d’enregistrer les modifications.') });
+    if (this.dossierId) this.store.saveDetails(this.dossierId, this.dossierDetails()).subscribe({ next: () => {
+      this.captureNavigationSnapshot();
+      this.showSuccessDialog('Modifications enregistrées', 'Les modifications du dossier ont été enregistrées avec succès.', ['/retraites/dossiers']);
+    }, error: () => this.note('Impossible d’enregistrer les modifications.') });
   }
   validateAndClose(){
     if (this.pieces.some(p => !Number.isInteger(p.quantite) || p.quantite < 1)) { this.note("La quantité doit être un entier supérieur ou égal à 1."); return; }
@@ -149,10 +169,56 @@ export class RetraitesPageComponent implements OnInit {
     }
     this.store.saveDetails(this.dossierId, this.dossierDetails()).subscribe({ next: () => this.closeDossier(this.dossierId!), error: () => this.note('Impossible d’enregistrer avant la clôture.') });
   }
-  private closeDossier(id: number) { this.store.close(id).subscribe({ next: () => this.router.navigate(['/retraites/validation']), error: () => this.note('Impossible de clôturer le dossier.') }); }
+  private closeDossier(id: number) {
+    this.store.close(id).subscribe({ next: () => {
+      this.readOnly = true;
+      this.validationMode = false;
+      this.captureNavigationSnapshot();
+      this.showSuccessDialog('Dossier validé et clôturé', 'Le dossier a été validé et clôturé avec succès.', ['/retraites/validation']);
+    }, error: () => this.note('Impossible de clôturer le dossier.') });
+  }
+  ngOnDestroy(): void { clearTimeout(this.successTimer); }
   cancelValidation(){ this.router.navigate(['/retraites/validation']); }
   returnToDossiers(){ this.router.navigate(['/retraites/dossiers']); }
   closeConsultation(){ this.router.navigate(['/retraites/dashboard']); }
+  confirmLeaveDraft(): boolean | Promise<boolean> {
+    if (this.allowSuccessNavigation) return true;
+    const isCreation = this.isNewDossier && !!this.selectedAdherent;
+    const isValidation = this.validationMode && !this.readOnly;
+    const hasUnsavedChanges = !!this.dossierId && !!this.draftSnapshot && this.hasDraftChanges();
+    if (!isCreation && !isValidation && !hasUnsavedChanges) return true;
+    this.leaveDraftMessage = isCreation
+      ? 'Le dossier en cours de création sera perdu.'
+      : isValidation
+        ? 'La validation de ce dossier ne sera pas terminée.'
+        : 'Les modifications non enregistrées seront perdues.';
+    this.leaveDraftDialogOpen = true;
+    return new Promise(resolve => this.leaveDraftResolver = resolve);
+  }
+  continueDraftCreation(): void {
+    this.leaveDraftDialogOpen = false;
+    this.leaveDraftResolver?.(false);
+    this.leaveDraftResolver = undefined;
+  }
+  discardDraftAndLeave(): void {
+    this.leaveDraftDialogOpen = false;
+    this.leaveDraftResolver?.(true);
+    this.leaveDraftResolver = undefined;
+  }
+  private showSuccessDialog(title: string, message: string, redirect: string[]): void {
+    clearTimeout(this.successTimer);
+    this.successDialogTitle = title;
+    this.successDialogMessage = message;
+    this.successRedirect = redirect;
+    this.successDialogOpen = true;
+    this.successTimer = setTimeout(() => this.continueAfterSuccess(), 1500);
+  }
+  private continueAfterSuccess(): void {
+    clearTimeout(this.successTimer);
+    this.successDialogOpen = false;
+    this.allowSuccessNavigation = true;
+    this.router.navigate(this.successRedirect);
+  }
   cancelNewDossier(){
     if (this.hasDraftChanges() && !window.confirm('Abandonner les modifications non enregistrées ?')) return;
     this.selectedAdherent=null;
@@ -196,17 +262,38 @@ export class RetraitesPageComponent implements OnInit {
       adresse: adherent.adresse ?? '',
     };
   }
+  private loadDeathDetails(adherentId: number): void {
+    this.store.deathDetails(adherentId).subscribe({
+      next: details => this.profile = { ...this.profile,
+        dateDeces: details.dateDeces ?? this.profile.dateDeces,
+        causeDeces: details.causeDeces ?? this.profile.causeDeces,
+        natureDeces: details.natureDeces ?? ''
+      },
+      error: () => undefined
+    });
+  }
   selectAdherent(adherent: AdherentResponse){
     const dossier = this.existingDossier(adherent);
     if (dossier) {
-      if (this.store.isClosed(dossier)) { this.note('Ce dossier est validé et clôturé : il n’est plus accessible.'); return; }
-      this.router.navigate(['/module/retraites/dossier', dossier.id]);
+      this.note(this.store.isClosed(dossier)
+        ? 'Un dossier validé et clôturé existe déjà pour cet adhérent.'
+        : 'Un dossier est déjà créé pour cet adhérent et attend son traitement.');
       return;
     }
     this.selectedAdherent=adherent;
     this.pieces = [];
     this.profile = {...this.profile, dossier:`RET-${new Date().getFullYear()}-NOUVEAU`, situation:'', region:'', natureDeces:'', motifRadiationSanction:'', adresseEM:'', code:'', entree:'', dateEnquete:'', observation:''};
     this.prefillAdherent(adherent);
+    this.loadDeathDetails(adherent.id);
+    this.adherentsService.get(adherent.id).subscribe({
+      next: freshAdherent => {
+        if (this.selectedAdherent?.id !== freshAdherent.id) return;
+        this.selectedAdherent = freshAdherent;
+        this.prefillAdherent(freshAdherent);
+        this.loadDeathDetails(freshAdherent.id);
+      },
+      error: () => undefined
+    });
     this.adherentResults=[];
     this.loadPhoto();
     this.draftSnapshot = this.currentDraftSnapshot();
@@ -214,12 +301,14 @@ export class RetraitesPageComponent implements OnInit {
   }
   private currentDraftSnapshot(): string { return JSON.stringify({ pieces: this.pieces, profile: this.profile, family: this.family, benefits: this.benefits, requests: this.requests }); }
   private hasDraftChanges(): boolean { return this.draftSnapshot !== this.currentDraftSnapshot(); }
+  private captureNavigationSnapshot(): void { this.draftSnapshot = this.currentDraftSnapshot(); }
   existingDossier(adherent: AdherentResponse): RetraiteDossier | undefined {
     const matricule = adherent.matriculeBR || adherent.matricule;
     if (!matricule) return undefined;
     return this.store.all().find(dossier => dossier.matricule === matricule);
   }
   isClosedDossier(dossier?: RetraiteDossier): boolean { return !!dossier && this.store.isClosed(dossier); }
+  hasExistingDossier(dossier?: RetraiteDossier): boolean { return !!dossier; }
   onPhotoSelected(event: Event){
     const file = (event.target as HTMLInputElement).files?.[0];
     if (!file) return;

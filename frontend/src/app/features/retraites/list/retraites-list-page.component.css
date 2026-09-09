@@ -1,3 +1,5 @@
+:host { --primary: #2f6f5e; --primary-dark: #24564a; --primary-light: #e6f1ee; }
+
 .page {
   display: flex;
   flex-direction: column;
@@ -333,6 +335,37 @@ tbody tr:hover {
   font-size: .84rem;
 }
 
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: .85rem 1rem;
+  border-top: 1px solid var(--border);
+  color: var(--text-2);
+  font-size: .78rem;
+}
+
+.pagination-actions { display: flex; align-items: center; gap: .5rem; white-space: nowrap; }
+.pagination-pages { display: flex; align-items: center; gap: .35rem; }
+.pagination-pages button,
+.pagination-arrow {
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: var(--surface);
+  color: var(--text-2);
+  font: 700 .78rem inherit;
+  cursor: pointer;
+  transition: .18s ease;
+}
+.pagination-arrow { font-size: 1.35rem; line-height: 1; }
+.pagination-pages button:hover,
+.pagination-arrow:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+.pagination-pages button.active { border-color: var(--primary); background: var(--primary); color: #fff; box-shadow: var(--sh-xs); }
+.pagination-actions button:disabled { cursor: not-allowed; opacity: .35; }
+
 /* =========================
    RESPONSIVE
    ========================= */
@@ -363,5 +396,10 @@ tbody tr:hover {
 
   .search {
     width: 100%;
+  }
+
+  .pagination {
+    align-items: flex-start;
+    flex-direction: column;
   }
 }

@@ -58,6 +58,7 @@ public class DossierDecesService {
                 .build();
 
         DossierDeces saved = dossierDecesRepository.save(dossier);
+        synchroniserDecesAdherent(adherent, saved);
         addHistorique(saved.getId(), "CREATION_DOSSIER", null, saved.getStatut(), "Création du dossier", "system");
         return toResponse(saved);
     }
@@ -93,8 +94,10 @@ public class DossierDecesService {
         dossier.setCauseDeces(request.getCauseDeces());
         dossier.setDpr(request.getDpr());
         dossier.setObservation(request.getObservation());
+        DossierDeces saved = dossierDecesRepository.save(dossier);
+        adherentRepository.findById(saved.getAdherentId()).ifPresent(adherent -> synchroniserDecesAdherent(adherent, saved));
         addHistorique(dossier.getId(), "MODIFICATION_DOSSIER", dossier.getStatut(), dossier.getStatut(), "Modification des informations du dossier", "system");
-        return toResponse(dossierDecesRepository.save(dossier));
+        return toResponse(saved);
     }
 
     public DossierDecesResponse updateStatut(Long id, String statut) {
@@ -158,6 +161,12 @@ public class DossierDecesService {
             numero = String.format("DEC-%d-%05d", year, count++);
         } while (dossierDecesRepository.existsByNumero(numero));
         return numero;
+    }
+
+    private void synchroniserDecesAdherent(Adherent adherent, DossierDeces dossier) {
+        adherent.setDateDeces(dossier.getDateDeces());
+        adherent.setCauseDeces(dossier.getCauseDeces());
+        adherentRepository.save(adherent);
     }
 
     private void assertTransition(StatutDossierDeces current, StatutDossierDeces next) {

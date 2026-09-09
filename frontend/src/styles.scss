@@ -66,6 +66,33 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* Shared viewport behavior for application dialogs. The class is added only to
+   real blocking dialogs, so regular in-page status messages keep their layout. */
+.viewport-overlay {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: clamp(1rem, 4vw, 2rem);
+  overflow: auto;
+  overscroll-behavior: contain;
+  touch-action: none;
+}
+
+.viewport-modal {
+  max-height: calc(100dvh - 2rem);
+  overflow: auto;
+  overscroll-behavior: contain;
+  touch-action: auto;
+}
+
+html:has(.viewport-overlay),
+body:has(.viewport-overlay) {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
 /* ── Scrollbar ───────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }

@@ -27,9 +27,9 @@
   <section class="panel">
     <div class="toolbar">
       <div class="search">
-        ⌕ <input [(ngModel)]="query" placeholder="Rechercher par nom, matricule ou référence">
+        ⌕ <input [(ngModel)]="query" (ngModelChange)="resetPage()" placeholder="Rechercher par nom, matricule ou référence">
       </div>
-      <select [(ngModel)]="filter">
+      <select [(ngModel)]="filter" (ngModelChange)="resetPage()">
         <option [ngValue]="''">Tous les statuts</option>
         <option [ngValue]="'En cours'">En cours</option>
         <option [ngValue]="'Validé'">Validé</option>
@@ -48,7 +48,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let d of filtered">
+          <tr *ngFor="let d of pagedDossiers">
             <td class="ref">{{d.reference}}</td>
             <td><b>{{d.nom}}</b></td>
             <td>{{d.matricule}}</td>
@@ -75,5 +75,15 @@
         </tbody>
       </table>
     </div>
+    <footer class="pagination" *ngIf="filtered.length">
+      <span>Affichage de {{ firstShown }} à {{ lastShown }} sur {{ filtered.length }} dossiers</span>
+      <div class="pagination-actions">
+        <button class="pagination-arrow" type="button" (click)="previousPage()" [disabled]="page === 1" aria-label="Page précédente">‹</button>
+        <div class="pagination-pages" aria-label="Pagination">
+          <button type="button" *ngFor="let number of pageNumbers" [class.active]="page === number" (click)="goToPage(number)" [attr.aria-label]="'Page ' + number" [attr.aria-current]="page === number ? 'page' : null">{{ number }}</button>
+        </div>
+        <button class="pagination-arrow" type="button" (click)="nextPage()" [disabled]="page === pageCount" aria-label="Page suivante">›</button>
+      </div>
+    </footer>
   </section>
 </main>

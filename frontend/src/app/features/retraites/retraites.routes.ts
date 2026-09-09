@@ -5,14 +5,15 @@ import { RetraitesListPageComponent } from './list/retraites-list-page.component
 import { RetraitesGlobalHistoryPageComponent } from './global-history/retraites-global-history-page.component';
 import { RetraitesDashboardComponent } from './dashboard/retraites-dashboard.component';
 import { RetraitesValidationComponent } from './validation/retraites-validation.component';
+import { retraitesDraftNavigationGuard } from './record/retraites-draft-navigation.guard';
 
 export const RETRAITES_ROUTES: Routes = [
   { path: 'retraites', redirectTo: 'retraites/dashboard', pathMatch: 'full' },
   { path: 'retraites/dashboard', component: RetraitesDashboardComponent, canActivate: [authGuard, moduleGuard], data: { moduleKey: 'retraites' } },
   { path: 'retraites/dossiers', component: RetraitesListPageComponent, canActivate: [authGuard, moduleGuard], data: { moduleKey: 'retraites' } },
-  { path: 'retraites/nouveau', component: RetraitesPageComponent, canActivate: [authGuard, moduleGuard], data: { moduleKey: 'retraites', newDossier: true } },
+  { path: 'retraites/nouveau', component: RetraitesPageComponent, canActivate: [authGuard, moduleGuard], canDeactivate: [retraitesDraftNavigationGuard], data: { moduleKey: 'retraites', newDossier: true } },
   { path: 'retraites/validation', component: RetraitesValidationComponent, canActivate: [authGuard, moduleGuard], data: { moduleKey: 'retraites' } },
-  { path: 'module/retraites/dossier/:id', component: RetraitesPageComponent, canActivate: [authGuard, moduleGuard], data: { moduleKey: 'retraites' } },
+  { path: 'module/retraites/dossier/:id', component: RetraitesPageComponent, canActivate: [authGuard, moduleGuard], canDeactivate: [retraitesDraftNavigationGuard], data: { moduleKey: 'retraites' } },
   { path: 'module/retraites/dossiers', component: RetraitesListPageComponent, canActivate: [authGuard, moduleGuard], data: { moduleKey: 'retraites' } },
   { path: 'module/retraites/historique-global', component: RetraitesGlobalHistoryPageComponent, canActivate: [authGuard, moduleGuard], data: { moduleKey: 'retraites' } },
   { path: 'module/retraites', pathMatch: 'full', component: RetraitesListPageComponent, canActivate: [authGuard, moduleGuard], data: { moduleKey: 'retraites' } },
@@ -20,6 +21,7 @@ export const RETRAITES_ROUTES: Routes = [
     path: 'module/retraites/:feature',
     component: RetraitesPageComponent,
     canActivate: [authGuard, moduleGuard],
+    canDeactivate: [retraitesDraftNavigationGuard],
     data: { moduleKey: 'retraites' }
   }
 ];

@@ -17,12 +17,14 @@
 .page-body {
   flex: 1;
   padding: 1.5rem 1.75rem 2rem;
-  animation: fadeSlide 300ms ease both;
+  animation: pageFade 300ms ease both;
 }
 
-@keyframes fadeSlide {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+/* A transformed ancestor turns fixed children into page-bound elements.
+   Keep the page transition, without creating a containing block for dialogs. */
+@keyframes pageFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @media (max-width: 1024px) {

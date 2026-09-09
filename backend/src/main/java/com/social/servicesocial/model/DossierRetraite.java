@@ -43,11 +43,8 @@ public class DossierRetraite {
     private String professionActuelle;
     private String colisRamadan;
     private String regionResidence;
-    private String situationLogement;
     private String hayRabat;
     private String observationSociale;
-    private String cinSocial;
-    private String matriculeSocial;
     private String motifEnquete;
     private String numeroDossier;
     private String cartePrelevementCmr;
