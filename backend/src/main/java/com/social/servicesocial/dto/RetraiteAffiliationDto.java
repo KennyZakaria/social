@@ -1,2 +1,4 @@
 package com.social.servicesocial.dto;
-public record RetraiteAffiliationDto(String typeCarte, boolean titulaire, String numeroCarte, String observation) {}
+import jakarta.validation.constraints.*;
+public record RetraiteAffiliationDto(@NotBlank @Size(max=50) String typeCarte, boolean titulaire,
+        @Size(max=80) String numeroCarte, @Size(max=500) String observation) {}

@@ -46,6 +46,7 @@ public record RetraiteDossierResponse(
         String observationAdhesion,
         Boolean avecPhoto,
         List<RetraitePieceDto> pieces,
+        String photo,
         Long id, String reference, Long adherentId, String nom, String prenom,
         String matricule, String cin, String matriculeBr, String grade, LocalDate dateNaissance, LocalDate dateRadiation,
         String motif, String telephoneGsm, String telephoneFixe, String affectation, String adresse,
