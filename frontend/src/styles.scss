@@ -124,3 +124,21 @@ h1, h2, h3, h4 {
   font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
   line-height: 1.25;
 }
+
+/* Consistent inline icon system across every module. */
+svg { display: block; flex: 0 0 auto; }
+.page-icon svg, .logo svg, .mark svg { width: 22px; height: 22px; }
+.mark svg { transition: transform .2s cubic-bezier(.22, 1, .36, 1); }
+.rail-card:hover .mark svg { transform: scale(1.08); }
+.arrow svg { width: 17px; height: 17px; }
+button svg, a svg { vertical-align: middle; }
+@media (prefers-reduced-motion: reduce) { .mark svg { transition: none; } }
+/* Institutional signature used by the sidebar and application footer. */
+.signature-text {
+  font-family: 'Fraunces', serif;
+  font-size: 16px;
+  font-style: italic;
+  font-weight: 500;
+  line-height: 1.6;
+  letter-spacing: .3px;
+}
