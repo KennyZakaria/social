@@ -225,3 +225,21 @@
   .nav__item, .nav__icon, .nav__arrow, .nav__child, .logout-btn { transition: none; }
 }
 .logo-icon__image { width: 100%; height: 100%; object-fit: contain; display: block; }
+
+.sidebar-signature {
+  position: relative;
+  z-index: 1;
+  margin: auto 14px 16px;
+  padding: 17px 15px;
+  border-top: 1px solid rgba(173, 211, 230, .12);
+  color: rgba(239, 249, 255, .76);
+  text-align: center;
+  text-wrap: balance;
+  animation: sidebar-quote-reveal .7s .24s cubic-bezier(.22, 1, .36, 1) both;
+}
+@keyframes sidebar-quote-reveal {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@media (max-width: 1024px) { .sidebar-signature { display: none; } }
+@media (prefers-reduced-motion: reduce) { .sidebar-signature { animation: none; } }

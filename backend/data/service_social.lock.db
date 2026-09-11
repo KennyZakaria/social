@@ -1,6 +1,14 @@
 #FileLock
+<<<<<<< HEAD
 #Thu Sep 10 10:13:18 WEST 2026
 hostName=host.docker.internal
 id=1a08a97c0627ce2a0b82de6552c7bd12f1169efb7fe
 method=file
 server=192.168.130.68\:64041
+=======
+#Wed Sep 09 14:33:29 WEST 2026
+hostName=DESKTOP-SCQFUEB
+id=1a0851d778f5621788fe3e155a588716ac0cc7873e8
+method=file
+server=192.168.60.70\:50068
+>>>>>>> 84859dd986308fb4bb4e9c6938a1cf073dea88ba

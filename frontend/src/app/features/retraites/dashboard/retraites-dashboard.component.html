@@ -1,18 +1,44 @@
 <main class="page">
   <header class="page-header">
+<<<<<<< HEAD
+    <div class="page-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></div>
+    <div><p class="kicker">Section Retraités</p><h2>Tableau de bord</h2><p class="subtitle">Vue d'ensemble des dossiers de retraités</p></div>
+    <a class="btn primary ml-auto" routerLink="/retraites/nouveau">+ Nouveau dossier</a>
+=======
     <div class="page-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2h9l3 3v17H6z"/><path d="M9 10h6M9 14h6M9 18h4"/></svg></div>
     <div><p class="page-kicker">Section Retraités</p><h2 class="page-title">Tableau de bord</h2><p class="subtitle">Suivi des dossiers de retraite</p></div>
     <a class="btn-primary ml-auto" routerLink="/retraites/nouveau">+ Nouveau dossier</a>
+>>>>>>> cb76b52221a55f53c621b49ea4e850a8e9a9d7a6
   </header>
   <section class="stats-grid" aria-label="Statistiques des dossiers">
     <article class="stat-card"><div class="stat-icon stat-icon--blue">▣</div><div><p>Total dossiers</p><b>{{ dossiers.length }}</b></div></article>
     <article class="stat-card"><div class="stat-icon stat-icon--amber">◷</div><div><p>En cours</p><b>{{ count('En cours') }}</b></div></article>
     <article class="stat-card"><div class="stat-icon stat-icon--green">✓</div><div><p>Validés</p><b>{{ count('Validé') }}</b></div></article>
   </section>
+<<<<<<< HEAD
+
+  <section class="rail">
+    <a routerLink="/retraites/dossiers" class="rail-card">
+      <div class="mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></div>
+      <div><b>Tous les dossiers</b><span>Consulter et suivre les dossier:</span></div>
+      <span class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+    </a>
+    <a routerLink="/retraites/nouveau" class="rail-card">
+      <div class="mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></div>
+      <div><b>Nouveau dossier</b><span>Créer un dossier de retraité</span></div>
+      <span class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+    </a>
+    <a routerLink="/retraites/validation" class="rail-card">
+      <div class="mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg></div>
+      <div><b>Validation</b><span>Gérer les dossiers en cours</span></div>
+      <span class="arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+    </a>
+=======
   <section class="nav-grid" aria-label="Navigation Retraités">
     <a routerLink="/retraites/dossiers" class="nav-card"><span class="nav-card__icon">☰</span><span>Tous les dossiers</span><span class="arrow">→</span></a>
     <a routerLink="/retraites/nouveau" class="nav-card"><span class="nav-card__icon">+</span><span>Nouveau dossier</span><span class="arrow">→</span></a>
     <a routerLink="/retraites/validation" class="nav-card"><span class="nav-card__icon">✓</span><span>Validation des dossiers</span><span class="arrow">→</span></a>
+>>>>>>> cb76b52221a55f53c621b49ea4e850a8e9a9d7a6
   </section>
   <section class="card">
     <div class="card__head"><h3>Derniers dossiers</h3><a class="btn-ghost" routerLink="/retraites/dossiers">Voir tous</a></div>

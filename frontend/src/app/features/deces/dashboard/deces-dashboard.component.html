@@ -1,4 +1,4 @@
-﻿<div class="page">
+<div class="page">
 
       <!-- Header -->
       <div class="page-header">
@@ -97,7 +97,7 @@
                 <td>{{ d.dateDeces }}</td>
                 <td><span class="stat-badge" [class]="getStatutClass(d.statut)">{{ getStatutLabel(d.statut) }}</span></td>
                 <td>
-                  <button class="action-btn" title="Voir" (click)="openAyants(d)">
+                  <button type="button" class="action-btn" title="Voir le dossier" aria-label="Voir le dossier" (click)="openDetail(d)">
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                   </button>
                 </td>

@@ -2,10 +2,11 @@
   <div class="navbar__context">
  
     <div>
-      <p class="navbar__eyebrow">Service Social</p>
-      <h1 class="navbar__title">Gestion des activités</h1>
+      <p class="navbar__eyebrow">{{ sectionSubtitle }}</p>
+      <h1 class="navbar__title">{{ sectionTitle }}</h1>
     </div>
   </div>
+
 
   <div class="navbar__account" *ngIf="authState.auth as me">
     <span class="navbar__status"><i></i> Session sécurisée</span>

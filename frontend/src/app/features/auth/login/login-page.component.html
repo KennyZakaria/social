@@ -1,8 +1,12 @@
 <div class="login-page" [class.login-page--embedded]="embedded">
   <div class="login-stage">
     <div class="login-decoration" aria-hidden="true">
-      <span class="login-decoration__line login-decoration__line--left"></span><span class="login-decoration__line login-decoration__line--center"></span><span class="login-decoration__line login-decoration__line--right"></span>
-      <span class="login-decoration__node login-decoration__node--left"></span><span class="login-decoration__node login-decoration__node--center"></span><span class="login-decoration__node login-decoration__node--right"></span>
+      <span class="login-decoration__line login-decoration__line--left"></span>
+      <span class="login-decoration__line login-decoration__line--center"></span>
+      <span class="login-decoration__line login-decoration__line--right"></span>
+      <span class="login-decoration__node login-decoration__node--left"></span>
+      <span class="login-decoration__node login-decoration__node--center"></span>
+      <span class="login-decoration__node login-decoration__node--right"></span>
     </div>
     <div class="login-card-wrapper">
       <div class="login-card">
@@ -10,11 +14,22 @@
         <h1>Service Social</h1>
         <p class="subtitle">Connexion à votre espace sécurisé</p>
         <form [formGroup]="form" (ngSubmit)="submit()">
-          <div class="form-group"><label for="username">Nom d'utilisateur</label><input id="username" formControlName="username" autocomplete="username" placeholder="Entrez votre nom d'utilisateur" /></div>
-          <div class="form-group"><label for="password">Mot de passe</label><input id="password" formControlName="password" [type]="showPassword ? 'text' : 'password'" autocomplete="current-password" placeholder="Entrez votre mot de passe" /></div>
-          <label class="show-password"><input type="checkbox" [checked]="showPassword" (change)="showPassword = !showPassword" />Afficher le mot de passe</label>
+          <div class="form-group">
+            <label for="username">Nom d'utilisateur</label>
+            <input id="username" formControlName="username" autocomplete="username" placeholder="Entrez votre nom d'utilisateur" />
+          </div>
+          <div class="form-group">
+            <label for="password">Mot de passe</label>
+            <input id="password" formControlName="password" [type]="showPassword ? 'text' : 'password'" autocomplete="current-password" placeholder="Entrez votre mot de passe" />
+          </div>
+          <label class="show-password">
+            <input type="checkbox" [checked]="showPassword" (change)="showPassword = !showPassword" />
+            Afficher le mot de passe
+          </label>
           <div class="error" *ngIf="error" role="alert">{{ error }}</div>
-          <button type="submit" [disabled]="form.invalid || loading">{{ loading ? 'Connexion...' : 'Se connecter' }}</button>
+          <button type="submit" [disabled]="form.invalid || loading">
+            {{ loading ? 'Connexion...' : 'Se connecter' }}
+          </button>
         </form>
       </div>
     </div>

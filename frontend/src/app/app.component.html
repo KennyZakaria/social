@@ -5,7 +5,9 @@
 
   <div class="main-wrap">
     <app-navbar [authState]="authState" (logoutRequested)="logout()"></app-navbar>
-    <main class="page-body"><router-outlet></router-outlet></main>
+    <div class="main-content">
+      <main class="page-body page-content"><router-outlet></router-outlet></main>
+    </div>
     <app-footer></app-footer>
   </div>
 </div>

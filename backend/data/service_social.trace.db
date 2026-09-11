@@ -1636,6 +1636,16 @@ The connection was not closed by the application and is garbage collected [90018
 	at org.h2.message.DbException.getJdbcSQLException(DbException.java:690)
 	at org.h2.message.DbException.getJdbcSQLException(DbException.java:489)
 	... 16 more
+<<<<<<< HEAD
+2026-09-09 11:50:22.174935+01:00 jdbc[83]: null
+org.h2.message.DbException: La connexion n'a pas été fermée et a été récupérée par le ramasse miette.
+The connection was not closed by the application and is garbage collected [90018-240]
+	at org.h2.message.DbException.get(DbException.java:223)
+	at org.h2.message.DbException.get(DbException.java:199)
+	at org.h2.message.DbException.get(DbException.java:188)
+	at org.h2.jdbc.JdbcConnection.closeOld(JdbcConnection.java:217)
+	at org.h2.jdbc.JdbcConnection.<init>(JdbcConnection.java:134)
+=======
 2026-09-09 11:16:26.513030+01:00 database: flush
 org.h2.message.DbException: Erreur générale: "org.h2.mvstore.MVStoreException: Double mark: 22/4 [4-7, d-14, 17-24, 45-] [2.4.240/6]"
 General error: "org.h2.mvstore.MVStoreException: Double mark: 22/4 [4-7, d-14, 17-24, 45-] [2.4.240/6]" [50000-240]
@@ -1653,11 +1663,25 @@ General error: "org.h2.mvstore.MVStoreException: Double mark: 22/4 [4-7, d-14, 1
 	at org.h2.engine.Engine.createSession(Engine.java:201)
 	at org.h2.engine.SessionRemote.connectEmbeddedOrServer(SessionRemote.java:350)
 	at org.h2.jdbc.JdbcConnection.<init>(JdbcConnection.java:124)
+>>>>>>> cb76b52221a55f53c621b49ea4e850a8e9a9d7a6
 	at org.h2.Driver.connect(Driver.java:59)
 	at com.zaxxer.hikari.util.DriverDataSource.getConnection(DriverDataSource.java:144)
 	at com.zaxxer.hikari.pool.PoolBase.newConnection(PoolBase.java:373)
 	at com.zaxxer.hikari.pool.PoolBase.newPoolEntry(PoolBase.java:210)
 	at com.zaxxer.hikari.pool.HikariPool.createPoolEntry(HikariPool.java:488)
+<<<<<<< HEAD
+	at com.zaxxer.hikari.pool.HikariPool$PoolEntryCreator.call(HikariPool.java:752)
+	at com.zaxxer.hikari.pool.HikariPool$PoolEntryCreator.call(HikariPool.java:731)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+Caused by: org.h2.jdbc.JdbcSQLNonTransientConnectionException: La connexion n'a pas été fermée et a été récupérée par le ramasse miette.
+The connection was not closed by the application and is garbage collected [90018-240]
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:690)
+	at org.h2.message.DbException.getJdbcSQLException(DbException.java:489)
+	... 16 more
+=======
 	at com.zaxxer.hikari.pool.HikariPool.checkFailFast(HikariPool.java:576)
 	at com.zaxxer.hikari.pool.HikariPool.<init>(HikariPool.java:97)
 	at com.zaxxer.hikari.HikariDataSource.getConnection(HikariDataSource.java:111)
@@ -3454,7 +3478,11 @@ Caused by: org.h2.mvstore.MVStoreException: The file is locked: C:/Users/USER/Do
 	at org.h2.mvstore.SingleFileStore.open(SingleFileStore.java:81)
 	at org.h2.mvstore.MVStore.<init>(MVStore.java:291)
 	... 12 more
+<<<<<<< HEAD
 2026-09-09 12:16:54.089525+01:00 jdbc[14]: exception
 org.h2.jdbc.JdbcSQLSyntaxErrorException: Erreur de syntaxe dans l'instruction SQL "[*]ADHERENTS"; attendu "ALTER, ANALYZE"
 Syntax error in SQL statement "[*]ADHERENTS"; expected "ALTER, ANALYZE"; SQL statement:
 ADHERENTS [42001-240]
+=======
+>>>>>>> cb76b52221a55f53c621b49ea4e850a8e9a9d7a6
+>>>>>>> 84859dd986308fb4bb4e9c6938a1cf073dea88ba

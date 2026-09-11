@@ -1,9 +1,9 @@
-﻿<div class="page">
+<div class="page">
   <div class="page-header">
    
 
     <div>
-      <p class="page-kicker">Section Deces</p>
+      <p class="page-kicker">Section Décès</p>
       <h2 class="page-title">Nouveau dossier</h2>
     </div>
   </div>
@@ -16,28 +16,28 @@
   <div class="card" *ngIf="adherentSelectionne">
     <div class="card__head">
       <p class="card__title">
-        Informations du deces
+        Informations du décès
         <span class="adherent-chip">{{ adherentSelectionne.prenomAr }} {{ adherentSelectionne.nomAr }} - {{ adherentSelectionne.matricule }}</span>
       </p>
-      <button class="btn-ghost" type="button" (click)="changerAdherent()">Changer d'adherent</button>
+      <button class="btn-ghost" type="button" (click)="changerAdherent()">Changer d'adhérent</button>
     </div>
 
     <form [formGroup]="form" (ngSubmit)="submitDossier()" class="form-body">
       <div class="form-grid">
         <div class="field">
-          <label>Date du deces <span class="req">*</span></label>
+          <label>Date du décès <span class="req">*</span></label>
           <input formControlName="dateDeces" type="date" />
         </div>
 
         <div class="field">
-          <label>Lieu du deces <span class="req">*</span></label>
+          <label>Lieu du décès <span class="req">*</span></label>
           <input formControlName="lieuDeces" placeholder="Ville, wilaya" />
         </div>
 
         <div class="field">
-          <label>Nature du deces</label>
+          <label>Nature du décès</label>
           <select formControlName="natureDeces">
-            <option value="">Selectionner</option>
+            <option value="">Sélectionner</option>
             <option>Naturelle</option>
             <option>Accidentelle</option>
             <option>Maladie</option>
@@ -46,18 +46,18 @@
         </div>
 
         <div class="field">
-          <label>Cause du deces</label>
+          <label>Cause du décès</label>
           <input formControlName="causeDeces" placeholder="Description" />
         </div>
 
         <div class="field">
           <label>DPR</label>
-          <input formControlName="dpr" placeholder="Numero DPR" />
+          <input formControlName="dpr" placeholder="Numéro DPR" />
         </div>
 
         <div class="field field--wide">
           <label>Observation</label>
-          <textarea formControlName="observation" rows="3" placeholder="Notes complementaires..."></textarea>
+          <textarea formControlName="observation" rows="3" placeholder="Notes complémentaires..."></textarea>
         </div>
       </div>
 
@@ -68,7 +68,7 @@
             <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v14a2 2 0 01-2 2z" />
             <polyline points="17 21 17 13 7 13 7 21" />
           </svg>
-          {{ redirecting ? 'Ouverture du dossier...' : (loading ? 'Enregistrement...' : 'Creer le dossier') }}
+          {{ redirecting ? 'Ouverture du dossier...' : (loading ? 'Enregistrement...' : 'Créer le dossier') }}
         </button>
       </div>
     </form>

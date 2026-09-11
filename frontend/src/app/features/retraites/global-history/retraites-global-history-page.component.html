@@ -1,6 +1,6 @@
     <main class="page">
       <header class="page-header">
-        <div class="page-icon">⏱</div>
+        <div class="page-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
         <div><p class="kicker">Section Retraités</p><h2>Historique global</h2><p class="subtitle">Uniquement les dossiers ayant fait l'objet d'une création, modification ou validation.</p></div>
       </header>
       <section class="card" *ngIf="activities.length; else empty"><article *ngFor="let item of activities"><i></i><div><b>{{item.action}}</b><p>{{item.nom}} · {{item.reference}}</p></div><time>{{item.date | simpleDate}}</time></article></section>
