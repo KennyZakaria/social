@@ -22,10 +22,10 @@ public class RetraiteDossierController {
     private final RetraiteDossierService service;
     private final DossierDecesRepository dossierDecesRepository;
 
-    @GetMapping public List<RetraiteDossierResponse> list() { return service.list(); }
-    @GetMapping("/{id}") public RetraiteDossierResponse get(@PathVariable Long id) { return service.get(id); }
-    @GetMapping("/{id}/historique") public List<RetraiteHistoriqueDto> history(@PathVariable Long id) { return service.get(id).historique(); }
-    @GetMapping("/adherents/{adherentId}/deces")
+        @GetMapping public List<RetraiteDossierResponse> list() { return service.list(); }
+        @GetMapping("/{id}") public RetraiteDossierResponse get(@PathVariable Long id) { return service.get(id); }
+        @GetMapping("/{id}/historique") public List<RetraiteHistoriqueDto> history(@PathVariable Long id) { return service.get(id).historique(); }
+        @GetMapping("/adherents/{adherentId}/deces")
     public ResponseEntity<RetraiteDecesDetailsResponse> deathDetails(@PathVariable Long adherentId) {
         return dossierDecesRepository.findByAdherentId(adherentId)
                 .map(dossier -> ResponseEntity.ok(new RetraiteDecesDetailsResponse(

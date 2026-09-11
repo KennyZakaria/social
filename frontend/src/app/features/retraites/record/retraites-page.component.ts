@@ -5,6 +5,7 @@ import { finalize } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RetraitePiece, RetraiteDossier, RetraitesStoreService } from '../services/retraites-store.service';
+import { RetraitesExportService } from '../services/retraites-export.service';
 import { AdherentsService } from '../../adherents/services/adherents.service';
 import { AdherentResponse } from '../../../core/models/models';
 
@@ -19,7 +20,7 @@ interface BudgetEntry { designation: string; montant: string; }
   imports: [SimpleDatePipe, CommonModule, FormsModule],
   templateUrl: './retraites-page.component.html',
   styleUrl: './retraites-page.component.css',
-  styles: ['.actions > button:first-child { display: none; }.budget-input{width:100%;border-collapse:collapse}.budget-input th,.budget-input td{padding:.7rem;border-bottom:1px solid var(--border);text-align:left;font-size:.78rem}.budget-input th{background:var(--surface-2);color:var(--text-2);font-weight:700}.budget-input input{width:100%;box-sizing:border-box;border:1px solid var(--border);border-radius:6px;padding:.45rem;background:var(--surface)}']
+  styles: ['.budget-input{width:100%;border-collapse:collapse}.budget-input th,.budget-input td{padding:.7rem;border-bottom:1px solid var(--border);text-align:left;font-size:.78rem}.budget-input th{background:var(--surface-2);color:var(--text-2);font-weight:700}.budget-input input{width:100%;box-sizing:border-box;border:1px solid var(--border);border-radius:6px;padding:.45rem;background:var(--surface)}']
 })
 export class RetraitesPageComponent implements OnInit, OnDestroy {
   leaveDraftDialogOpen = false;
@@ -41,6 +42,7 @@ export class RetraitesPageComponent implements OnInit, OnDestroy {
   }
   tab: Tab = 'fiche'; message = ''; editing: Person | null = null; memberError = ''; memberSubmitted = false; private editingNewMember = false; isNewDossier = false; readOnly = false; validationMode = false;
   private dossierId?: number;
+  exportableDossier?: RetraiteDossier;
   selectedAdherent: AdherentResponse | null = null;
   photoUrl = '';
   saving = false;
@@ -62,7 +64,7 @@ export class RetraitesPageComponent implements OnInit, OnDestroy {
   benefits: { name: string; detail: string; icon: string; active: boolean }[] = [];
   requests: { title: string; date: string; pieces: number; status: string }[] = [];
   history: { title: string; detail: string; date: string }[] = [];
-  constructor(private route: ActivatedRoute, private readonly store: RetraitesStoreService, private readonly adherentsService: AdherentsService, private readonly router: Router) {}
+  constructor(private route: ActivatedRoute, private readonly store: RetraitesStoreService, private readonly adherentsService: AdherentsService, private readonly router: Router, private readonly exporter: RetraitesExportService) {}
   ngOnInit(){
     this.isNewDossier = !!this.route.snapshot.data['newDossier'];
     this.readOnly = this.route.snapshot.queryParamMap.get('consultation') === 'true';
@@ -71,6 +73,7 @@ export class RetraitesPageComponent implements OnInit, OnDestroy {
     if (id) {
       this.dossierId = id;
       this.store.get(id).subscribe({ next: dossier => {
+        this.exportableDossier = this.store.isClosed(dossier) ? dossier : undefined;
         this.readOnly = this.readOnly || dossier.traite || this.store.isClosed(dossier);
         const names = dossier.nom.trim().split(/\s+/);
         this.profile = { ...this.profile, dossier: dossier.reference, prenom: names.shift() || '', nom: names.join(' '), matricule: dossier.matricule, situation: dossier.situation };
@@ -182,6 +185,7 @@ export class RetraitesPageComponent implements OnInit, OnDestroy {
   }
   private closeDossier(id: number) {
     this.store.close(id).pipe(finalize(() => this.saving = false)).subscribe({ next: dossier => {
+      this.exportableDossier = this.store.isClosed(dossier) ? dossier : undefined;
       this.readOnly = true; this.validationMode = false;
       this.history = dossier.details?.history as typeof this.history ?? [];
       this.captureNavigationSnapshot();
@@ -368,18 +372,10 @@ export class RetraitesPageComponent implements OnInit, OnDestroy {
   validateAssistance(item: AssistanceEntry){ if (!item.nature.trim() || !item.organisme.trim() || !item.date) { this.note('Complétez la nature, l’organisme et la date avant de valider.'); return; } item.confirmed = true; this.assistanceDrafts.delete(item.id); this.note('Assistance validée'); }
   editAssistance(item: AssistanceEntry){ this.assistanceDrafts.set(item.id, { ...item }); item.confirmed = false; this.note('Assistance ouverte en modification'); }
   total(rows: BudgetEntry[]){ return rows.reduce((sum,row)=>sum+(Number(String(row.montant).replace(',','.'))||0),0); }
-  exportForm(){
-    const printable = document.getElementById('social-survey-form')?.cloneNode(true) as HTMLElement | undefined;
-    if (!printable) return;
-    const popup=window.open('','_blank','width=1050,height=800');
-    if (!popup) { this.note('Autorisez les fenêtres contextuelles pour exporter la fiche.'); return; }
-    printable.querySelectorAll('button').forEach(button=>button.remove());
-    printable.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>('input, select, textarea').forEach(field=>{
-      const value=field instanceof HTMLInputElement && field.type==='checkbox' ? (field.checked ? 'Oui' : 'Non') : field.value;
-      const text=document.createElement('span'); text.className='print-value'; text.textContent=value || '—'; field.replaceWith(text);
-    });
-    popup.document.write(`<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>Fiche d’enquête sociale</title><style>body{font:12px Arial;margin:15mm;color:#111}.print-header{display:block!important}.print-header h1,.print-header h2{text-align:center;margin:3px}.print-header h1{font-size:20px}.print-header h2{font-size:14px}.survey-section{page-break-inside:avoid}table{width:100%;border-collapse:collapse;margin:6px 0 12px}th,td{border:1px solid #222;padding:5px}.print-value{display:block;min-height:16px;padding:2px 0;border-bottom:1px dotted #777}.btn{display:none}@media print{body{margin:8mm}}</style></head><body>${printable.outerHTML}</body></html>`);
-    popup.document.close(); popup.focus(); setTimeout(()=>popup.print(),250);
+  exportForm(): void {
+    if (this.exportableDossier && this.store.isClosed(this.exportableDossier)) {
+      this.exporter.export(this.exportableDossier);
+    }
   }
   private note(text:string){this.message=text;setTimeout(()=>this.message='',3000);}
 }

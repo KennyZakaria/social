@@ -42,6 +42,7 @@
             <th>Référence</th>
             <th>Retraité</th>
             <th>Matricule</th>
+            <th>Statut adhérent</th>
             <th>Traitement</th>
             <th>Mise à jour</th>
             <th>Action</th>
@@ -52,6 +53,7 @@
             <td class="ref">{{d.reference}}</td>
             <td><b>{{d.nom}}</b></td>
             <td>{{d.matricule}}</td>
+            <td><span class="adherent-status" [attr.data-status]="adherentStatusOf(d)">{{adherentStatusOf(d)}}</span></td>
             <td><span class="tag" [class.ok]="isValidated(d)">{{statusOf(d)}}</span></td>
             <td>{{lastUpdate(d) | simpleDate}}</td>
             <td class="row-actions">
@@ -70,7 +72,7 @@
             </td>
           </tr>
           <tr *ngIf="!filtered.length">
-            <td colspan="6" class="empty">Aucun dossier ne correspond à cette recherche.</td>
+            <td colspan="7" class="empty">Aucun dossier ne correspond à cette recherche.</td>
           </tr>
         </tbody>
       </table>

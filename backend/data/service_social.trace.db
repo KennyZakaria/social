@@ -3454,3 +3454,7 @@ Caused by: org.h2.mvstore.MVStoreException: The file is locked: C:/Users/USER/Do
 	at org.h2.mvstore.SingleFileStore.open(SingleFileStore.java:81)
 	at org.h2.mvstore.MVStore.<init>(MVStore.java:291)
 	... 12 more
+2026-09-09 12:16:54.089525+01:00 jdbc[14]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Erreur de syntaxe dans l'instruction SQL "[*]ADHERENTS"; attendu "ALTER, ANALYZE"
+Syntax error in SQL statement "[*]ADHERENTS"; expected "ALTER, ANALYZE"; SQL statement:
+ADHERENTS [42001-240]

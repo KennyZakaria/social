@@ -31,6 +31,17 @@ export class RetraitesListPageComponent {
   nextPage(): void { this.page = Math.min(this.pageCount, this.page + 1); }
   goToPage(page: number): void { this.page = Math.min(Math.max(1, page), this.pageCount); }
   count(status: RetraiteDossier['statut']) { return this.dossiers.filter(d => this.statusOf(d) === status).length; }
+  adherentStatusOf(dossier: RetraiteDossier): string {
+    const profile = dossier.details?.profile;
+    if (profile?.['dateDeces']) return 'Décédé';
+    const value = String(profile?.['situationCategorie'] ?? '').trim();
+    const key = value.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase().replace(/[\s-]+/g, '_');
+    const labels: Record<string, string> = {
+      EN_ACTIVITE: 'Actif', ACTIF: 'Actif', RETRAITE: 'Retraité',
+      DECEDE: 'Décédé', DECES: 'Décédé', RADIE: 'Radié', REFORME: 'Réformé'
+    };
+    return labels[key] ?? (value || 'Non renseigné');
+  }
   statusOf(dossier: RetraiteDossier): RetraiteDossier['statut'] { return dossier.cloture ? 'Validé' : dossier.statut; }
   isValidated(dossier: RetraiteDossier): boolean { return this.statusOf(dossier) === 'Validé'; }
   lastUpdate(dossier: RetraiteDossier): string { return dossier.miseAJour || new Date().toLocaleDateString('fr-FR'); }

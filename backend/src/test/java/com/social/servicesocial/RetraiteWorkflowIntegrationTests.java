@@ -115,6 +115,30 @@ class RetraiteWorkflowIntegrationTests {
         assertEquals(3, expect(200, "GET", path + "/historique", null).size());
     }
 
+    @Test void createsShortReferencePersistedInDatabaseAndHistory() throws Exception {
+        var created = expect(201, "POST", "/api/retraites", dossier());
+        long id = created.path("id").asLong();
+        String reference = "RET-" + LocalDate.now().getYear() + "-" + String.format(Locale.ROOT, "%03d", id);
+        assertEquals(reference, created.path("reference").asText());
+        assertEquals(reference, expect(200, "GET", "/api/retraites/" + id, null).path("reference").asText());
+        assertEquals(reference, jdbc.queryForObject(
+                "select d.numero from dossiers d join dossiers_retraites r on r.dossier_id=d.id where r.id=?", String.class, id));
+        assertEquals("Création du dossier " + reference, jdbc.queryForObject(
+                "select detail from retraite_historiques where dossier_retraite_id=?", String.class, id));
+    }
+
+    @Test void rejectsDuplicateMatriculeIgnoringCaseForAnotherAdherent() throws Exception {
+        var original = dossier();
+        long id = expect(201, "POST", "/api/retraites", original).path("id").asLong();
+        var duplicate = dossier();
+        duplicate.put("matricule", original.path("matricule").asText().toLowerCase(Locale.ROOT));
+        int before = jdbc.queryForObject("select count(*) from dossiers_retraites", Integer.class);
+        expect(409, "POST", "/api/retraites", duplicate);
+        assertEquals(before, jdbc.queryForObject("select count(*) from dossiers_retraites", Integer.class));
+        assertEquals(original.path("matricule").asText(),
+                expect(200, "GET", "/api/retraites/" + id, null).path("matricule").asText());
+    }
+
     @Test void rejectsInvalidFieldsWithoutCreatingAnyDossier() throws Exception {
         var valid = dossier();
         int before = jdbc.queryForObject("select count(*) from dossiers_retraites", Integer.class);

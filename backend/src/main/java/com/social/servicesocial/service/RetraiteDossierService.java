@@ -51,7 +51,8 @@ public class RetraiteDossierService {
         if (adherent == null) throw new NotFoundException("Adherent introuvable");
         if (retraiteRepository.existsByAdherentId(request.adherentId()) || retraiteRepository.existsByDossierMatriculeIgnoreCase(request.matricule().trim()))
             throw new com.social.servicesocial.exception.ConflictException("Un dossier retraite existe deja pour cet adherent.");
-        String reference = "RET-" + LocalDate.now().getYear() + "-" + java.util.UUID.randomUUID();
+        String reference = "RET-" + LocalDate.now().getYear() + "-"
+                + java.util.UUID.randomUUID().toString().replace("-", "").substring(0, 30);
         Dossier dossier = Dossier.builder()
                 .section(SocialModule.RETRAITES).numero(reference)
                 .adherentNom(fullName(request)).matricule(value(request.matricule()))
@@ -60,7 +61,13 @@ public class RetraiteDossierService {
         dossier = dossierRepository.save(dossier);
         DossierRetraite retraite = DossierRetraite.builder().dossier(dossier).build();
         apply(retraite, request);
-        retraite = retraiteRepository.save(retraite); replaceDetails(retraite, request); record(retraite, "Dossier créé", "Création du dossier " + reference); return toResponse(retraite);
+        retraite = retraiteRepository.save(retraite);
+        reference = "RET-" + LocalDate.now().getYear() + "-"
+                + String.format(java.util.Locale.ROOT, "%03d", retraite.getId());
+        dossier.setNumero(reference);
+        replaceDetails(retraite, request);
+        record(retraite, "Dossier créé", "Création du dossier " + reference);
+        return toResponse(retraite);
     }
 
     @Transactional
